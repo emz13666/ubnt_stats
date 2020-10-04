@@ -1,0 +1,3 @@
+TEMPLATE_VNC RCDATA "Template.vnc"
+VNC_EXE RCDATA "VNC-Viewer.exe"
+MMS_SHELL_EXE RCDATA "mmsShell.exe"

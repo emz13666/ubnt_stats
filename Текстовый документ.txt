@@ -1,0 +1,1 @@
+cat /local/clientcode/lgk/opns/sh140709n.transact |grep "A112 .*GPS_ARR" && cat /local/clientcode/lgk/opns/sh140709d.transact |grep "A112 .*GPS_ARR

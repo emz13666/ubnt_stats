@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2015.10.28 12:34:11.025.pas,W:\УКиСС\Участок АСУ ГТК\programs\ubiquiti_stats\ubnt_stats\actual\Unit4.pas=W:\УКиСС\Участок АСУ ГТК\programs\ubiquiti_stats\ubnt_stats\actual\WiFiAnalizeByMap.pas</Transaction>
+    <Transaction>2015.10.28 12:34:11.025.dfm,W:\УКиСС\Участок АСУ ГТК\programs\ubiquiti_stats\ubnt_stats\actual\Unit4.dfm=W:\УКиСС\Участок АСУ ГТК\programs\ubiquiti_stats\ubnt_stats\actual\WiFiAnalizeByMap.dfm</Transaction>
+  </Transactions>
+</BorlandProject>
