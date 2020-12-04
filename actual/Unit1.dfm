@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 278
   Top = 121
   Caption = 'Ubiquiti Statistics (C) EMZ ('#1045#1074#1075#1077#1085#1080#1081' '#1052#1080#1093#1072#1081#1083#1086#1074#1080#1095' '#1047#1080#1085#1086#1074#1100#1077#1074')'
-  ClientHeight = 817
+  ClientHeight = 734
   ClientWidth = 1115
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object Form1: TForm1
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 624
+    Top = 541
     Width = 1115
     Height = 3
     Cursor = crVSplit
@@ -29,12 +29,11 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Top = 627
+    Top = 544
     Width = 1115
     Height = 190
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 532
     object Chart1: TChart
       Left = 1
       Top = 33
@@ -433,14 +432,13 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 1115
-    Height = 624
+    Height = 541
     Align = alClient
     TabOrder = 1
-    ExplicitHeight = 529
     object Splitter3: TSplitter
       Left = 813
       Top = 1
-      Height = 622
+      Height = 539
       Align = alRight
       ExplicitLeft = 712
       ExplicitHeight = 487
@@ -449,28 +447,25 @@ object Form1: TForm1
       Left = 816
       Top = 1
       Width = 298
-      Height = 622
+      Height = 539
       Align = alRight
       TabOrder = 0
-      ExplicitHeight = 527
       object PageControl1: TPageControl
         Left = 1
         Top = 1
         Width = 296
-        Height = 620
+        Height = 537
         ActivePage = TabSheet4
         Align = alClient
         TabOrder = 0
-        ExplicitHeight = 525
         object TabSheet1: TTabSheet
           Caption = '1'
-          ExplicitHeight = 497
           object MonthCalendar1: TMonthCalendar
             Left = 0
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.602244826390000000
+            Date = 41178.773877939810000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -737,7 +732,6 @@ object Form1: TForm1
         object TabSheet2: TTabSheet
           Caption = '2'
           ImageIndex = 1
-          ExplicitHeight = 497
           object RadioGroup1: TRadioGroup
             Left = 8
             Top = 32
@@ -996,7 +990,6 @@ object Form1: TForm1
         object TabSheet3: TTabSheet
           Caption = 'log and setup'
           ImageIndex = 2
-          ExplicitHeight = 497
           object ToolTipsDBGrid2: TDBGrid
             Left = 0
             Top = 0
@@ -1158,12 +1151,11 @@ object Form1: TForm1
           Caption = 'ReleaseNotes'
           ImageIndex = 3
           OnShow = TabSheet4Show
-          ExplicitHeight = 497
           object Memo1: TMemo
             Left = 0
             Top = 0
             Width = 288
-            Height = 592
+            Height = 509
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -1579,11 +1571,16 @@ object Form1: TForm1
               #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100#1089#1103' '#1082' Bullet ('#1074#1079#1088#1099#1074#1094#1077#1093') '#1080
               #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100#1089#1103' '#1082' Bullet '#1087#1086' SSH ('#1074#1079#1088#1099#1074#1094#1077#1093') '
               #1055#1088#1080' '#1074#1099#1073#1086#1088#1077' '#1101#1090#1080#1093' '#1087#1091#1085#1082#1090#1086#1074'  '#1087#1086#1076#1082#1083#1102#1095#1072#1077#1090#1089#1103' '#1087#1086' ip_alias '
-              '('#1085#1086#1074#1086#1077' '#1087#1086#1083#1077' '#1074' '#1090#1072#1073#1083#1080#1094#1077' equipment)')
+              '('#1085#1086#1074#1086#1077' '#1087#1086#1083#1077' '#1074' '#1090#1072#1073#1083#1080#1094#1077' equipment)'
+              ''
+              '04.12.2020'
+              'Version 1.1.21.83'
+              #1045#1089#1083#1080' '#1075#1088#1072#1092#1080#1082' '#1089#1090#1088#1086#1080#1090#1089#1103' '#1085#1077' '#1079#1072' '#1087#1077#1088#1080#1086#1076' '#1072' '#1079#1072' '#1090#1077#1082#1091#1097#1080#1077' '
+              #1089#1091#1090#1082#1080', '#1090#1086' '#1083#1080#1085#1080#1102' -78 '#1088#1080#1089#1091#1077#1084' '#1086#1090' 0:00 '#1076#1086' '#1090#1077#1082#1091#1097#1077#1075#1086' '
+              #1074#1088#1077#1084#1077#1085#1080'.')
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
-            ExplicitHeight = 497
           end
         end
       end
@@ -1592,16 +1589,15 @@ object Form1: TForm1
       Left = 1
       Top = 1
       Width = 812
-      Height = 622
+      Height = 539
       Align = alClient
       TabOrder = 1
-      ExplicitHeight = 527
       object pagesTables: TPageControl
         Left = 1
         Top = 1
         Width = 810
-        Height = 620
-        ActivePage = tabBur
+        Height = 537
+        ActivePage = tabAvto
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1612,16 +1608,14 @@ object Form1: TForm1
         ParentFont = False
         TabHeight = 35
         TabOrder = 0
-        ExplicitHeight = 525
         object tabAvto: TTabSheet
           Caption = #1040#1074#1090#1086#1089#1072#1084#1086#1089#1074#1072#1083#1099
           OnShow = tabAvtoShow
-          ExplicitHeight = 480
           object ToolTipsDBGrid1: TDBGrid
             Left = 0
             Top = 0
             Width = 802
-            Height = 575
+            Height = 492
             Align = alClient
             DataSource = DataSource1
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
@@ -1696,7 +1690,6 @@ object Form1: TForm1
                 Expanded = False
                 FieldName = 'mac_address_1'
                 Title.Caption = 'mac_ptx'
-                Width = 64
                 Visible = True
               end
               item
@@ -1733,19 +1726,16 @@ object Form1: TForm1
           Caption = #1069#1082#1089#1082#1072#1074#1072#1090#1086#1088#1099
           ImageIndex = 1
           OnShow = tabExShow
-          ExplicitHeight = 480
         end
         object tabBur: TTabSheet
           Caption = #1041#1091#1088#1089#1090#1072#1085#1082#1080' '#1080' '#1057#1047#1052
           ImageIndex = 2
           OnShow = tabBurShow
-          ExplicitHeight = 480
         end
         object tabBase: TTabSheet
           Caption = #1041#1072#1079#1086#1074#1099#1077' '#1089#1090#1072#1085#1094#1080#1080
           ImageIndex = 3
           OnShow = tabBaseShow
-          ExplicitHeight = 480
         end
       end
     end
