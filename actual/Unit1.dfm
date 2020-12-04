@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 278
   Top = 121
   Caption = 'Ubiquiti Statistics (C) EMZ ('#1045#1074#1075#1077#1085#1080#1081' '#1052#1080#1093#1072#1081#1083#1086#1074#1080#1095' '#1047#1080#1085#1086#1074#1100#1077#1074')'
-  ClientHeight = 722
+  ClientHeight = 817
   ClientWidth = 1115
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object Form1: TForm1
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 529
+    Top = 624
     Width = 1115
     Height = 3
     Cursor = crVSplit
@@ -29,11 +29,12 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Top = 532
+    Top = 627
     Width = 1115
     Height = 190
     Align = alBottom
     TabOrder = 0
+    ExplicitTop = 532
     object Chart1: TChart
       Left = 1
       Top = 33
@@ -378,19 +379,34 @@ object Form1: TForm1
       object Label11: TLabel
         Left = 463
         Top = 11
-        Width = 77
+        Width = 51
         Height = 13
-        Caption = #1057#1058#1054#1071#1053#1050#1040' '#1043#1041#1052
-        Color = clYellow
+        Caption = 'SMOTR_2'
+        Color = clPurple
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindow
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
         ParentColor = False
+        ParentFont = False
       end
       object Label12: TLabel
-        Left = 556
+        Left = 534
         Top = 10
-        Width = 118
+        Width = 45
         Height = 13
-        Caption = #1052#1054#1041'. '#1056#1045#1058#1056#1040#1053#1057#1051#1071#1058#1054#1056
+        Caption = '9_PS_V2'
         Color = clAqua
+        ParentColor = False
+      end
+      object Label18: TLabel
+        Left = 599
+        Top = 11
+        Width = 105
+        Height = 13
+        Caption = 'BVU_GARAGE_Bullet'
+        Color = clFuchsia
         ParentColor = False
       end
       object ProgressBar1: TProgressBar
@@ -417,13 +433,14 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 1115
-    Height = 529
+    Height = 624
     Align = alClient
     TabOrder = 1
+    ExplicitHeight = 529
     object Splitter3: TSplitter
       Left = 813
       Top = 1
-      Height = 527
+      Height = 622
       Align = alRight
       ExplicitLeft = 712
       ExplicitHeight = 487
@@ -432,25 +449,28 @@ object Form1: TForm1
       Left = 816
       Top = 1
       Width = 298
-      Height = 527
+      Height = 622
       Align = alRight
       TabOrder = 0
+      ExplicitHeight = 527
       object PageControl1: TPageControl
         Left = 1
         Top = 1
         Width = 296
-        Height = 525
+        Height = 620
         ActivePage = TabSheet4
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 525
         object TabSheet1: TTabSheet
           Caption = '1'
+          ExplicitHeight = 497
           object MonthCalendar1: TMonthCalendar
             Left = 0
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.812794004630000000
+            Date = 41178.602244826390000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -717,6 +737,7 @@ object Form1: TForm1
         object TabSheet2: TTabSheet
           Caption = '2'
           ImageIndex = 1
+          ExplicitHeight = 497
           object RadioGroup1: TRadioGroup
             Left = 8
             Top = 32
@@ -975,6 +996,7 @@ object Form1: TForm1
         object TabSheet3: TTabSheet
           Caption = 'log and setup'
           ImageIndex = 2
+          ExplicitHeight = 497
           object ToolTipsDBGrid2: TDBGrid
             Left = 0
             Top = 0
@@ -1136,11 +1158,12 @@ object Form1: TForm1
           Caption = 'ReleaseNotes'
           ImageIndex = 3
           OnShow = TabSheet4Show
+          ExplicitHeight = 497
           object Memo1: TMemo
             Left = 0
             Top = 0
             Width = 288
-            Height = 497
+            Height = 592
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -1547,10 +1570,20 @@ object Form1: TForm1
               #1057#1076#1077#1083#1072#1083' '#1082#1072#1088#1090#1080#1085#1082#1080' '#1089' '#1087#1088#1086#1079#1088#1072#1095#1085#1099#1084' '#1092#1086#1085#1086#1084' '#1085#1072' '#1079#1072#1082#1083#1072#1076#1082#1072#1093' '
               #1089' '#1087#1086#1084#1086#1097#1100#1102' '#1082#1086#1084#1087#1086#1085#1077#1085#1090#1072' TsAlphaImageList ('#1080#1079' '#1085#1072#1073#1086#1088#1072' '
               #1082#1086#1084#1087#1086#1085#1077#1085#1090#1086#1074' AlphaControls). '#1042' '#1085#1105#1084' '#1084#1086#1078#1085#1086' '#1076#1086#1073#1072#1074#1083#1103#1090#1100' '
-              'png '#1089' '#1087#1088#1086#1079#1088#1072#1095#1085#1099#1084' '#1092#1086#1085#1086#1084'.')
+              'png '#1089' '#1087#1088#1086#1079#1088#1072#1095#1085#1099#1084' '#1092#1086#1085#1086#1084'.'
+              ''
+              '04.12.2020'
+              'Version 1.1.21.82'
+              #1055#1086#1087#1088#1072#1074#1080#1083' '#1083#1077#1075#1077#1085#1076#1091' '#1085#1072' '#1075#1088#1072#1092#1080#1082#1077'. '#1044#1086#1073#1072#1074#1080#1083' 2 '#1087#1091#1085#1082#1090#1072' '#1074' '
+              #1084#1077#1085#1102': '
+              #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100#1089#1103' '#1082' Bullet ('#1074#1079#1088#1099#1074#1094#1077#1093') '#1080
+              #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100#1089#1103' '#1082' Bullet '#1087#1086' SSH ('#1074#1079#1088#1099#1074#1094#1077#1093') '
+              #1055#1088#1080' '#1074#1099#1073#1086#1088#1077' '#1101#1090#1080#1093' '#1087#1091#1085#1082#1090#1086#1074'  '#1087#1086#1076#1082#1083#1102#1095#1072#1077#1090#1089#1103' '#1087#1086' ip_alias '
+              '('#1085#1086#1074#1086#1077' '#1087#1086#1083#1077' '#1074' '#1090#1072#1073#1083#1080#1094#1077' equipment)')
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
+            ExplicitHeight = 497
           end
         end
       end
@@ -1559,15 +1592,16 @@ object Form1: TForm1
       Left = 1
       Top = 1
       Width = 812
-      Height = 527
+      Height = 622
       Align = alClient
       TabOrder = 1
+      ExplicitHeight = 527
       object pagesTables: TPageControl
         Left = 1
         Top = 1
         Width = 810
-        Height = 525
-        ActivePage = tabAvto
+        Height = 620
+        ActivePage = tabBur
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1578,14 +1612,16 @@ object Form1: TForm1
         ParentFont = False
         TabHeight = 35
         TabOrder = 0
+        ExplicitHeight = 525
         object tabAvto: TTabSheet
           Caption = #1040#1074#1090#1086#1089#1072#1084#1086#1089#1074#1072#1083#1099
           OnShow = tabAvtoShow
+          ExplicitHeight = 480
           object ToolTipsDBGrid1: TDBGrid
             Left = 0
             Top = 0
             Width = 802
-            Height = 480
+            Height = 575
             Align = alClient
             DataSource = DataSource1
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
@@ -1660,6 +1696,7 @@ object Form1: TForm1
                 Expanded = False
                 FieldName = 'mac_address_1'
                 Title.Caption = 'mac_ptx'
+                Width = 64
                 Visible = True
               end
               item
@@ -1696,16 +1733,19 @@ object Form1: TForm1
           Caption = #1069#1082#1089#1082#1072#1074#1072#1090#1086#1088#1099
           ImageIndex = 1
           OnShow = tabExShow
+          ExplicitHeight = 480
         end
         object tabBur: TTabSheet
           Caption = #1041#1091#1088#1089#1090#1072#1085#1082#1080' '#1080' '#1057#1047#1052
           ImageIndex = 2
           OnShow = tabBurShow
+          ExplicitHeight = 480
         end
         object tabBase: TTabSheet
           Caption = #1041#1072#1079#1086#1074#1099#1077' '#1089#1090#1072#1085#1094#1080#1080
           ImageIndex = 3
           OnShow = tabBaseShow
+          ExplicitHeight = 480
         end
       end
     end
@@ -1717,7 +1757,7 @@ object Form1: TForm1
   end
   object PopupMenu1: TPopupMenu
     Left = 160
-    Top = 128
+    Top = 88
     object C1: TMenuItem
       Caption = #1043#1088#1072#1092#1080#1082' '#1091#1088#1086#1074#1085#1103' '#1089#1080#1075#1085#1072#1083#1072
       OnClick = C1Click
@@ -1798,6 +1838,14 @@ object Form1: TForm1
     object BulletSSH: TMenuItem
       Caption = #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100#1089#1103' '#1082' Bullet '#1087#1086' SSH'
       OnClick = BulletSSHClick
+    end
+    object G1: TMenuItem
+      Caption = #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100#1089#1103' '#1082' Bullet ('#1074#1079#1088#1099#1074#1094#1077#1093')'
+      OnClick = G1Click
+    end
+    object BulletSSH1: TMenuItem
+      Caption = #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100#1089#1103' '#1082' Bullet '#1087#1086' SSH ('#1074#1079#1088#1099#1074#1094#1077#1093')'
+      OnClick = BulletSSH1Click
     end
     object BulletAP1: TMenuItem
       Caption = #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100#1089#1103' '#1082' BulletAP'
@@ -2006,12 +2054,12 @@ object Form1: TForm1
     Top = 88
   end
   object DBConnection: TADOConnection
+    Connected = True
     ConnectionString = 
       'Provider=MSDASQL.1;Persist Security Info=False;Data Source=mysql' +
       '_ubiquiti;'
     LoginPrompt = False
-    Provider = 'MSDASQL.1'
-    Left = 64
+    Left = 48
     Top = 147
   end
   object Query_3: TADOQuery
@@ -2135,6 +2183,10 @@ object Form1: TForm1
     object Modemsip_pc: TStringField
       FieldName = 'ip_pc'
       Size = 50
+    end
+    object Modemsip_alias: TStringField
+      FieldName = 'ip_alias'
+      Size = 15
     end
     object Modemscomment: TMemoField
       FieldName = 'comment'

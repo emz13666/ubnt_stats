@@ -230,6 +230,25 @@ type
     TabSheet4: TTabSheet;
     Memo1: TMemo;
     Button21: TButton;
+    PressureProJ19391: TMenuItem;
+    checkPing: TCheckBox;
+    GroupBox5: TGroupBox;
+    edtHeightPing: TSpinEdit;
+    edtWidthPing: TSpinEdit;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    edtBorderWidthPing: TSpinEdit;
+    edtBorderHeightPing: TSpinEdit;
+    Label16: TLabel;
+    btnSetPing: TButton;
+    chkPingsWindowSizeInSymbol: TCheckBox;
+    Label17: TLabel;
+    edtKoeffPingFromSymbols: TSpinEdit;
+    sAlphaImageList1: TsAlphaImageList;
+    Label18: TLabel;
+    G1: TMenuItem;
+    BulletSSH1: TMenuItem;
     Modemsid_modem: TLargeintField;
     Modemsis_access_point: TSmallintField;
     Modemsname: TStringField;
@@ -259,25 +278,10 @@ type
     Modemsequipment_type: TIntegerField;
     Modemsip_address_2: TStringField;
     Modemsip_pc: TStringField;
+    Modemsip_alias: TStringField;
     Modemscomment: TMemoField;
     ModemsuseInMonitoring: TSmallintField;
     ModemsLastGPSDateTime: TDateTimeField;
-    PressureProJ19391: TMenuItem;
-    checkPing: TCheckBox;
-    GroupBox5: TGroupBox;
-    edtHeightPing: TSpinEdit;
-    edtWidthPing: TSpinEdit;
-    Label13: TLabel;
-    Label14: TLabel;
-    Label15: TLabel;
-    edtBorderWidthPing: TSpinEdit;
-    edtBorderHeightPing: TSpinEdit;
-    Label16: TLabel;
-    btnSetPing: TButton;
-    chkPingsWindowSizeInSymbol: TCheckBox;
-    Label17: TLabel;
-    edtKoeffPingFromSymbols: TSpinEdit;
-    sAlphaImageList1: TsAlphaImageList;
     function SSH_Client(Server, Userid, Pass: string): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -368,6 +372,8 @@ type
     procedure TabSheet4Show(Sender: TObject);
     procedure Button21Click(Sender: TObject);
     procedure btnSetPingClick(Sender: TObject);
+    procedure G1Click(Sender: TObject);
+    procedure BulletSSH1Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -566,6 +572,8 @@ procedure TForm1.tabAvtoShow(Sender: TObject);
 begin
   GroupBox4.Caption := 'По всем авто в статусе ГОТОВ';
   C1.Visible := true;
+  G1.Visible := false;
+  BulletSSH1.Visible := false;
   GPS1.Visible  := true;
   Gpswifi1.Visible := true;
   N12.Visible  := true;
@@ -613,6 +621,8 @@ procedure TForm1.tabBaseShow(Sender: TObject);
 begin
   GroupBox4.Caption := 'По всем в статусе ГОТОВ';
   C1.Visible := true;
+  G1.Visible := false;
+  BulletSSH1.Visible := false;
   GPS1.Visible  := false;
   Gpswifi1.Visible := false;
   N12.Visible  := true;
@@ -656,6 +666,8 @@ begin
   GroupBox4.Caption := 'По всем бурстанкам в статусе ГОТОВ';
   C1.Visible := true;
   GPS1.Visible  := true;
+  G1.Visible := true;
+  BulletSSH1.Visible := true;
   Gpswifi1.Visible := true;
   N12.Visible  := true;
   ReloadDrivers2.Visible  := false;
@@ -700,6 +712,8 @@ end;
 procedure TForm1.tabExShow(Sender: TObject);
 begin
   GroupBox4.Caption :='По всем экскаваторам в статусе ГОТОВ';
+  G1.Visible := false;
+  BulletSSH1.Visible := false;
   C1.Visible := true;
   GPS1.Visible  := true;
   Gpswifi1.Visible := true;
@@ -716,7 +730,7 @@ begin
   Ping1.Caption := 'Пинговать PTX и Bullet';
   Bullet1.Visible := true;
   BulletAP1.Visible := false;
-  Switch1.Visible := false;  
+  Switch1.Visible := false;
   OMStip1.Visible := true;
   VNC1.Visible := true;
   VNC1.Caption :=  'Подключиться по VNC к PTX';
@@ -3137,6 +3151,15 @@ begin
   ShellExecute(0,nil,PChar('http://'+AddIPaddress(Modemsip_address.AsString,1)),nil,nil,SW_restore);
 end;
 
+procedure TForm1.BulletSSH1Click(Sender: TObject);
+begin
+  if not tabBur.Visible then
+    ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('admin@'+AddIPaddress(Modemsip_address.AsString,0)+' -pw unrfce20'),nil,SW_restore)
+  else
+    ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('admin@'+Modems.FieldByName('ip_alias').AsString+' -pw gtkbvu19'),nil,SW_restore);
+  sleep(1000);
+end;
+
 procedure TForm1.BulletSSHClick(Sender: TObject);
 begin
   if not tabBur.Visible then
@@ -3432,6 +3455,11 @@ begin
   if FileExists(File_name) then frmMEMO.Memo11.Lines.LoadFromFile(File_name) else frmMEMO.Memo11.Lines.Add(CommandString);
   frmMEMO.Memo11.Lines.Add('');
   frmMEMO.Memo11.Lines.Add(IntToStr(GetTickCount-tmpTick)+' millisec');
+end;
+
+procedure TForm1.G1Click(Sender: TObject);
+begin
+  ShellExecute(0,nil,PChar('http://'+Modems.FieldByName('ip_alias').AsString),nil,nil,SW_restore);
 end;
 
 procedure TForm1.GPS1Click(Sender: TObject);
