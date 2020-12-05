@@ -969,8 +969,7 @@ begin
     ToolTipsDBGrid1.Tag := 0;
     exit;
   end;
-  Query.FindLast;
-  if Query.RecordCount = 0 then exit;
+  if not Query.Eof then Query.FindLast;
   ProgressBar1.Min := 0;
   ProgressBar1.Position := 0;
   ProgressBar1.Max := Query.RecordCount;
@@ -997,8 +996,9 @@ begin
 
   SetLength(CoordsModems,0);
   SetLength(NamesModems,0);
-  if not CheckBox3.Checked then tmpDateTime := Date;
-  tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then tmpDateTime := Date
+  else
+    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
   Chart1.Series[2].Color := clRed;
   Chart1.Series[2].AddXY(tmpDateTime,-78,'',clred);
 
@@ -1054,10 +1054,11 @@ begin
         CoordsModems[High(CoordsModems)].y := Query.FieldByName('y').asinteger;
     Query.Next;
   end;
-  tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
-  if not CheckBox3.Checked then tmpDateTime := now;
+  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then tmpDateTime := now
+  else
+    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
 
-  Chart1.Series[0].AddXY(tmpDateTime,(Query.FieldByName('signal_level').AsInteger-256),'',Query.FieldByName('color').AsInteger);
+  if Query.RecordCount<>0 then Chart1.Series[0].AddXY(tmpDateTime,(Query.FieldByName('signal_level').AsInteger-256),'',Query.FieldByName('color').AsInteger);
   Chart1.Series[2].AddXY(tmpDateTime,-78,'',clred);
   ProgressBar1.Position := 0;
   Query.Close;
