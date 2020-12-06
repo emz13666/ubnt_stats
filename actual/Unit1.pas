@@ -996,7 +996,7 @@ begin
 
   SetLength(CoordsModems,0);
   SetLength(NamesModems,0);
-  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then tmpDateTime := Date
+  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then tmpDateTime := MonthCalendar1.Date
   else
     tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
   Chart1.Series[2].Color := clRed;
@@ -1054,7 +1054,10 @@ begin
         CoordsModems[High(CoordsModems)].y := Query.FieldByName('y').asinteger;
     Query.Next;
   end;
-  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then tmpDateTime := now
+  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then begin
+    if MonthCalendar1.Date=Date then tmpDateTime := now
+    else tmpDateTime := MonthCalendar1.Date+1
+  end
   else
     tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
 
