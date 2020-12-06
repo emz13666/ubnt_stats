@@ -996,7 +996,8 @@ begin
 
   SetLength(CoordsModems,0);
   SetLength(NamesModems,0);
-  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then tmpDateTime := MonthCalendar1.Date
+  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then
+    tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
   else
     tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
   Chart1.Series[2].Color := clRed;
@@ -1055,7 +1056,7 @@ begin
     Query.Next;
   end;
   if (not CheckBox3.Checked)or(Query.RecordCount = 0) then begin
-    if MonthCalendar1.Date=Date then tmpDateTime := now
+    if FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)=FormatDateTime('dd.mm.yyyy',Date) then tmpDateTime := now
     else tmpDateTime := MonthCalendar1.Date+1
   end
   else
