@@ -374,6 +374,7 @@ type
     procedure btnSetPingClick(Sender: TObject);
     procedure G1Click(Sender: TObject);
     procedure BulletSSH1Click(Sender: TObject);
+    procedure PopupMenu1Popup(Sender: TObject);
 
   private
     { Private declarations }
@@ -2930,6 +2931,20 @@ begin
    else
      ShowMessage('No ip');
  end;
+end;
+
+procedure TForm1.PopupMenu1Popup(Sender: TObject);
+begin
+  if  tabBur.Visible then
+   if copy(Modemsname.AsString, 1, 3) <> 'SZM'  then
+    begin
+      G1.Visible := false;
+      BulletSSH1.Visible := false;
+    end
+    else begin
+      G1.Visible := true;
+      BulletSSH1.Visible := true;
+    end;
 end;
 
 function getdatetime(s:string):TDateTime;
