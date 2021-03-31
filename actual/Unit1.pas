@@ -3269,6 +3269,7 @@ begin
         end;
     Ping1Click(Sender);
   end;
+  Button8Click(Sender);//обновляем таблицу TableLog
 end;
 
 procedure TForm1.Button8Click(Sender: TObject);
