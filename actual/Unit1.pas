@@ -187,8 +187,8 @@ type
     PTXPWRUP1: TMenuItem;
     killprocdeliteexe1: TMenuItem;
     killprocdeliteexe2: TMenuItem;
-    btnWifi_on: TButton;
-    btnWifi_off: TButton;
+    btnAddBullet: TButton;
+    btnAddPTX: TButton;
     N8: TMenuItem;
     vims2: TMenuItem;
     btnUninstallPTX: TButton;
@@ -282,6 +282,10 @@ type
     Modemscomment: TMemoField;
     ModemsuseInMonitoring: TSmallintField;
     ModemsLastGPSDateTime: TDateTimeField;
+    Button22: TButton;
+    btnGetOffBullet: TButton;
+    btnBulletInstall: TButton;
+    Button23: TButton;
     function SSH_Client(Server, Userid, Pass: string): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -334,10 +338,8 @@ type
     procedure Button8Click(Sender: TObject);
     procedure ReloadDrivers1Click(Sender: TObject);
     procedure VEIDUMP1Click(Sender: TObject);
-//    procedure Button17Click(Sender: TObject);
     procedure Button19Click(Sender: TObject);
     procedure Button18Click(Sender: TObject);
-//    procedure Button20Click(Sender: TObject);
     procedure btnVeiDump3Click(Sender: TObject);
     procedure GPS1Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
@@ -350,7 +352,6 @@ type
     procedure fullversion1Click(Sender: TObject);
     procedure telnet2Click(Sender: TObject);
     procedure OMSsniffMenuClick(Sender: TObject);
-    procedure btnWifi_onClick(Sender: TObject);
     procedure NWiFiQualClick(Sender: TObject);
     procedure Gpswifi1Click(Sender: TObject);
     procedure Tranzact_nClick(Sender: TObject);
@@ -375,6 +376,8 @@ type
     procedure G1Click(Sender: TObject);
     procedure BulletSSH1Click(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
+    procedure Button17Click(Sender: TObject);
+    procedure Button23Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -1320,6 +1323,76 @@ temp_memo.Free;
 ShowMessage('Отчёт сохранен в файле '+ExtractFilePath(Application.ExeName)+ 'temp_report_bur.txt');
 end;
 
+procedure TForm1.Button23Click(Sender: TObject);
+var
+  MacAclList: TStrings;
+  count_acl: integer;
+  puttyPath: WideString;
+  lpSysInfo: TSystemInfo;
+begin
+//Формируем строки для откл mac acl
+  MacAclList := TStringList.Create;
+  MacAclList.Clear;
+  MacAclList.Add('wireless.1.mac_acl.status=disabled');
+  MacAclList.Add('wireless.1.mac_acl.policy=allow');
+
+//сохраняем сформированный mac acl в файл
+    MacAclList.SaveToFile(ExtractFilePath(Application.ExeName)+'mac_off.txt');
+
+//формируем и запускаем на выполнение файл DisableMacACL.cmd
+//который применяет mac_off.txt на все точки доступа
+
+  //сначала проверяем, установлен ли Putty
+  puttyPath := 'c:\Program Files\Putty\';
+  if not FileExists(puttyPath+'plink.exe') then begin
+    puttyPath := 'C:\Program Files (x86)\Putty\';
+    if not FileExists(puttyPath+'plink.exe') then
+    begin
+      puttyPath := '';
+      if not FileExists(puttyPath+'plink.exe') then begin
+        ShowMessage('Putty не найден.');
+        MacAclList.Free;
+        exit;
+      end;
+    end;
+  end;
+
+  MacAclList.Clear;
+  MacAclList.Add('@ECHO OFF');
+  Query.Close;
+  Query.SQL.Text := 'select m.ip_address, eq.name from modems as m LEFT JOIN equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by m.ip_address';
+  try
+    Query.Open;
+    while not Query.Eof do
+    begin
+      MacAclList.Add('ECHO ---------------------------------------------------');
+      MacAclList.Add('ECHO Disabling MAC ACL to '+Query.FieldByName('name').AsString+' ('+
+        Query.FieldByName('ip_address').AsString+'):');
+      MacAclList.Add('ECHO ---------------------------------------------------');
+      MacAclList.Add('"'+puttyPath+'pscp.exe" -batch -scp -pw unrfce20 mac_off.txt admin@'+
+        Query.FieldByName('ip_address').AsString +
+         ':/tmp/mac_off.txt');
+      MacAclList.Add('"'+puttyPath+'plink.exe" -batch -pw unrfce20 admin@'+
+        Query.FieldByName('ip_address').AsString +
+         ' "cat /tmp/system.cfg | grep -v mac_acl > /tmp/systemnomacacl.tmp;'+
+         'cat /tmp/mac_off.txt >> /tmp/systemnomacacl.tmp;'+
+         'mv /tmp/systemnomacacl.tmp /tmp/system.cfg;cfgmtd -w -p /etc/;'+
+         '/usr/etc/rc.d/rc.softrestart save"');
+       MacAclList.Add('@ECHO.');
+      Query.Next;
+    end;
+    MacAclList.Add('pause');
+    MacAclList.Add('del /Q /F %0');
+//сохраняем сформированный cmd в файл
+    MacAclList.SaveToFile(ExtractFilePath(Application.ExeName)+'DisableMacACL.cmd');
+    MacAclList.Free;
+//запускаем ApplyMac.cmd
+    ShellExecute(0,nil,PChar(ExtractFilePath(Application.ExeName)+'DisableMacACL.cmd'),nil,nil,SW_restore);
+  except
+    Query.Close;
+  end;
+end;
+
 procedure TForm1.CheckBox1Click(Sender: TObject);
 begin
  if CheckBox1.Checked then CheckBox3.Checked := false;
@@ -1789,7 +1862,10 @@ begin
     ping_height_with_borders := ping_height_without_borders + ping_border_height;
     ping_width_with_borders := ping_width_without_borders + ping_border_width;
     PingsRows := Monitor.Height div ping_height_with_borders;
+    if PingsRows = 0 then PingsRows := 1;
+
     PingsCols := Monitor.Width div ping_width_with_borders;
+    if PingsCols = 0 then PingsCols := 10;
     PingFirstLeft := 0;//пока так, потом - привязать к координатам монитора на котором форма
     PingFirstTop := 0;
 
@@ -2715,6 +2791,8 @@ end;
 procedure TForm1.lAvgLevelDblClick(Sender: TObject);
 begin
   Button16.Visible := not Button16.Visible;
+  Button17.Visible := not Button17.Visible;
+  Button23.Visible := not Button23.Visible;
 end;
 
 procedure TForm1.loadavg1minute1Click(Sender: TObject);
@@ -2847,6 +2925,101 @@ begin
   Query_2.SQL.Add('and time<'+QuotedStr(FormatDateTime('hh:mm',DateTimePicker4.Time)));
   Query_2.ExecSQL;
   Query_2.Close;
+end;
+
+procedure TForm1.Button17Click(Sender: TObject);
+var
+  MacAclList: TStrings;
+  count_acl: integer;
+  puttyPath: WideString;
+  lpSysInfo: TSystemInfo;
+begin
+//Формируем mac acl
+  MacAclList := TStringList.Create;
+  MacAclList.Clear;
+  Query.Close;
+  Query.SQL.Text := 'SELECT distinct mac_address, id_modem, name  FROM modems '+
+    'WHERE (mac_address is not Null) and (mac_address <> ' + QuotedStr('00:00:00:00:00:00') + ') and (mac_address <> '+
+    QuotedStr('') + ')' + ' order by name';
+  try
+    Query.Open;
+    count_acl := 1;
+    MacAclList.Add('wireless.1.mac_acl.status=enabled');
+    MacAclList.Add('wireless.1.mac_acl.policy=allow');
+    while not Query.Eof do
+    begin
+      MacAclList.Add('wireless.1.mac_acl.'+IntToStr(count_acl)+'.status=enabled');
+      MacAclList.Add('wireless.1.mac_acl.'+IntToStr(count_acl)+'.comment=' + Query.FieldByName('name').AsString);
+      MacAclList.Add('wireless.1.mac_acl.'+IntToStr(count_acl)+'.mac='+Query.FieldByName('mac_address').AsString);
+      Query.Next;
+      inc(count_acl);
+    end;
+//сохраняем сформированный mac acl в файл
+    MacAclList.SaveToFile(ExtractFilePath(Application.ExeName)+'macacl.txt');
+  except
+    Query.Close;
+  end;
+
+//формируем и запускаем на выполнение файл ApplyMac.cmd
+//который применяет mac acl на все точки доступа
+
+  //сначала проверяем, установлен ли Putty
+  puttyPath := 'c:\Program Files\Putty\';
+  if not FileExists(puttyPath+'plink.exe') then begin
+    puttyPath := 'C:\Program Files (x86)\Putty\';
+    if not FileExists(puttyPath+'plink.exe') then
+    begin
+      puttyPath := '';
+      if not FileExists(puttyPath+'plink.exe') then begin
+        ShowMessage('Putty не найден.');
+        MacAclList.Free;
+        exit;
+      end;
+    end;
+  end;
+
+  MacAclList.Clear;
+  MacAclList.Add('@ECHO OFF');
+  Query.Close;
+  Query.SQL.Text := 'select m.ip_address, eq.name from modems as m LEFT JOIN equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by m.ip_address';
+  try
+    Query.Open;
+    while not Query.Eof do
+    begin
+      MacAclList.Add('ECHO ---------------------------------------------------');
+      MacAclList.Add('ECHO Applying MAC ACL to '+Query.FieldByName('name').AsString+' ('+
+        Query.FieldByName('ip_address').AsString+'):');
+      MacAclList.Add('ECHO ---------------------------------------------------');
+      MacAclList.Add('"'+puttyPath+'pscp.exe" -batch -scp -pw unrfce20 macacl.txt admin@'+
+        Query.FieldByName('ip_address').AsString +
+         ':/tmp/macacl.txt');
+      MacAclList.Add('"'+puttyPath+'plink.exe" -batch -pw unrfce20 admin@'+
+        Query.FieldByName('ip_address').AsString +
+         ' "cat /tmp/system.cfg | grep -v mac_acl > /tmp/systemnomacacl.tmp;'+
+         'cat /tmp/macacl.txt >> /tmp/systemnomacacl.tmp;'+
+         'mv /tmp/systemnomacacl.tmp /tmp/system.cfg;cfgmtd -w -p /etc/;'+
+         '/usr/etc/rc.d/rc.softrestart save"');
+       MacAclList.Add('@ECHO.');
+      Query.Next;
+    end;
+    MacAclList.Add('pause');
+    MacAclList.Add('del /Q /F %0');
+//сохраняем сформированный cmd в файл
+    MacAclList.SaveToFile(ExtractFilePath(Application.ExeName)+'ApplyMac.cmd');
+    MacAclList.Free;
+//запускаем ApplyMac.cmd
+    ShellExecute(0,nil,PChar(ExtractFilePath(Application.ExeName)+'ApplyMac.cmd'),nil,nil,SW_restore);
+  except
+    Query.Close;
+  end;
+
+  (*
+"c:\Program Files (x86)\PuTTY\plink.exe" -batch -pw unrfce20 admin@10.70.120.15 "cat /tmp/system.cfg | grep -v mac_acl > /tmp/systemnomacacl.tmp"
+"c:\Program Files (x86)\PuTTY\pscp.exe" -batch -scp -pw unrfce20 macacl.txt admin@10.70.120.15:/tmp/macacl.txt
+"c:\Program Files (x86)\PuTTY\plink.exe" -batch -pw unrfce20 admin@10.70.120.15 "cat /tmp/macacl.txt >> /tmp/systemnomacacl.tmp"
+"c:\Program Files (x86)\PuTTY\plink.exe" -batch -pw unrfce20 admin@10.70.120.15 "mv /tmp/systemnomacacl.tmp /tmp/system.cfg"
+"c:\Program Files (x86)\PuTTY\plink.exe" -batch -pw unrfce20 admin@10.70.120.15 "cfgmtd -w -p /etc/;sleep 1;/usr/etc/rc.d/rc.softrestart save"
+  *)
 end;
 
 function ptx_ip(modem_ip: string):string;
@@ -3362,12 +3535,7 @@ begin
  frmMEMO.Memo11.Lines.Add('------end--------');
   frmMEMO.Memo11.Lines.Add(IntToStr(GetTickCount-tmpTick)+' millisec');
 end;
-(* закомментировано 09.06.2016 -  Не актуально, VEI не используется
-procedure TForm1.Button17Click(Sender: TObject);
-begin
-  Button20Click(sender);
-end;
-   *)
+
 procedure TForm1.Button19Click(Sender: TObject);
 begin
   ReloadDrivers1Click(sender);
@@ -3378,83 +3546,6 @@ begin
   xrebootPTX1Click(sender);
 end;
 
-(* закомментировано 09.06.2016 -  Не актуально, VEI не используется
-
-procedure TForm1.Button20Click(Sender: TObject);
-type TArrayString = array [0..254] of AnsiChar;
-var
- SSH: TCryptSession;
-//  Data: PAnsiChar;
- Data: TArrayString;
- tmpStr,tmpStr1, DataString: shortstring;
- LenData,EnterPos: Integer;
- BytePushed: Integer;
- BytePoped,j: Integer;
- tmpTick: Cardinal;
-procedure FindEnter;
-var i: integer;
-begin
-  EnterPos:=0;
-  i := 254;
-  while (Data[i]<>#13)and(i>0) do begin inc(EnterPos);dec(i) end;
-end;
-
-begin
-  tmpTick := GetTickCount;
-  frmMEMO := TfrmMEMO.Create(Application);
-  frmMEMO.Show;
-
-  frmMEMO.Memo11.Lines.Clear;
-  Application.ProcessMessages;
-   frmMEMO.Memo11.Lines.Add('------begin------');
- cryptInit;
-
- SSH := SSH_Client('10.70.121.3', 'lgktech', '20gtkasu');
- if SSH = nil then
-   Exit;
-
- SSH.FlushData; // обязательно нужно использовать перед вызовом PopData
-
- Sleep(500);
- LenData := 255;
- FillChar(Data,255,#0);
- BytePoped := SSH.PopData(addr(Data), LenData);
- frmMEMO.Memo11.Lines.Add(Data);
- FillChar(Data,255,#0);
-   DataString := 'cat OMSsniff/'+formatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+'.sniff.eth0.raw | grep "'+Modemsname.AsString+'.*VEI"'#13;
-   frmMEMO.Memo11.Lines.Add(DataString);
-   move(Datastring[1],Data,Length(DataString));
- LenData := length(DataString);
- SSH.PushData(addr(Data), LenData, BytePushed);
- frmMEMO.Memo11.Lines.Add('------PopData--------');
- SSH.FlushData;
- Sleep(1000);
-
- LenData := 255;
- FillChar(Data,255,#0);
- BytePoped := SSH.PopData(addr(Data), LenData);
- FindEnter;
- tmpStr := Data;
- SetLength(tmpStr,255-EnterPos-1);
- frmMEMO.Memo11.Lines.Add(tmpStr);
- tmpStr :=''; for j:=255-EnterPos+1 to BytePoped-1 do tmpStr := tmpStr+Data[j];
- while BytePoped > 0 do begin
-   LenData := 255;
-   FillChar(Data,255,#0);
-   BytePoped := SSH.PopData(addr(Data), LenData);
-   FindEnter;
-   tmpStr1 := data;
-   SetLength(tmpStr1,255-EnterPos-1);
-   frmMEMO.Memo11.Lines.Add(tmpStr+tmpStr1);
-   tmpStr :=''; for j:=255-EnterPos+1 to BytePoped-1 do tmpStr := tmpStr+Data[j];
- end;
- frmMEMO.Memo11.Lines.Add(tmpStr);
- FreeAndNil(SSH);
- cryptEnd;
- frmMEMO.Memo11.Lines.Add('------end--------');
- frmMEMO.Memo11.Lines.Add(IntToStr(GetTickCount-tmpTick)+' millisec');
-end;
-*)
 procedure TForm1.btnVeiDump3Click(Sender: TObject);
 var
   tmpTick: cardinal;
@@ -3470,7 +3561,6 @@ begin
   DataString := 'cat OMSsniff/'+formatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+'.sniff.eth0.raw | grep '+Modemsname.AsString+'.*VEI';
   File_name := ExtractFilePath(Application.ExeName)+'tmpVeiDump.txt';
   CommandString := '"c:\Program files (x86)\putty\plink.exe" -ssh  -pw "20gtkasu" lgktech@10.70.121.3 "'+ datastring +'" > "'+File_name+'"';
-
 
 
 //  ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K '+ CommandString),nil,SW_HIDE);
@@ -4158,110 +4248,6 @@ begin
      frmShowMap.imgMap.Canvas.Ellipse(paintx-5,painty-5,paintx+5,painty+5);
 
      frmShowMap.Show;
-end;
-
-procedure TForm1.btnWifi_onClick(Sender: TObject);
-var
-  SSHconn: TSSHobj;
-  i: byte;
-  fl_on: byte;
-  f_ip_ap, f_user_ap, f_passwd_ap:string;
-begin
-  //включение/отключение wifi для ноутбука
-  f_ip_ap := '10.70.120.22';
-  f_user_ap := 'admin';
-  f_passwd_ap := 'unrfce20';
-  fl_on :=2; //unknown status
-  SSHconn := TSSHobj.Create(f_ip_ap,f_user_ap,f_passwd_ap,'TI.v5.5.8#');
-     SSHconn.fcommand := 'ifconfig ath0|grep MTU';
-     if SSHconn.Execute then begin
-     //  ShowMessage(QuotedStr(SSHconn.Answer.Text));
-     //  SSHconn.Free;
-     //  exit;
-       if FindLineSubstringInList('UP',SSHconn.Answer)>-1 then fl_on :=1 else fl_on :=0;
-     end;
-  if (Sender as TButton).Name = 'btnWifi_on' then begin
-   if fl_on =1 then begin
-     ShowMessage('Wifi уже включен.');
-     SSHconn.Free;
-     exit;
-   end;
-     SSHconn.fcommand := 'grep -v "netconf.2.up=" /tmp/system.cfg > /tmp/tempconfig;echo "netconf.2.up=enabled" >> /tmp/tempconfig;mv /tmp/tempconfig /tmp/system.cfg;save;reboot';
-     btnWifi_on.Enabled := false;
-     btnWifi_off.Enabled := false;
-     Screen.Cursor := crHourGlass;
-     Application.ProcessMessages;
-     SSHconn.Execute;
-     sleep(1000);
-     SSHconn.Free;
-     ProgressBar1.Max := 100;
-     ProgressBar1.Position := 0;
-       for  i := 1 to ProgressBar1.Max do begin
-         sleep(500);
-         ProgressBar1.Position := ProgressBar1.Position + 1;
-         Application.ProcessMessages;
-       end;
-     SSHconn := TSSHobj.Create(f_ip_ap,f_user_ap,f_passwd_ap,'TI.v5.5.8#');
-     SSHconn.fcommand := 'ifconfig ath0|grep MTU';
-     if SSHconn.Execute then
-       if FindLineSubstringInList('UP',sshconn.answer)>-1 then begin
-         //ShowMessage(SSHconn.Answer.Text);
-         Query_3.SQL.Text := 'insert into wifi_log(datetime, action) values('+
-           QuotedStr(FormatDateTime('yyyy-mm-dd hh:nn:ss', now))+',''ON'')';
-         Query_3.ExecSQL;
-         Query_3.Close;
-         ShowMessage('Wifi у точки доступа 10.70.120.22 (SMOTR_2) включен.')
-       end else
-         ShowMessage('Wifi у точки доступа 10.70.120.22 (SMOTR_2) не включен: '#13+SSHconn.Answer.Text)
-     else
-       ShowMessage('Не удалось включить Wifi у точки доступа 10.70.120.22 (SMOTR_2).');
-     btnWifi_on.Enabled := True;
-     btnWifi_off.Enabled := true;
-     Screen.Cursor := crDefault;
-     ProgressBar1.Position := 0;
-  end else
-  begin
-     if fl_on=0 then begin
-       ShowMessage('Wifi уже отключен.');
-       SSHconn.Free;
-       exit;
-     end;
-
-     SSHconn.fcommand := 'grep -v "netconf.2.up=" /tmp/system.cfg > /tmp/tempconfig;echo "netconf.2.up=disabled" >> /tmp/tempconfig;mv /tmp/tempconfig /tmp/system.cfg;save;reboot';
-     btnWifi_on.Enabled := false;
-     btnWifi_off.Enabled := false;
-     Screen.Cursor := crHourGlass;
-     Application.ProcessMessages;
-     SSHconn.Execute;
-     sleep(500);
-     SSHconn.Free;
-     ProgressBar1.Max := 100;
-       ProgressBar1.Position := 0;
-       for  i := 1 to ProgressBar1.Max do begin
-         sleep(500);
-         ProgressBar1.Position := ProgressBar1.Position + 1;
-         Application.ProcessMessages;
-       end;
-     SSHconn := TSSHobj.Create(f_ip_ap,f_user_ap,f_passwd_ap,'TI.v5.5.8#');
-     SSHconn.fcommand := 'ifconfig ath0|grep MTU';
-     if SSHconn.Execute then
-       if FindLineSubstringInList('UP',sshconn.answer)=-1 then begin
-         //ShowMessage(SSHconn.Answer.Text);
-         Query_3.SQL.Text := 'insert into wifi_log(datetime, action) values('+
-           QuotedStr(FormatDateTime('yyyy-mm-dd hh:nn:ss', now))+',''OFF'')';
-         Query_3.ExecSQL;
-         Query_3.Close;
-         ShowMessage('Wifi у точки доступа 10.70.120.22 (SMOTR_2) отключен.')
-       end else
-         ShowMessage('Wifi у точки доступа 10.70.120.22 (SMOTR_2) не отключен: '#13+SSHconn.Answer.Text)
-     else
-       ShowMessage('Не удалось отключить Wifi у точки доступа 10.70.120.22 (SMOTR_2).');
-     btnWifi_on.Enabled := True;
-     btnWifi_off.Enabled := true;
-     Screen.Cursor := crDefault;
-     ProgressBar1.Position := 0;
-  end;
-  SSHconn.Free;
 end;
 
 procedure TForm1.NWiFiQualClick(Sender: TObject);

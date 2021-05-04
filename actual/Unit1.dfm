@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 278
   Top = 121
   Caption = 'Ubiquiti Statistics (C) EMZ ('#1045#1074#1075#1077#1085#1080#1081' '#1052#1080#1093#1072#1081#1083#1086#1074#1080#1095' '#1047#1080#1085#1086#1074#1100#1077#1074')'
-  ClientHeight = 772
+  ClientHeight = 791
   ClientWidth = 1115
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object Form1: TForm1
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 579
+    Top = 598
     Width = 1115
     Height = 3
     Cursor = crVSplit
@@ -29,12 +29,12 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Top = 582
+    Top = 601
     Width = 1115
     Height = 190
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 563
+    ExplicitTop = 582
     object Chart1: TChart
       Left = 1
       Top = 33
@@ -433,14 +433,14 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 1115
-    Height = 579
+    Height = 598
     Align = alClient
     TabOrder = 1
-    ExplicitHeight = 560
+    ExplicitHeight = 579
     object Splitter3: TSplitter
       Left = 813
       Top = 1
-      Height = 577
+      Height = 596
       Align = alRight
       ExplicitLeft = 712
       ExplicitHeight = 487
@@ -449,28 +449,28 @@ object Form1: TForm1
       Left = 816
       Top = 1
       Width = 298
-      Height = 577
+      Height = 596
       Align = alRight
       TabOrder = 0
-      ExplicitHeight = 558
+      ExplicitHeight = 577
       object PageControl1: TPageControl
         Left = 1
         Top = 1
         Width = 296
-        Height = 575
-        ActivePage = TabSheet4
+        Height = 594
+        ActivePage = TabSheet2
         Align = alClient
         TabOrder = 0
-        ExplicitHeight = 556
+        ExplicitHeight = 575
         object TabSheet1: TTabSheet
           Caption = '1'
-          ExplicitHeight = 528
+          ExplicitHeight = 547
           object MonthCalendar1: TMonthCalendar
             Left = 0
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.634887268520000000
+            Date = 41178.601351921290000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -737,7 +737,7 @@ object Form1: TForm1
         object TabSheet2: TTabSheet
           Caption = '2'
           ImageIndex = 1
-          ExplicitHeight = 528
+          ExplicitHeight = 547
           object RadioGroup1: TRadioGroup
             Left = 8
             Top = 32
@@ -753,7 +753,7 @@ object Form1: TForm1
           end
           object Button11: TButton
             Left = 8
-            Top = 128
+            Top = 132
             Width = 105
             Height = 25
             Caption = #1053#1072#1075#1088#1091#1079#1082#1072' '#1085#1072' '#1041#1057
@@ -875,16 +875,18 @@ object Form1: TForm1
             OnClick = Button16Click
           end
           object Button17: TButton
-            Left = 8
-            Top = 160
+            Left = 16
+            Top = 488
             Width = 105
             Height = 25
-            Caption = 'VEI_DUMP'
+            Caption = 'Apply MAC ACL'
             TabOrder = 6
+            Visible = False
+            OnClick = Button17Click
           end
           object Button18: TButton
-            Left = 128
-            Top = 96
+            Left = 127
+            Top = 65
             Width = 105
             Height = 25
             Caption = 'xreboot'
@@ -893,7 +895,7 @@ object Form1: TForm1
           end
           object Button19: TButton
             Left = 8
-            Top = 192
+            Top = 168
             Width = 105
             Height = 25
             Caption = 'Reload_Drivers'
@@ -901,35 +903,33 @@ object Form1: TForm1
             OnClick = Button19Click
           end
           object btnChangePTX: TButton
-            Left = 128
-            Top = 128
+            Left = 127
+            Top = 96
             Width = 105
             Height = 25
             Caption = #1047#1072#1084#1077#1085#1080#1090#1100' '#1056#1058#1061
             TabOrder = 9
             OnClick = btnChangePTXClick
           end
-          object btnWifi_on: TButton
-            Left = 7
-            Top = 232
-            Width = 107
+          object btnAddBullet: TButton
+            Left = 8
+            Top = 201
+            Width = 105
             Height = 25
-            Caption = #1042#1082#1083#1102#1095#1080#1090#1100' wifi'
+            Caption = #1044#1086#1073#1072#1074#1080#1090#1100' Bullet'
             TabOrder = 10
-            OnClick = btnWifi_onClick
           end
-          object btnWifi_off: TButton
-            Left = 128
-            Top = 231
-            Width = 106
+          object btnAddPTX: TButton
+            Left = 8
+            Top = 225
+            Width = 105
             Height = 25
-            Caption = #1054#1090#1082#1083#1102#1095#1080#1090#1100' wifi'
+            Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1056#1058#1061
             TabOrder = 11
-            OnClick = btnWifi_onClick
           end
           object btnUninstallPTX: TButton
-            Left = 128
-            Top = 160
+            Left = 127
+            Top = 120
             Width = 105
             Height = 25
             Caption = #1057#1085#1103#1090#1100' '#1056#1058#1061
@@ -937,8 +937,8 @@ object Form1: TForm1
             OnClick = btnChangePTXClick
           end
           object btnInstallPTX: TButton
-            Left = 128
-            Top = 192
+            Left = 127
+            Top = 144
             Width = 105
             Height = 25
             Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1056#1058#1061
@@ -946,8 +946,8 @@ object Form1: TForm1
             OnClick = btnChangePTXClick
           end
           object btnUnion: TButton
-            Left = 128
-            Top = 63
+            Left = 127
+            Top = 34
             Width = 105
             Height = 25
             Hint = #1057#1090#1088#1086#1080#1090' '#1075#1088#1072#1092#1080#1082' '#1091#1088#1086#1074#1085#1103' '#1089#1080#1075#1085#1072#1083#1072' '#1080#1079' 2 '#1090#1072#1073#1083#1080#1094' '#1089#1090#1072#1090#1080#1089#1090#1080#1082#1080
@@ -992,11 +992,45 @@ object Form1: TForm1
             TabOrder = 18
             OnClick = Button21Click
           end
+          object Button22: TButton
+            Left = 128
+            Top = 177
+            Width = 105
+            Height = 25
+            Caption = #1047#1072#1084#1077#1085#1080#1090#1100' Bullet'
+            TabOrder = 19
+          end
+          object btnGetOffBullet: TButton
+            Left = 128
+            Top = 201
+            Width = 105
+            Height = 25
+            Caption = #1057#1085#1103#1090#1100' Bullet'
+            TabOrder = 20
+          end
+          object btnBulletInstall: TButton
+            Left = 128
+            Top = 225
+            Width = 105
+            Height = 25
+            Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' Bullet'
+            TabOrder = 21
+          end
+          object Button23: TButton
+            Left = 136
+            Top = 488
+            Width = 96
+            Height = 25
+            Caption = 'Delete MAC ACL'
+            TabOrder = 22
+            Visible = False
+            OnClick = Button23Click
+          end
         end
         object TabSheet3: TTabSheet
           Caption = 'log and setup'
           ImageIndex = 2
-          ExplicitHeight = 528
+          ExplicitHeight = 547
           object ToolTipsDBGrid2: TDBGrid
             Left = 0
             Top = 0
@@ -1158,12 +1192,12 @@ object Form1: TForm1
           Caption = 'ReleaseNotes'
           ImageIndex = 3
           OnShow = TabSheet4Show
-          ExplicitHeight = 528
+          ExplicitHeight = 547
           object Memo1: TMemo
             Left = 0
             Top = 0
             Width = 288
-            Height = 547
+            Height = 566
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -1614,13 +1648,22 @@ object Form1: TForm1
               #1048#1089#1087#1088#1072#1074#1080#1083' '#1082#1086#1089#1103#1095#1086#1082' '#1074#1077#1088#1089#1080#1080'  1.1.21.87: '#1089#1082#1088#1099#1074#1072#1083#1080#1089#1100' '
               #1076#1083#1103' '#1074#1089#1077#1093' '#1080' '#1085#1077' '#1086#1090#1086#1073#1088#1072#1078#1072#1083#1080#1089#1100
               ''
+              '31.03.2021'
               'Version 1.1.21.89'
               #1057#1076#1077#1083#1072#1083' '#1086#1073#1085#1086#1074#1083#1077#1085#1080#1077' '#1090#1072#1073#1083#1080#1094#1099' TableLog '#1087#1086#1089#1083#1077' '
-              #1087#1077#1088#1077#1079#1072#1075#1088#1091#1079#1082#1080' '#1056#1058#1061' '#1080' '#1079#1072#1087#1080#1089#1080' '#1074' '#1083#1086#1075'.')
+              #1087#1077#1088#1077#1079#1072#1075#1088#1091#1079#1082#1080' '#1056#1058#1061' '#1080' '#1079#1072#1087#1080#1089#1080' '#1074' '#1083#1086#1075'.'
+              ''
+              '01.04.2021'
+              'Version 1.1.21.90'
+              #1059#1076#1072#1083#1080#1083' '#1083#1080#1096#1085#1080#1077' '#1089#1090#1086#1083#1073#1094#1099' '#1080#1079' '#1090#1072#1073#1083#1080#1094#1099', '#1076#1086#1073#1072#1074#1080#1083' '
+              #1089#1090#1086#1083#1073#1077#1094' IP Alias.'
+              #1044#1086#1073#1072#1074#1080#1083' '#1092#1091#1085#1082#1094#1080#1086#1085#1072#1083' '#1087#1088#1080#1084#1077#1085#1077#1085#1080#1103' MAC ACL. '
+              #1044#1086#1073#1072#1074#1080#1083' '#1092#1091#1085#1082#1094#1080#1080' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1103'/'#1079#1072#1084#1077#1085#1099' '#1076#1083#1103' '#1073#1091#1083#1080#1090#1086#1074'.'
+              #1059#1076#1072#1083#1080#1083' '#1083#1080#1096#1085#1080#1077' '#1082#1085#1086#1087#1082#1080'.')
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
-            ExplicitHeight = 528
+            ExplicitHeight = 547
           end
         end
       end
@@ -1629,16 +1672,16 @@ object Form1: TForm1
       Left = 1
       Top = 1
       Width = 812
-      Height = 577
+      Height = 596
       Align = alClient
       TabOrder = 1
-      ExplicitHeight = 558
+      ExplicitHeight = 577
       object pagesTables: TPageControl
         Left = 1
         Top = 1
         Width = 810
-        Height = 575
-        ActivePage = tabBur
+        Height = 594
+        ActivePage = tabAvto
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1649,16 +1692,16 @@ object Form1: TForm1
         ParentFont = False
         TabHeight = 35
         TabOrder = 0
-        ExplicitHeight = 556
+        ExplicitHeight = 575
         object tabAvto: TTabSheet
           Caption = #1040#1074#1090#1086#1089#1072#1084#1086#1089#1074#1072#1083#1099
           OnShow = tabAvtoShow
-          ExplicitHeight = 511
+          ExplicitHeight = 530
           object ToolTipsDBGrid1: TDBGrid
             Left = 0
             Top = 0
             Width = 802
-            Height = 530
+            Height = 549
             Align = alClient
             DataSource = DataSource1
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
@@ -1697,27 +1740,6 @@ object Form1: TForm1
               end
               item
                 Expanded = False
-                FieldName = 'place_install'
-                Title.Caption = #1052#1077#1089#1090#1086' '#1091#1089#1090#1072#1085#1086#1074#1082#1080
-                Width = 122
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'power'
-                Title.Caption = #1052#1086#1097#1072', dBm'
-                Width = 65
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'prim'
-                Title.Caption = #1055#1088#1080#1084'. '#1084#1086#1076#1077#1084
-                Width = 112
-                Visible = True
-              end
-              item
-                Expanded = False
                 FieldName = 'serial'
                 Title.Caption = 'PTX s/n'
                 Width = 131
@@ -1731,8 +1753,14 @@ object Form1: TForm1
               end
               item
                 Expanded = False
+                FieldName = 'ip_alias'
+                Title.Caption = 'IP Alias'
+                Visible = True
+              end
+              item
+                Expanded = False
                 FieldName = 'mac_address_1'
-                Title.Caption = 'mac_ptx'
+                Title.Caption = 'MAC PTX'
                 Visible = True
               end
               item
@@ -1755,13 +1783,6 @@ object Form1: TForm1
                 Title.Caption = 'PTX OEM_Driver_ver'
                 Width = 141
                 Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'prim_1'
-                Title.Caption = #1055#1088#1080#1084'. PTX'
-                Width = 163
-                Visible = True
               end>
           end
         end
@@ -1769,19 +1790,19 @@ object Form1: TForm1
           Caption = #1069#1082#1089#1082#1072#1074#1072#1090#1086#1088#1099
           ImageIndex = 1
           OnShow = tabExShow
-          ExplicitHeight = 511
+          ExplicitHeight = 530
         end
         object tabBur: TTabSheet
           Caption = #1041#1091#1088#1089#1090#1072#1085#1082#1080' '#1080' '#1057#1047#1052
           ImageIndex = 2
           OnShow = tabBurShow
-          ExplicitHeight = 511
+          ExplicitHeight = 530
         end
         object tabBase: TTabSheet
           Caption = #1041#1072#1079#1086#1074#1099#1077' '#1089#1090#1072#1085#1094#1080#1080
           ImageIndex = 3
           OnShow = tabBaseShow
-          ExplicitHeight = 511
+          ExplicitHeight = 530
         end
       end
     end
@@ -2034,6 +2055,7 @@ object Form1: TForm1
       end
       object VIST1: TMenuItem
         Caption = #1044#1072#1085#1085#1099#1077' '#1087#1086' VIST'
+        Visible = False
         OnClick = OMSsniffMenuClick
       end
       object Vims1: TMenuItem
