@@ -3582,10 +3582,10 @@ var
  tmpDateTime: TDateTime;
 
 begin
-  if (Copy(Modemsname.AsString,1,1)<>'A')and(Copy(Modemsname.AsString,1,1)<>'E')then begin
+  (*if (Copy(Modemsname.AsString,1,1)<>'A')and(Copy(Modemsname.AsString,1,1)<>'E')then begin
     ShowMessage('Выберите авто или экскаватор');
     exit;
-  end;
+  end;*)
 
     flagWLANConnections := true;
     Chart1.ShowHint := false;
@@ -4280,7 +4280,7 @@ begin
   wifi_max:= 0;
   wifi_min:= -40;
   Button1.Click;
-  if (Copy(Modemsname.AsString,1,1)<>'A')and(Copy(Modemsname.AsString,1,1)<>'E')then exit;
+  //if (Copy(Modemsname.AsString,1,1)<>'A')and(Copy(Modemsname.AsString,1,1)<>'E')then exit;
   //Chart1.ShowHint := false;
   ToolTipsDBGrid1.Tag := 1;
   Chart1.Title.Text.Clear;
@@ -4338,7 +4338,13 @@ begin
       f_max_x := Query.FieldByName('max_x').AsSingle;
       f_min_x := Query.FieldByName('min_x').AsSingle;
   end;
-  f_sdvig := f_max_x*(wifi_max-wifi_min)/(f_max_x-f_min_x)-wifi_max;
+
+  try
+    if (f_max_x-f_min_x)=0 then f_max_x := f_min_x+1; //довавлено в версии 1.1.21.92
+    f_sdvig := f_max_x*(wifi_max-wifi_min)/(f_max_x-f_min_x)-wifi_max;
+  except
+
+  end;
 
   Query.Close;
   Query.sql.Text := 'select date, time, signal_level, status, x from statss where ';
