@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 278
   Top = 121
   Caption = 'Ubiquiti Statistics (C) EMZ ('#1045#1074#1075#1077#1085#1080#1081' '#1052#1080#1093#1072#1081#1083#1086#1074#1080#1095' '#1047#1080#1085#1086#1074#1100#1077#1074')'
-  ClientHeight = 734
+  ClientHeight = 753
   ClientWidth = 1115
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object Form1: TForm1
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 541
+    Top = 560
     Width = 1115
     Height = 3
     Cursor = crVSplit
@@ -29,7 +29,7 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Top = 544
+    Top = 563
     Width = 1115
     Height = 190
     Align = alBottom
@@ -432,13 +432,13 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 1115
-    Height = 541
+    Height = 560
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 813
       Top = 1
-      Height = 539
+      Height = 558
       Align = alRight
       ExplicitLeft = 712
       ExplicitHeight = 487
@@ -447,14 +447,14 @@ object Form1: TForm1
       Left = 816
       Top = 1
       Width = 298
-      Height = 539
+      Height = 558
       Align = alRight
       TabOrder = 0
       object PageControl1: TPageControl
         Left = 1
         Top = 1
         Width = 296
-        Height = 537
+        Height = 556
         ActivePage = TabSheet4
         Align = alClient
         TabOrder = 0
@@ -465,7 +465,7 @@ object Form1: TForm1
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.935512627310000000
+            Date = 41178.650721307870000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -1189,7 +1189,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 288
-            Height = 509
+            Height = 528
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -1667,13 +1667,16 @@ object Form1: TForm1
               #1048#1079#1084#1077#1085#1080#1083' '#1082#1086#1076' '#1076#1083#1103' '#1091#1089#1090#1088#1072#1085#1077#1085#1080#1103' '#1076#1077#1083#1077#1085#1080#1103' '#1085#1072' 0 '
               ''
               '04.08.2021'
-              'Version 1.1.21.92'
-              #1044#1086#1073#1072#1074#1080#1083' '#1087#1086#1089#1090#1088#1086#1077#1085#1080#1077' '#1075#1088#1072#1092#1080#1082#1086#1074' '#1091#1088#1086#1074#1085#1103' '#1089#1080#1075#1085#1072#1083#1086#1074' LTE')
+              'Version 1.1.21.93'
+              #1044#1086#1073#1072#1074#1080#1083' '#1087#1086#1089#1090#1088#1086#1077#1085#1080#1077' '#1075#1088#1072#1092#1080#1082#1086#1074' '#1091#1088#1086#1074#1085#1103' '#1089#1080#1075#1085#1072#1083#1086#1074' LTE'
+              ''
+              '05.08.2021'
+              'Version 1.1.21.94'
+              '"'#1053#1072#1074#1105#1083' '#1082#1088#1072#1089#1086#1090#1091'" '#1076#1083#1103' '#1075#1088#1072#1092#1080#1082#1086#1074' LTE: '#1091#1073#1088#1072#1083' & '#1074' '
+              #1079#1072#1075#1086#1083#1086#1074#1082#1077' '#1075#1088#1072#1092#1080#1082#1072' '#1080' '#1080#1079#1084#1077#1085#1080#1083' '#1094#1074#1077#1090#1072)
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
-            ExplicitLeft = -24
-            ExplicitTop = 288
           end
         end
       end
@@ -1682,14 +1685,14 @@ object Form1: TForm1
       Left = 1
       Top = 1
       Width = 812
-      Height = 539
+      Height = 558
       Align = alClient
       TabOrder = 1
       object pagesTables: TPageControl
         Left = 1
         Top = 1
         Width = 810
-        Height = 537
+        Height = 556
         ActivePage = tabBur
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -1708,7 +1711,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 802
-            Height = 492
+            Height = 511
             Align = alClient
             DataSource = DataSource1
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]

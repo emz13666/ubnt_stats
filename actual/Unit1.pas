@@ -1660,12 +1660,16 @@ procedure TForm1.chartRSRPClick(Sender: TObject);
 var tmpDateTime: TDateTime;
     successPing, failPing:integer;
     sumAvg: real;
-    color1:TColor;
+    color_chart, color_fail, color_mediana: TColor;
     fail_value,mediana:integer;
     sql_query1, sql_query2, sql_query3, sql_query2anydays,
     sql_query2oneday, sql_query2onedaycalendar, sql_query1ap, sql_query3ap: string;
     field_name: string;
 begin
+  color_chart := clYellow;
+  color_fail := clRed;
+  color_mediana := clGreen;
+
   ToolTipsDBGrid1.Tag := 1;
   Label8.Caption := 'Средний уровень сигнала';
   flagWLANConnections := false;
@@ -1714,7 +1718,7 @@ begin
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
   Chart1.Title.Text.Clear;
-  Chart1.Title.Text.Add('График уровня сигнала LTE -> '+(Sender as TMenuItem).Caption);
+  Chart1.Title.Text.Add('График уровня сигнала LTE -> '+ StringReplace((Sender as TMenuItem).Caption,'&','',[rfReplaceAll]));
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
@@ -1732,7 +1736,7 @@ begin
     tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
   else
     tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
-  Chart1.Series[2].Color := clRed;
+  Chart1.Series[2].Color := color_mediana;
   if (Sender as TMenuItem).Name='chartRSRQ' then
   begin
     mediana := -20;
@@ -1754,7 +1758,7 @@ begin
     fail_value := -10;
     mediana := 0;
   end;
-    Chart1.Series[2].AddXY(tmpDateTime,mediana,'',clred);
+    Chart1.Series[2].AddXY(tmpDateTime,mediana,'',color_mediana);
     Chart1.Series[0].AddXY(tmpDateTime,fail_value);
 
   // successPing - количество успешных Pingов
@@ -1773,18 +1777,16 @@ begin
       tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
        if Query.FieldByName(field_name).AsInteger<=fail_value then
        begin
-        color1:=clYellow;
         inc(failPing);
-        Chart1.Series[0].AddXY(tmpDateTime,fail_value,'',color1);
+        Chart1.Series[0].AddXY(tmpDateTime,fail_value,'',color_fail);
         NamesModems[High(NamesModems)] := '';
        end
        else
        begin
-         color1:=clWhite;
            inc(successPing);
            sumAvg:=sumAvg+(Query.FieldByName(field_name).AsInteger);
-         Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',color1);
-         NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
+           Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',color_chart);
+           NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
        end;
     Query.Next;
   end;
@@ -1795,8 +1797,8 @@ begin
   else
     tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
 
-  if Query.RecordCount<>0 then Chart1.Series[0].AddXY(tmpDateTime,(Query.FieldByName(field_name).AsInteger),'',clWhite);
-  Chart1.Series[2].AddXY(tmpDateTime,mediana,'',clred);
+  if Query.RecordCount<>0 then Chart1.Series[0].AddXY(tmpDateTime,(Query.FieldByName(field_name).AsInteger),'',color_chart);
+  Chart1.Series[2].AddXY(tmpDateTime,mediana,'',color_mediana);
   ProgressBar1.Position := 0;
   Query.Close;
 
