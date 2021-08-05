@@ -286,6 +286,10 @@ type
     btnGetOffBullet: TButton;
     btnBulletInstall: TButton;
     Button23: TButton;
+    U1: TMenuItem;
+    chartRSRP: TMenuItem;
+    chartRSRQ: TMenuItem;
+    chartSINR: TMenuItem;
     function SSH_Client(Server, Userid, Pass: string): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -378,6 +382,7 @@ type
     procedure PopupMenu1Popup(Sender: TObject);
     procedure Button17Click(Sender: TObject);
     procedure Button23Click(Sender: TObject);
+    procedure chartRSRPClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -1650,6 +1655,172 @@ begin
     Result := Result + IntToHex(ord(Astr[i]),2);
   end;
 end;
+
+procedure TForm1.chartRSRPClick(Sender: TObject);
+var tmpDateTime: TDateTime;
+    successPing, failPing:integer;
+    sumAvg: real;
+    color1:TColor;
+    fail_value,mediana:integer;
+    sql_query1, sql_query2, sql_query3, sql_query2anydays,
+    sql_query2oneday, sql_query2onedaycalendar, sql_query1ap, sql_query3ap: string;
+    field_name: string;
+begin
+  ToolTipsDBGrid1.Tag := 1;
+  Label8.Caption := 'Средний уровень сигнала';
+  flagWLANConnections := false;
+  Chart1.ShowHint := true;
+  Query.Close;
+  sql_query1ap := 'select st.date, st.time, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name  from stats_lte st, modems m, lte lt where ';
+  sql_query2anydays :=
+            ' (((st.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
+            ' and (st.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
+            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') and ' +
+            '(st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+')) ' +
+            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+') and ' +
+            '(st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+'))) ';
+  sql_query2oneday :=
+            ' (st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+' and ' +
+            'st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
+            'st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') ';
+  sql_query2onedaycalendar := ' st.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
+  sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id_equipment ' +
+                   'and st.id_equipment=lt.id_equipment order by date, time';
+
+    if CheckBox3.Checked then //если стоит галка "Строить за период"
+    begin
+      //если в выбранном интервале одинаковые даты
+      if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
+         sql_query2 := sql_query2anydays
+      else sql_query2 := sql_query2oneday;
+    end
+    else  sql_query2 := sql_query2onedaycalendar;
+
+    Query.SQL.Text := sql_query1ap + sql_query2+sql_query3ap;
+
+
+  try
+    Query.Open;
+  except
+    DBConnection.Close;
+    ToolTipsDBGrid1.Tag := 0;
+    exit;
+  end;
+  if not Query.Eof then Query.FindLast;
+  ProgressBar1.Min := 0;
+  ProgressBar1.Position := 0;
+  ProgressBar1.Max := Query.RecordCount;
+  Query.First;
+  Chart1.Series[0].Clear;
+  Chart1.Series[2].Clear;
+  Chart1.Title.Text.Clear;
+  Chart1.Title.Text.Add('График уровня сигнала LTE -> '+(Sender as TMenuItem).Caption);
+  Chart1.Series[0].Active:= false;
+  Chart1.Series[1].Active:= false;
+  Chart1.Series[2].Active:= false;
+  Chart1.Series[3].Active:= false;
+  Chart1.Series[4].Active:= false;
+  Chart1.Series[5].Active:= false;
+  Chart1.Series[6].Active:= false;
+  Chart1.Series[7].Active:= false;
+  Chart1.Series[8].Active:= false;
+  Chart1.Series[9].Active:= false;
+  Chart1.Series[10].Active:= false;
+  Chart1.Series[11].Active:= false;
+  SetLength(NamesModems,0);
+  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then
+    tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
+  else
+    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+  Chart1.Series[2].Color := clRed;
+  if (Sender as TMenuItem).Name='chartRSRQ' then
+  begin
+    mediana := -20;
+    fail_value := -50;
+    Chart1.Series[0].AddXY(tmpDateTime,-5);
+    field_name := 'signal_rsrq';
+  end;
+  if (Sender as TMenuItem).Name='chartRSRP' then
+  begin
+    Chart1.Series[0].AddXY(tmpDateTime,-70);
+    field_name := 'signal_rsrp';
+    fail_value := -150;
+    mediana := -100;
+  end;
+  if (Sender as TMenuItem).Name='chartSINR' then
+  begin
+    Chart1.Series[0].AddXY(tmpDateTime,18);
+    field_name := 'signal_sinr';
+    fail_value := -10;
+    mediana := 0;
+  end;
+    Chart1.Series[2].AddXY(tmpDateTime,mediana,'',clred);
+    Chart1.Series[0].AddXY(tmpDateTime,fail_value);
+
+  // successPing - количество успешных Pingов
+  // FailPing - Неудачные пинги (fail_value)
+  successPing:=0;
+  failPing:=0;
+  sumAvg:=0;
+  while not Query.Eof do
+  begin
+    if CheckBox2.Checked then
+    begin
+      ProgressBar1.Position := ProgressBar1.Position +1;
+      Application.ProcessMessages;
+    end;
+      SetLength(NamesModems,Length(NamesModems)+1);
+      tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+       if Query.FieldByName(field_name).AsInteger<=fail_value then
+       begin
+        color1:=clYellow;
+        inc(failPing);
+        Chart1.Series[0].AddXY(tmpDateTime,fail_value,'',color1);
+        NamesModems[High(NamesModems)] := '';
+       end
+       else
+       begin
+         color1:=clWhite;
+           inc(successPing);
+           sumAvg:=sumAvg+(Query.FieldByName(field_name).AsInteger);
+         Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',color1);
+         NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
+       end;
+    Query.Next;
+  end;
+  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then begin
+    if FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)=FormatDateTime('dd.mm.yyyy',Date) then tmpDateTime := now
+    else tmpDateTime := MonthCalendar1.Date+1
+  end
+  else
+    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+
+  if Query.RecordCount<>0 then Chart1.Series[0].AddXY(tmpDateTime,(Query.FieldByName(field_name).AsInteger),'',clWhite);
+  Chart1.Series[2].AddXY(tmpDateTime,mediana,'',clred);
+  ProgressBar1.Position := 0;
+  Query.Close;
+
+  Chart1.Series[0].Active := true;
+  Chart1.Series[2].Active := true;
+  ToolTipsDBGrid1.Tag := 0;
+  if successPing>0 then begin
+     lAvgLevel.Caption:=FloatToStrF(sumavg/successPing,ffFixed,7,1);
+     lSuccessPing.Caption:=inttostr(successPing);
+     lFailPing.Caption:=inttostr(failPing);
+  end else begin
+     lAvgLevel.Caption:=IntToStr(fail_value);
+  end;
+  if (SuccessPing+failPing)>0 then begin
+     lSuccessPerc.Caption:=floattostr(round(SuccessPing/(SuccessPing+failPing)*1000)/10);
+     lFailPerc.Caption:=floattostr(100-StrToFloat(lSuccessPerc.Caption))+'%';
+     lSuccessPerc.Caption:=lSuccessPerc.Caption+'%';
+  end else begin
+     lSuccessPerc.Caption:='0%';
+     lFailPerc.Caption:='0%';
+  end;
+
+end;
+
 
 procedure TForm1.Updatemac1Click(Sender: TObject);
  var s1,s2,s3,s4:AnsiString;

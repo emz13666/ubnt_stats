@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 278
   Top = 121
   Caption = 'Ubiquiti Statistics (C) EMZ ('#1045#1074#1075#1077#1085#1080#1081' '#1052#1080#1093#1072#1081#1083#1086#1074#1080#1095' '#1047#1080#1085#1086#1074#1100#1077#1074')'
-  ClientHeight = 867
+  ClientHeight = 734
   ClientWidth = 1115
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object Form1: TForm1
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 674
+    Top = 541
     Width = 1115
     Height = 3
     Cursor = crVSplit
@@ -29,7 +29,7 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Top = 677
+    Top = 544
     Width = 1115
     Height = 190
     Align = alBottom
@@ -432,13 +432,13 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 1115
-    Height = 674
+    Height = 541
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 813
       Top = 1
-      Height = 672
+      Height = 539
       Align = alRight
       ExplicitLeft = 712
       ExplicitHeight = 487
@@ -447,14 +447,14 @@ object Form1: TForm1
       Left = 816
       Top = 1
       Width = 298
-      Height = 672
+      Height = 539
       Align = alRight
       TabOrder = 0
       object PageControl1: TPageControl
         Left = 1
         Top = 1
         Width = 296
-        Height = 670
+        Height = 537
         ActivePage = TabSheet4
         Align = alClient
         TabOrder = 0
@@ -465,7 +465,7 @@ object Form1: TForm1
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.586001458330000000
+            Date = 41178.935512627310000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -1189,7 +1189,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 288
-            Height = 642
+            Height = 509
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -1664,10 +1664,16 @@ object Form1: TForm1
               #1057#1076#1077#1083#1072#1083' '#1086#1073#1088#1072#1073#1086#1090#1082#1091' '#1080#1089#1082#1083#1102#1095#1077#1085#1080#1103', '#1082#1086#1090#1086#1088#1086#1077' '
               #1074#1099#1089#1082#1072#1082#1080#1074#1072#1083#1086' '#1087#1088#1080' '#1086#1090#1089#1091#1090#1089#1090#1074#1080#1080' GPS-'#1082#1086#1086#1088#1076#1080#1085#1072#1090
               'Version 1.1.21.92'
-              #1048#1079#1084#1077#1085#1080#1083' '#1082#1086#1076' '#1076#1083#1103' '#1091#1089#1090#1088#1072#1085#1077#1085#1080#1103' '#1076#1077#1083#1077#1085#1080#1103' '#1085#1072' 0 ')
+              #1048#1079#1084#1077#1085#1080#1083' '#1082#1086#1076' '#1076#1083#1103' '#1091#1089#1090#1088#1072#1085#1077#1085#1080#1103' '#1076#1077#1083#1077#1085#1080#1103' '#1085#1072' 0 '
+              ''
+              '04.08.2021'
+              'Version 1.1.21.92'
+              #1044#1086#1073#1072#1074#1080#1083' '#1087#1086#1089#1090#1088#1086#1077#1085#1080#1077' '#1075#1088#1072#1092#1080#1082#1086#1074' '#1091#1088#1086#1074#1085#1103' '#1089#1080#1075#1085#1072#1083#1086#1074' LTE')
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
+            ExplicitLeft = -24
+            ExplicitTop = 288
           end
         end
       end
@@ -1676,14 +1682,14 @@ object Form1: TForm1
       Left = 1
       Top = 1
       Width = 812
-      Height = 672
+      Height = 539
       Align = alClient
       TabOrder = 1
       object pagesTables: TPageControl
         Left = 1
         Top = 1
         Width = 810
-        Height = 670
+        Height = 537
         ActivePage = tabBur
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -1702,7 +1708,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 802
-            Height = 625
+            Height = 492
             Align = alClient
             DataSource = DataSource1
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
@@ -1855,6 +1861,21 @@ object Form1: TForm1
       object N4: TMenuItem
         Caption = #1057#1090#1088#1086#1080#1090#1100' '#1079#1086#1085#1091' '#1087#1086#1082#1088#1099#1090#1080#1103' '#1041#1057
         OnClick = N4Click
+      end
+    end
+    object U1: TMenuItem
+      Caption = #1043#1088#1072#1092#1080#1082' '#1091#1088#1086#1074#1085#1103' '#1089#1080#1075#1085#1072#1083#1072' LTE'
+      object chartRSRP: TMenuItem
+        Caption = #1043#1088#1072#1092#1080#1082' RSRP'
+        OnClick = chartRSRPClick
+      end
+      object chartRSRQ: TMenuItem
+        Caption = #1043#1088#1072#1092#1080#1082' RSRQ'
+        OnClick = chartRSRPClick
+      end
+      object chartSINR: TMenuItem
+        Caption = #1043#1088#1072#1092#1080#1082' SINR'
+        OnClick = chartRSRPClick
       end
     end
     object ReloadDrivers2: TMenuItem
