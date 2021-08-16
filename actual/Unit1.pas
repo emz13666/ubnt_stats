@@ -249,6 +249,15 @@ type
     Label18: TLabel;
     G1: TMenuItem;
     BulletSSH1: TMenuItem;
+    Button22: TButton;
+    btnGetOffBullet: TButton;
+    btnBulletInstall: TButton;
+    Button23: TButton;
+    U1: TMenuItem;
+    chartRSRP: TMenuItem;
+    chartRSRQ: TMenuItem;
+    chartSINR: TMenuItem;
+    menuChartPing: TMenuItem;
     Modemsid_modem: TLargeintField;
     Modemsis_access_point: TSmallintField;
     Modemsname: TStringField;
@@ -275,6 +284,22 @@ type
     Modemsid_equipment_1: TLargeintField;
     Modemsid: TLargeintField;
     Modemsname_1: TStringField;
+    Modemsip_lte: TStringField;
+    Modemsip_vpn: TStringField;
+    Modemsmac_eth01: TStringField;
+    Modemsmac_eth02: TStringField;
+    Modemsmac_ovpn: TStringField;
+    Modemsplace_install_1: TStringField;
+    Modemsfirmware_1: TStringField;
+    Modemsid_equipment_2: TLargeintField;
+    Modemsmodel_lte: TStringField;
+    Modemsserial_lte: TStringField;
+    Modemsserial_modem: TStringField;
+    Modemsimei_modem: TStringField;
+    Modemsmodel_modem: TStringField;
+    Modemsprim_2: TStringField;
+    Modemsid_1: TLargeintField;
+    Modemsname_2: TStringField;
     Modemsequipment_type: TIntegerField;
     Modemsip_address_2: TStringField;
     Modemsip_pc: TStringField;
@@ -282,14 +307,6 @@ type
     Modemscomment: TMemoField;
     ModemsuseInMonitoring: TSmallintField;
     ModemsLastGPSDateTime: TDateTimeField;
-    Button22: TButton;
-    btnGetOffBullet: TButton;
-    btnBulletInstall: TButton;
-    Button23: TButton;
-    U1: TMenuItem;
-    chartRSRP: TMenuItem;
-    chartRSRQ: TMenuItem;
-    chartSINR: TMenuItem;
     function SSH_Client(Server, Userid, Pass: string): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -383,6 +400,7 @@ type
     procedure Button17Click(Sender: TObject);
     procedure Button23Click(Sender: TObject);
     procedure chartRSRPClick(Sender: TObject);
+    procedure menuChartPingClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -581,6 +599,7 @@ procedure TForm1.tabAvtoShow(Sender: TObject);
 begin
   GroupBox4.Caption := 'По всем авто в статусе ГОТОВ';
   C1.Visible := true;
+  menuChartPing.Visible := true;
   G1.Visible := false;
   BulletSSH1.Visible := false;
   GPS1.Visible  := true;
@@ -595,7 +614,7 @@ begin
   Tranzact_mon.Visible := true;
   N6.Visible := true;
   Ping1.Visible := true;
-  Ping1.Caption := 'Пинговать PTX и Bullet';
+  Ping1.Caption := 'Пинговать PTX, Bullet и LTE';
   Bullet1.Visible := true;
   BulletAP1.Visible := false;
   Switch1.Visible := false;
@@ -617,7 +636,7 @@ begin
   ToolTipsDBGrid1.Parent := tabAvto;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 1 order by m.name';
+  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 1 order by m.name';
   try
     Modems.Open;
   except
@@ -629,6 +648,7 @@ end;
 procedure TForm1.tabBaseShow(Sender: TObject);
 begin
   GroupBox4.Caption := 'По всем в статусе ГОТОВ';
+  menuChartPing.Visible := false;
   C1.Visible := true;
   G1.Visible := false;
   BulletSSH1.Visible := false;
@@ -661,7 +681,7 @@ begin
   ToolTipsDBGrid1.Parent := tabBase;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by m.name';
+  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by m.name';
   try
     Modems.Open;
   except
@@ -688,7 +708,7 @@ begin
   Tranzact_mon.Visible := false;
   N6.Visible := false;
   Ping1.Visible := true;
-  Ping1.Caption := 'Пинговать Switch, BulletSt, BulletAp, Кобус';
+  Ping1.Caption := 'Пинговать Switch, BulletSt, BulletAp, Кобус и LTE';
   Bullet1.Visible := true;
   BulletAP1.Visible := true;
   Switch1.Visible := true;
@@ -705,11 +725,12 @@ begin
   N7.Visible := false;
   N1.Visible := false;
   Updatemac1.Visible := true;
+  menuChartPing.Visible := true;
 
   ToolTipsDBGrid1.Parent := tabBur;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type=5 or eq.equipment_type=6 order by m.name';
+  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type=5 or eq.equipment_type=6 order by m.name';
   try
     Modems.Open;
   except
@@ -722,6 +743,7 @@ procedure TForm1.tabExShow(Sender: TObject);
 begin
   GroupBox4.Caption :='По всем экскаваторам в статусе ГОТОВ';
   G1.Visible := false;
+  menuChartPing.Visible := true;
   BulletSSH1.Visible := false;
   C1.Visible := true;
   GPS1.Visible  := true;
@@ -736,7 +758,7 @@ begin
   Tranzact_mon.Visible := true;
   N6.Visible := true;
   Ping1.Visible := true;
-  Ping1.Caption := 'Пинговать PTX и Bullet';
+  Ping1.Caption := 'Пинговать PTX, Bullet и LTE';
   Bullet1.Visible := true;
   BulletAP1.Visible := false;
   Switch1.Visible := false;
@@ -757,7 +779,7 @@ begin
   ToolTipsDBGrid1.Parent := tabEx;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by m.name';
+  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by m.name';
   try
     Modems.Open;
   except
@@ -1668,7 +1690,7 @@ var tmpDateTime: TDateTime;
 begin
   color_chart := clYellow;
   color_fail := clRed;
-  color_mediana := clGreen;
+  color_mediana := clFuchsia;
 
   ToolTipsDBGrid1.Tag := 1;
   Label8.Caption := 'Средний уровень сигнала';
@@ -1756,7 +1778,9 @@ begin
     Chart1.Series[0].AddXY(tmpDateTime,18);
     field_name := 'signal_sinr';
     fail_value := -10;
-    mediana := 0;
+    mediana := 10;
+    //  Version 1.1.21.95: изменил на mediana 10
+    // Пишут, что Минимальное значение, приемлемое для стабильной работы в сети: CINR = 10 дБ.
   end;
     Chart1.Series[2].AddXY(tmpDateTime,mediana,'',color_mediana);
     Chart1.Series[0].AddXY(tmpDateTime,fail_value);
@@ -1923,10 +1947,10 @@ ToolTipsDBGrid1.Tag := 1;
 //  SELECT * FROM modems m LEFT join equipment eq on m.name = eq.name  where eq.equipment_type = 1 order by m.name
    0: begin
         case pagesTables.ActivePageIndex of
-          0: Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 1 order by m.name';
-          1: Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by m.name';
-          2: Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 5 or eq.equipment_type = 6 order by m.name';
-          3: Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by m.name';
+          0: Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 1 order by m.name';
+          1: Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by m.name';
+          2: Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 5 or eq.equipment_type = 6 order by m.name';
+          3: Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by m.name';
         end;
       end;
    1: Modems.SQL.Text := 'select * from modems as t1 RIGHT OUTER JOIN ptx as t2 ON t1.id_modem=t2.id_modem order by t1.name';
@@ -3070,6 +3094,149 @@ begin
   ToolTipsDBGrid1.Tag := 0;
 end;
 
+procedure TForm1.menuChartPingClick(Sender: TObject);
+var tmpDateTime: TDateTime;
+    successPing, failPing:integer;
+    sumAvg: real;
+    color_chart, color_fail: TColor;
+    fail_value:integer;
+    sql_query1, sql_query2, sql_query3, sql_query2anydays,
+    sql_query2oneday, sql_query2onedaycalendar, sql_query1ap, sql_query3ap: string;
+    field_name: string;
+begin
+  color_chart := clYellow;
+  color_fail := clRed;
+
+  ToolTipsDBGrid1.Tag := 1;
+  Label8.Caption := 'Средняя задержка';
+  flagWLANConnections := false;
+  Chart1.ShowHint := true;
+  Query.Close;
+  sql_query1ap := 'select st.date, st.time, st.time_ping, st.id_equipment, m.name  from stats_ping st, equipment m where ';
+  sql_query2anydays :=
+            ' (((st.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
+            ' and (st.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
+            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') and ' +
+            '(st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+')) ' +
+            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+') and ' +
+            '(st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+'))) ';
+  sql_query2oneday :=
+            ' (st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+' and ' +
+            'st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
+            'st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') ';
+  sql_query2onedaycalendar := ' st.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
+  sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id ' +
+                   'order by date, time';
+
+    if CheckBox3.Checked then //если стоит галка "Строить за период"
+    begin
+      //если в выбранном интервале одинаковые даты
+      if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
+         sql_query2 := sql_query2anydays
+      else sql_query2 := sql_query2oneday;
+    end
+    else  sql_query2 := sql_query2onedaycalendar;
+
+    Query.SQL.Text := sql_query1ap + sql_query2+sql_query3ap;
+
+
+  try
+    Query.Open;
+  except
+    DBConnection.Close;
+    ToolTipsDBGrid1.Tag := 0;
+    exit;
+  end;
+  if not Query.Eof then Query.FindLast;
+  ProgressBar1.Min := 0;
+  ProgressBar1.Position := 0;
+  ProgressBar1.Max := Query.RecordCount;
+  Query.First;
+  Chart1.Series[0].Clear;
+  Chart1.Series[2].Clear;
+  Chart1.Title.Text.Clear;
+  Chart1.Title.Text.Add('График ping (по оси у - задежка в ms) - '+ Modemsname.AsString);
+  Chart1.Series[0].Active:= false;
+  Chart1.Series[1].Active:= false;
+  Chart1.Series[2].Active:= false;
+  Chart1.Series[3].Active:= false;
+  Chart1.Series[4].Active:= false;
+  Chart1.Series[5].Active:= false;
+  Chart1.Series[6].Active:= false;
+  Chart1.Series[7].Active:= false;
+  Chart1.Series[8].Active:= false;
+  Chart1.Series[9].Active:= false;
+  Chart1.Series[10].Active:= false;
+  Chart1.Series[11].Active:= false;
+  SetLength(NamesModems,0);
+  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then
+    tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
+  else
+    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+
+  Chart1.Series[0].AddXY(tmpDateTime,18);
+  field_name := 'time_ping';
+  fail_value := -100;
+    Chart1.Series[0].AddXY(tmpDateTime,fail_value);
+
+  // successPing - количество успешных Pingов
+  // FailPing - Неудачные пинги (fail_value)
+  successPing:=0;
+  failPing:=0;
+  sumAvg:=0;
+  while not Query.Eof do
+  begin
+    if CheckBox2.Checked then
+    begin
+      ProgressBar1.Position := ProgressBar1.Position +1;
+      Application.ProcessMessages;
+    end;
+      SetLength(NamesModems,Length(NamesModems)+1);
+      tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+       if Query.FieldByName(field_name).AsInteger<=fail_value then
+       begin
+        inc(failPing);
+        Chart1.Series[0].AddXY(tmpDateTime,fail_value,'',color_fail);
+        NamesModems[High(NamesModems)] := '';
+       end
+       else
+       begin
+           inc(successPing);
+           sumAvg:=sumAvg+(Query.FieldByName(field_name).AsInteger);
+           Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',color_chart);
+           NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
+       end;
+    Query.Next;
+  end;
+  if (not CheckBox3.Checked)or(Query.RecordCount = 0) then begin
+    if FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)=FormatDateTime('dd.mm.yyyy',Date) then tmpDateTime := now
+    else tmpDateTime := MonthCalendar1.Date+1
+  end
+  else
+    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+
+  if Query.RecordCount<>0 then Chart1.Series[0].AddXY(tmpDateTime,(Query.FieldByName(field_name).AsInteger),'',color_chart);
+  ProgressBar1.Position := 0;
+  Query.Close;
+
+  Chart1.Series[0].Active := true;
+  ToolTipsDBGrid1.Tag := 0;
+  if successPing>0 then begin
+     lAvgLevel.Caption:=FloatToStrF(sumavg/successPing,ffFixed,7,1);
+     lSuccessPing.Caption:=inttostr(successPing);
+     lFailPing.Caption:=inttostr(failPing);
+  end else begin
+     lAvgLevel.Caption:=IntToStr(fail_value);
+  end;
+  if (SuccessPing+failPing)>0 then begin
+     lSuccessPerc.Caption:=floattostr(round(SuccessPing/(SuccessPing+failPing)*1000)/10);
+     lFailPerc.Caption:=floattostr(100-StrToFloat(lSuccessPerc.Caption))+'%';
+     lSuccessPerc.Caption:=lSuccessPerc.Caption+'%';
+  end else begin
+     lSuccessPerc.Caption:='0%';
+     lFailPerc.Caption:='0%';
+  end;
+end;
 procedure TForm1.ModemsAfterOpen(DataSet: TDataSet);
 begin
   Modems.AfterScroll:=ModemsAfterScroll;
@@ -3234,11 +3401,19 @@ begin
      begin
        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString+' - bullet');
        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_pc').AsString,Modemsname.AsString+' - PTX');
+       if Modems.FieldByName('ip_vpn').AsString <>'' then begin
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
+       end;
      end
      else
      begin
         ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_address').AsString),nil,SW_restore);
         ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_pc').AsString),nil,SW_restore);
+        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
+           ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_vpn').AsString),nil,SW_restore);
+           ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_lte').AsString),nil,SW_restore);
+        end;
      end;
    end
    else
@@ -3266,12 +3441,22 @@ begin
       Create_Process('cmd.exe /K ping -t '+ip_addresss,Modemsname.AsString+' - BulletSt');
       Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,1),Modemsname.AsString+' - BulletAP');
       Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,2),Modemsname.AsString+' - Kobus');
+       if Modems.FieldByName('ip_vpn').AsString <>'' then begin
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
+       end;
+
     end
     else begin
       ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+AddIPaddress(ip_addresss,-1)),nil,SW_restore);
       ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+ip_addresss),nil,SW_restore);
       ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+AddIPaddress(ip_addresss,1)),nil,SW_restore);
       ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+AddIPaddress(ip_addresss,2)),nil,SW_restore);
+        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
+           ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_vpn').AsString),nil,SW_restore);
+           ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_lte').AsString),nil,SW_restore);
+        end;
+
     end;
    end
    else

@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 278
   Top = 121
   Caption = 'Ubiquiti Statistics (C) EMZ ('#1045#1074#1075#1077#1085#1080#1081' '#1052#1080#1093#1072#1081#1083#1086#1074#1080#1095' '#1047#1080#1085#1086#1074#1100#1077#1074')'
-  ClientHeight = 753
+  ClientHeight = 734
   ClientWidth = 1115
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object Form1: TForm1
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 560
+    Top = 541
     Width = 1115
     Height = 3
     Cursor = crVSplit
@@ -29,7 +29,7 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Top = 563
+    Top = 544
     Width = 1115
     Height = 190
     Align = alBottom
@@ -432,13 +432,13 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 1115
-    Height = 560
+    Height = 541
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 813
       Top = 1
-      Height = 558
+      Height = 539
       Align = alRight
       ExplicitLeft = 712
       ExplicitHeight = 487
@@ -447,14 +447,14 @@ object Form1: TForm1
       Left = 816
       Top = 1
       Width = 298
-      Height = 558
+      Height = 539
       Align = alRight
       TabOrder = 0
       object PageControl1: TPageControl
         Left = 1
         Top = 1
         Width = 296
-        Height = 556
+        Height = 537
         ActivePage = TabSheet4
         Align = alClient
         TabOrder = 0
@@ -465,7 +465,7 @@ object Form1: TForm1
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.650721307870000000
+            Date = 41178.865668483800000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -628,7 +628,7 @@ object Form1: TForm1
             Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103
             TabOrder = 10
             object lAvgLevel: TLabel
-              Left = 208
+              Left = 202
               Top = 48
               Width = 67
               Height = 37
@@ -1189,7 +1189,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 288
-            Height = 528
+            Height = 509
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -1673,7 +1673,16 @@ object Form1: TForm1
               '05.08.2021'
               'Version 1.1.21.94'
               '"'#1053#1072#1074#1105#1083' '#1082#1088#1072#1089#1086#1090#1091'" '#1076#1083#1103' '#1075#1088#1072#1092#1080#1082#1086#1074' LTE: '#1091#1073#1088#1072#1083' & '#1074' '
-              #1079#1072#1075#1086#1083#1086#1074#1082#1077' '#1075#1088#1072#1092#1080#1082#1072' '#1080' '#1080#1079#1084#1077#1085#1080#1083' '#1094#1074#1077#1090#1072)
+              #1079#1072#1075#1086#1083#1086#1074#1082#1077' '#1075#1088#1072#1092#1080#1082#1072' '#1080' '#1080#1079#1084#1077#1085#1080#1083' '#1094#1074#1077#1090#1072
+              ''
+              '16.08.2021'
+              'Version 1.1.21.95'
+              #1044#1086#1073#1072#1074#1080#1083' '#1087#1086#1089#1090#1088#1086#1077#1085#1080#1077' '#1075#1088#1072#1092#1080#1082#1072' ping.'
+              #1044#1086#1073#1072#1074#1080#1083' '#1089#1090#1086#1083#1073#1094#1099' '#1076#1083#1103' LTE-'#1084#1086#1076#1077#1084#1086#1074' '#1074' '#1090#1072#1073#1083#1080#1094#1091' '#1080' '
+              #1091#1073#1088#1072#1083' '#1083#1080#1096#1085#1080#1077' '#1085#1077#1080#1085#1092#1086#1088#1084#1072#1090#1080#1074#1085#1099#1077' '#1087#1086#1083#1103'.'
+              #1044#1086#1073#1072#1074#1080#1083' '#1087#1080#1085#1075#1086#1074#1072#1085#1080#1077' ip_lte '#1080' ip_vpn LTE-'#1084#1086#1076#1077#1084#1072' '#1077#1089#1083#1080' '
+              #1086#1085' '#1077#1089#1090#1100'.'
+              #1044#1086#1073#1072#1074#1080#1083' '#1089#1086#1093#1088#1072#1085#1077#1085#1080#1077' '#1074#1099#1089#1086#1090#1099' '#1075#1088#1072#1092#1080#1082#1072'.')
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
@@ -1685,15 +1694,15 @@ object Form1: TForm1
       Left = 1
       Top = 1
       Width = 812
-      Height = 558
+      Height = 539
       Align = alClient
       TabOrder = 1
       object pagesTables: TPageControl
         Left = 1
         Top = 1
         Width = 810
-        Height = 556
-        ActivePage = tabBur
+        Height = 537
+        ActivePage = tabAvto
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1711,7 +1720,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 802
-            Height = 511
+            Height = 492
             Align = alClient
             DataSource = DataSource1
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
@@ -1729,7 +1738,7 @@ object Form1: TForm1
             Columns = <
               item
                 Expanded = False
-                FieldName = 'name'
+                FieldName = 'name_2'
                 Title.Caption = #1048#1084#1103
                 Width = 84
                 Visible = True
@@ -1771,27 +1780,42 @@ object Form1: TForm1
                 Expanded = False
                 FieldName = 'mac_address_1'
                 Title.Caption = 'MAC PTX'
+                Width = 112
                 Visible = True
               end
               item
                 Expanded = False
-                FieldName = 'os_ver'
-                Title.Caption = 'PTX OS_VER'
-                Width = 133
+                FieldName = 'name_1'
+                Title.Caption = #1048#1084#1103' LTE'
+                Width = 85
                 Visible = True
               end
               item
                 Expanded = False
-                FieldName = 'dispatch_ver'
-                Title.Caption = 'PTX Dispatch_Ver'
-                Width = 131
+                FieldName = 'ip_lte'
+                Title.Caption = 'IP '#1089#1080#1084'-'#1082#1072#1088#1090#1099
+                Width = 88
                 Visible = True
               end
               item
                 Expanded = False
-                FieldName = 'oem_driver_ver'
-                Title.Caption = 'PTX OEM_Driver_ver'
-                Width = 141
+                FieldName = 'ip_vpn'
+                Title.Caption = 'IP VPN LTE'
+                Width = 93
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'model_lte'
+                Title.Caption = #1052#1086#1076#1077#1083#1100' LTE'
+                Width = 100
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'serial_lte'
+                Title.Caption = 'LTE s/n'
+                Width = 160
                 Visible = True
               end>
           end
@@ -1810,6 +1834,7 @@ object Form1: TForm1
           Caption = #1041#1072#1079#1086#1074#1099#1077' '#1089#1090#1072#1085#1094#1080#1080
           ImageIndex = 3
           OnShow = tabBaseShow
+          ExplicitLeft = 3
         end
       end
     end
@@ -1826,6 +1851,10 @@ object Form1: TForm1
     object C1: TMenuItem
       Caption = #1043#1088#1072#1092#1080#1082' '#1091#1088#1086#1074#1085#1103' '#1089#1080#1075#1085#1072#1083#1072
       OnClick = C1Click
+    end
+    object menuChartPing: TMenuItem
+      Caption = #1043#1088#1072#1092#1080#1082' ping'
+      OnClick = menuChartPingClick
     end
     object GPS1: TMenuItem
       Caption = #1043#1088#1072#1092#1080#1082' GPS-'#1082#1086#1086#1088#1076#1080#1085#1072#1090#1099
@@ -2158,8 +2187,9 @@ object Form1: TForm1
     SQL.Strings = (
       
         'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_' +
-        'modem LEFT join equipment eq on m.id_equipment = eq.id  where eq' +
-        '.equipment_type = 1 order by m.name')
+        'modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join' +
+        ' equipment eq on m.id_equipment = eq.id  where eq.equipment_type' +
+        ' = 1 order by m.name')
     Left = 232
     Top = 304
     object Modemsid_modem: TLargeintField
@@ -2252,6 +2282,68 @@ object Form1: TForm1
     end
     object Modemsname_1: TStringField
       FieldName = 'name_1'
+      Size = 50
+    end
+    object Modemsip_lte: TStringField
+      FieldName = 'ip_lte'
+      Size = 50
+    end
+    object Modemsip_vpn: TStringField
+      FieldName = 'ip_vpn'
+      Size = 50
+    end
+    object Modemsmac_eth01: TStringField
+      FieldName = 'mac_eth01'
+      Size = 50
+    end
+    object Modemsmac_eth02: TStringField
+      FieldName = 'mac_eth02'
+      Size = 50
+    end
+    object Modemsmac_ovpn: TStringField
+      FieldName = 'mac_ovpn'
+      Size = 50
+    end
+    object Modemsplace_install_1: TStringField
+      FieldName = 'place_install_1'
+      Size = 100
+    end
+    object Modemsfirmware_1: TStringField
+      FieldName = 'firmware_1'
+      Size = 100
+    end
+    object Modemsid_equipment_2: TLargeintField
+      FieldName = 'id_equipment_2'
+    end
+    object Modemsmodel_lte: TStringField
+      FieldName = 'model_lte'
+      Size = 100
+    end
+    object Modemsserial_lte: TStringField
+      FieldName = 'serial_lte'
+      Size = 50
+    end
+    object Modemsserial_modem: TStringField
+      FieldName = 'serial_modem'
+      Size = 50
+    end
+    object Modemsimei_modem: TStringField
+      FieldName = 'imei_modem'
+      Size = 50
+    end
+    object Modemsmodel_modem: TStringField
+      FieldName = 'model_modem'
+      Size = 50
+    end
+    object Modemsprim_2: TStringField
+      FieldName = 'prim_2'
+      Size = 100
+    end
+    object Modemsid_1: TLargeintField
+      FieldName = 'id_1'
+    end
+    object Modemsname_2: TStringField
+      FieldName = 'name_2'
       Size = 50
     end
     object Modemsequipment_type: TIntegerField
@@ -2476,7 +2568,8 @@ object Form1: TForm1
       'edtBorderHeightPing.Value'
       'edtBorderWidthPing.Value'
       'chkPingsWindowSizeInSymbol.Checked'
-      'edtKoeffPingFromSymbols.Value')
+      'edtKoeffPingFromSymbols.Value'
+      'Panel1.Height')
     StoredValues = <>
     Left = 672
     Top = 448
