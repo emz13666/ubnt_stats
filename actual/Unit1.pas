@@ -442,6 +442,7 @@ const
 var
   Form1: TForm1;
   NamesModems: Array of String;
+  edIzmForHint: AnsiString;
   flagWLANConnections: boolean;
   startDate, endDate : TDate;
   vncConf: TStrings;
@@ -1027,6 +1028,7 @@ begin
 
   SetLength(CoordsModems,0);
   SetLength(NamesModems,0);
+  edIzmForHint := ' dBm ';
   if (not CheckBox3.Checked)or(Query.RecordCount = 0) then
     tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
   else
@@ -1271,6 +1273,7 @@ begin
   Chart1.Series[11].Active:= false;
   SetLength(CoordsModems,0);
   SetLength(NamesModems,0);
+  edIzmForHint := ' dBm ';
   Chart1.Series[2].Color := clRed;
   // successPing - количество успешных Pingов во всех статусах
   // FailPing - Неудачные пинги (-100) в статусе
@@ -1514,7 +1517,7 @@ begin
  if not flagWLANConnections then
     //Version 1.1.18.25 - для учета 2 начальных точек, которые рисуются для масштабирования графика,
     //нужно namesModems[ValueIndex-2] (было namesModems[ValueIndex])
-    try Chart1.Hint := namesModems[ValueIndex-2]+IntToStr(Trunc(Chart1.Series[0].YValue[ValueIndex]))+' dBm '+
+    try Chart1.Hint := namesModems[ValueIndex-2]+IntToStr(Trunc(Chart1.Series[0].YValue[ValueIndex]))+edIzmForHint+
       FormatDateTime('dd.mm.yyyy hh:nn:ss',Chart1.Series[0].XValue[ValueIndex])
     except
       Chart1.Hint:='??????'
@@ -1754,6 +1757,7 @@ begin
   Chart1.Series[10].Active:= false;
   Chart1.Series[11].Active:= false;
   SetLength(NamesModems,0);
+
   if (not CheckBox3.Checked)or(Query.RecordCount = 0) then
     tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
   else
@@ -1761,6 +1765,7 @@ begin
   Chart1.Series[2].Color := color_mediana;
   if (Sender as TMenuItem).Name='chartRSRQ' then
   begin
+    edIzmForHint := ' dB ';
     mediana := -20;
     fail_value := -50;
     Chart1.Series[0].AddXY(tmpDateTime,-5);
@@ -1768,6 +1773,7 @@ begin
   end;
   if (Sender as TMenuItem).Name='chartRSRP' then
   begin
+    edIzmForHint := ' dBm ';
     Chart1.Series[0].AddXY(tmpDateTime,-70);
     field_name := 'signal_rsrp';
     fail_value := -150;
@@ -1775,6 +1781,7 @@ begin
   end;
   if (Sender as TMenuItem).Name='chartSINR' then
   begin
+    edIzmForHint := ' dB ';
     Chart1.Series[0].AddXY(tmpDateTime,18);
     field_name := 'signal_sinr';
     fail_value := -10;
@@ -3169,6 +3176,7 @@ begin
   Chart1.Series[10].Active:= false;
   Chart1.Series[11].Active:= false;
   SetLength(NamesModems,0);
+  edIzmForHint := ' ms ';
   if (not CheckBox3.Checked)or(Query.RecordCount = 0) then
     tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
   else
