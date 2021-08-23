@@ -3407,11 +3407,11 @@ begin
    begin
      if checkPing.Checked then
      begin
-       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString+' - bullet');
-       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_pc').AsString,Modemsname.AsString+' - PTX');
+       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname_2.AsString+' - bullet');
+       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_pc').AsString,Modemsname_2.AsString+' - PTX');
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname_2.AsString+' - LTE VPN');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname_2.AsString+' - LTE SIM');
        end;
      end
      else
@@ -3432,7 +3432,7 @@ begin
    if Modems.FieldByName('ip_address').AsString <>'' then
    begin
       if checkPing.Checked then
-        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString)
+        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname_2.AsString)
       else
         ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_address').AsString),nil,SW_restore)
    end
@@ -3445,13 +3445,13 @@ begin
    begin
     ip_addresss :=Modems.FieldByName('ip_address').AsString;
     if checkPing.Checked then begin
-      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,-1),Modemsname.AsString+' - Switch');
-      Create_Process('cmd.exe /K ping -t '+ip_addresss,Modemsname.AsString+' - BulletSt');
-      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,1),Modemsname.AsString+' - BulletAP');
-      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,2),Modemsname.AsString+' - Kobus');
+      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,-1),Modemsname_2.AsString+' - Switch');
+      Create_Process('cmd.exe /K ping -t '+ip_addresss,Modemsname_2.AsString+' - BulletSt');
+      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,1),Modemsname_2.AsString+' - BulletAP');
+      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,2),Modemsname_2.AsString+' - Kobus');
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname_2.AsString+' - LTE VPN');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname_2.AsString+' - LTE SIM');
        end;
 
     end
