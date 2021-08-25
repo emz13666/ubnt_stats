@@ -1439,30 +1439,36 @@ procedure TForm1.ToolTipsDBGrid1DrawColumnCell(Sender: TObject;
   State: TGridDrawState);
 
 begin
+(* закомментировал 25.08.2021 - добавил в сбор обновление поля online для БС
    if Modemsis_access_point.AsInteger=1 then
       begin
         ToolTipsDBGrid1.Canvas.Brush.Color := RGB(0,150,200);
         ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
       end
       else
+*)
+           if Modemsonline.AsInteger=1 then begin
+                if (gdSelected in State) then begin
+                  ToolTipsDBGrid1.Canvas.Brush.Color := RGB(0,220,0);
+                  ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
+                end
+                else begin
+                  ToolTipsDBGrid1.Canvas.Brush.Color := clLime;
+                  ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
+                end;
+           end
+           else begin
+                if (gdSelected in State) then begin
+                  ToolTipsDBGrid1.Canvas.Brush.Color := RGB(220,0,0);
+                  ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
+                end
+                else begin
+                  ToolTipsDBGrid1.Canvas.Brush.Color := clRed;
+                  ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
+                end;
 
-           if Modemsonline.AsInteger=1 then
-              begin
-                ToolTipsDBGrid1.Canvas.Brush.Color := clLime;
-                ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
-              end
-           else
-              begin
-                ToolTipsDBGrid1.Canvas.Brush.Color := clRed;
-                ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
-              end;
+           end;
 
-
-      {  if (gdSelected in State) then
-  begin
-    ToolTipsDBGrid1.Canvas.Brush.Color := clBlue;
-    ToolTipsDBGrid1.Canvas.Font.Color :=  clWhite;
-  end;}
   ToolTipsDBGrid1.DefaultDrawColumnCell(Rect,DataCol,Column,State);
 end;
 
