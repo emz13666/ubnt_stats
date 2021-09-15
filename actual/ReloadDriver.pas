@@ -46,7 +46,7 @@ end;
 
 
 procedure TfrmReloadDrv.FormCreate(Sender: TObject);
-var i:byte;
+//var i:byte;
 begin
   with ComboBox1.Items do
   begin
@@ -150,10 +150,10 @@ procedure TfrmReloadDrv.Button1Click(Sender: TObject);
  var
   Layout: array[0.. KL_NAMELENGTH] of char;
   PStr: PChar;
-  p:string;
-  hwnd_active: HWND;
-  c: cardinal;
-  i:word;
+ // p:string;
+//  hwnd_active: HWND;
+ // c: cardinal;
+//  i:word;
 begin
     PStr := pchar('/K "'+ExtractFilePath(Application.ExeName)+
       'mmsShell.exe"'+' /hostname='+ MassIPAdress[ComboBox2.Items.IndexOf(ComboBox2.Text)]);

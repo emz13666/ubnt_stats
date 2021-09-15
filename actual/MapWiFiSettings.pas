@@ -357,7 +357,7 @@ procedure TWifiQuality.DrawSector(xsector, ysector: integer);
 var xstart,ystart,xend,yend:integer;
     color:TColor;
     x,y:integer;
-    a1:integer;
+   // a1:integer;
 begin
      SectorsToBitmapCoords(xsector,ysector,xstart,ystart,xend,yend);
      if (xsector=10) and (ysector=45) then begin

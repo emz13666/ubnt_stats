@@ -958,6 +958,7 @@ begin
   Label8.Caption := 'Средний уровень сигнала';
   flagWLANConnections := false;
   Chart1.ShowHint := true;
+  Chart1.LeftAxis.Automatic := true;
   Query.Close;
   sql_query1ap := 'select date, time, signal_level, color, 2 as status, name, 0 as x, 0 as y from stats_ap st, modems m where ';
   sql_query1 := 'select date, time, signal_level, color, status, name, x,y from statss st, modems m where ';
@@ -1008,6 +1009,7 @@ begin
   Query.First;
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
+  Chart1.Series[3].Clear;
   Chart1.Title.Text.Clear;
   if Modemsis_access_point.AsInteger=1 then
     Chart1.Title.Text.Add('График доступности по протоколу SNMP для '+Modemsname_2.Asstring)
@@ -1749,6 +1751,8 @@ begin
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
   Chart1.Title.Text.Clear;
+  Chart1.Series[3].Clear;
+  Chart1.LeftAxis.Automatic:= true;
   Chart1.Title.Text.Add('График уровня сигнала LTE -> '+ StringReplace((Sender as TMenuItem).Caption,'&','',[rfReplaceAll]));
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
@@ -3061,6 +3065,8 @@ begin
   Query.First;
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
+  Chart1.Series[3].Clear;
+  Chart1.LeftAxis.Automatic:= true;
   Chart1.Title.Text.Clear;
   Chart1.Title.Text.Add((Sender as TMenuItem).Caption+' (для '+Modemsname_2.Asstring+')');
   Chart1.Series[0].Active:= false;
@@ -3109,7 +3115,7 @@ end;
 
 procedure TForm1.menuChartPingClick(Sender: TObject);
 var tmpDateTime: TDateTime;
-    successPing, failPing:integer;
+    successPing, failPing, maximumLeftAxis:integer;
     sumAvg: real;
     color_chart, color_fail: TColor;
     fail_value:integer;
@@ -3117,9 +3123,9 @@ var tmpDateTime: TDateTime;
     sql_query2oneday, sql_query2onedaycalendar, sql_query1ap, sql_query3ap: string;
     field_name: string;
 begin
-  color_chart := clYellow;
+  color_chart := clGreen;
   color_fail := clRed;
-
+  maximumLeftAxis := 150;
   ToolTipsDBGrid1.Tag := 1;
   Label8.Caption := 'Средняя задержка';
   flagWLANConnections := false;
@@ -3167,6 +3173,7 @@ begin
   Query.First;
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
+  Chart1.Series[3].Clear;
   Chart1.Title.Text.Clear;
   Chart1.Title.Text.Add('График ping (по оси у - задежка в ms) - '+ Modemsname_2.AsString);
   Chart1.Series[0].Active:= false;
@@ -3188,10 +3195,11 @@ begin
   else
     tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
 
-  Chart1.Series[0].AddXY(tmpDateTime,18);
   field_name := 'time_ping';
   fail_value := -100;
-    Chart1.Series[0].AddXY(tmpDateTime,fail_value);
+  Chart1.Series[3].AddXY(tmpDateTime,fail_value);
+  Chart1.LeftAxis.Automatic := false;
+  Chart1.LeftAxis.SetMinMax(-101,maximumLeftAxis);
 
   // successPing - количество успешных Pingов
   // FailPing - Неудачные пинги (fail_value)
@@ -3210,14 +3218,14 @@ begin
        if Query.FieldByName(field_name).AsInteger<=fail_value then
        begin
         inc(failPing);
-        Chart1.Series[0].AddXY(tmpDateTime,fail_value,'',color_fail);
+        Chart1.Series[3].AddXY(tmpDateTime,fail_value,'',color_fail);
         NamesModems[High(NamesModems)] := '';
        end
        else
        begin
            inc(successPing);
            sumAvg:=sumAvg+(Query.FieldByName(field_name).AsInteger);
-           Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',color_chart);
+           Chart1.Series[3].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',color_chart);
            NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
        end;
     Query.Next;
@@ -3229,13 +3237,13 @@ begin
   else
     tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
 
-  if Query.RecordCount<>0 then Chart1.Series[0].AddXY(tmpDateTime,(Query.FieldByName(field_name).AsInteger),'',color_chart);
+  if Query.RecordCount <> 0 then Chart1.Series[3].AddXY(tmpDateTime,(Query.FieldByName(field_name).AsInteger),'',color_chart);
   ProgressBar1.Position := 0;
   Query.Close;
 
-  Chart1.Series[0].Active := true;
+  Chart1.Series[3].Active := true;
   ToolTipsDBGrid1.Tag := 0;
-  if successPing>0 then begin
+  if successPing > 0 then begin
      lAvgLevel.Caption:=FloatToStrF(sumavg/successPing,ffFixed,7,1);
      lSuccessPing.Caption:=inttostr(successPing);
      lFailPing.Caption:=inttostr(failPing);
@@ -3539,6 +3547,8 @@ begin
     Chart1.ShowHint := false;
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
+  Chart1.Series[3].Clear;
+  Chart1.LeftAxis.Automatic:= true;
   Chart1.Title.Text.Clear;
   Chart1.Title.Text.Add('GPS ARRIVE для '+Modemsname_2.Asstring);
   Chart1.Series[0].Active:= false;
@@ -3965,6 +3975,8 @@ begin
   ToolTipsDBGrid1.Tag := 1;
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
+    Chart1.Series[3].Clear;
+    Chart1.LeftAxis.Automatic := true;
   Chart1.Title.Text.Clear;
   Chart1.Title.Text.Add('Изменение GPS координаты (Х) для '+Modemsname.Asstring);
   Chart1.Series[0].Active:= false;
@@ -4669,6 +4681,8 @@ begin
   Chart1.Series[10].Active:= false;
   Chart1.Series[11].Active:= false;
   Chart1.Series[1].Clear;
+  Chart1.Series[3].Clear;
+  Chart1.LeftAxis.Automatic:= true;
 
 //  (Chart1.Series[9] as TPointSeries).Pointer.HorizSize := 2;  (Chart1.Series[9] as TPointSeries).Pointer.VertSize :=2;
 //  (Chart1.Series[0] as TPointSeries).Pointer.HorizSize := 2;  (Chart1.Series[0] as TPointSeries).Pointer.VertSize :=2;
