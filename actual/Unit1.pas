@@ -960,8 +960,10 @@ begin
   Chart1.ShowHint := true;
   Chart1.LeftAxis.Automatic := true;
   Query.Close;
-  sql_query1ap := 'select date, time, signal_level, color, 2 as status, name, 0 as x, 0 as y from stats_ap st, modems m where ';
-  sql_query1 := 'select date, time, signal_level, color, status, name, x,y from statss st, modems m where ';
+  sql_query1ap := 'select date, time, signal_level, color, e.name, 0 as x, 0 as y from stats_ap st' +
+   ' left join modems m on m.id_equipment=st.id_equipment left join equipment e on e.id=st.id_equipment where ';
+  sql_query1 := 'select date, time, signal_level, color, status, e.name, x,y from statss st'+
+   ' left join modems m on m.mac_address=st.mac_ap left join equipment e on e.id=m.id_equipment where ';
   sql_query2anydays :=
             ' (((st.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
             ' and (st.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
@@ -974,9 +976,13 @@ begin
             'st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
             'st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') ';
   sql_query2onedaycalendar := ' st.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
-  sql_query3ap := ' and st.id_modem='+ Modemsid_modem.AsString+' and st.id_modem=m.id_modem order by date, time';
-  sql_query3 := ' and st.id_modem='+Modemsid_modem.AsString+' and st.mac_ap=m.mac_address order by date, time';
-
+  sql_query3ap := ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString+' order by date, time';
+  sql_query3 := sql_query3ap;
+  (*
+  //выбрать все статусы по оборудованию из таблицы ststs_status:
+  Query_2.Close;
+  Query_2.SQL.Text := 'SELECT * FROM stats_status where id_equipment='+Modems.FieldByName('id_equipment').AsString+'(select id from equipment WHERE name='A159') and datetimeend>='2021-09-15 00:00:00' ORDER BY `stats_status`.`datetimeend` ASC';
+  *)
     if CheckBox3.Checked then //если стоит галка "Строить за период"
     begin
       //если в выбранном интервале одинаковые даты
@@ -991,9 +997,10 @@ begin
   else
       Query.SQL.Text := sql_query1ap + sql_query2+sql_query3ap;
 
+(* Забыл, зачем это
    if (Sender as TButton).Name = 'btnUnion' then Query.SQL.Text :=   sql_query1ap+sql_query2+
-       ' and st.id_modem='+ Modemsid_modem.AsString+' and st.id_modem=m.id_modem'+' UNION ALL '+sql_query1+sql_query2+sql_query3;
-
+       ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString+' and st.id_equipment=e.id'+' UNION ALL '+sql_query1+sql_query2+sql_query3;
+  *)
 
   try
     Query.Open;
@@ -1213,6 +1220,7 @@ begin
 end;
 
 procedure TForm1.Button21Click(Sender: TObject);
+//Это когда-то давно делал для Сорокина на скорую руку - сейчас не актуально и работать будет не так как раньше
 var successPing, failPing:integer;
     sumAvg: real;
     color1:TColor;
@@ -1511,7 +1519,7 @@ procedure TForm1.Chart1ClickSeries(Sender: TCustomChart;
 var
   pt:TPoint;
 begin
- if Series.Name<>Series1.Name then begin
+ if (Series.Name<>Series1.Name)and(Series.Name <> Chart1.Series[3].Name) then begin
       Chart1.Hint:='Здесь нельзя щелкать. Ха ха ха';
       if button<>mbLeft then Chart1ClickSeries(sender,series,valueindex,mbLeft,shift,x,y);
       exit;
@@ -1519,14 +1527,19 @@ begin
 
  // Если щелкнули правой кнопкой, то отрисовать местоположение для точки
  if (Button=mbRight)and (not flagWLANConnections) then begin
-    ShowPointPosition(valueindex-2);//Возможно, здесь нужно тоже valueindex-2 ???
+    ShowPointPosition(valueindex-2);//здесь нужно valueindex-2, потому что первые 2 точки рисуются для масштабирования графика по оси х
     exit;
  end;
- if not flagWLANConnections then
+ if not flagWLANConnections then   //если график - не WLANConnections для БС
     //Version 1.1.18.25 - для учета 2 начальных точек, которые рисуются для масштабирования графика,
     //нужно namesModems[ValueIndex-2] (было namesModems[ValueIndex])
-    try Chart1.Hint := namesModems[ValueIndex-2]+IntToStr(Trunc(Chart1.Series[0].YValue[ValueIndex]))+edIzmForHint+
-      FormatDateTime('dd.mm.yyyy hh:nn:ss',Chart1.Series[0].XValue[ValueIndex])
+    try
+      if chart1.Series[3].Visible then
+        Chart1.Hint := namesModems[ValueIndex-2]+IntToStr(Trunc(Chart1.Series[3].YValue[ValueIndex]))+edIzmForHint+
+          FormatDateTime('dd.mm.yyyy hh:nn:ss',Chart1.Series[3].XValue[ValueIndex]);
+      if chart1.Series[0].Visible then
+        Chart1.Hint := namesModems[ValueIndex-2]+IntToStr(Trunc(Chart1.Series[0].YValue[ValueIndex]))+edIzmForHint+
+          FormatDateTime('dd.mm.yyyy hh:nn:ss',Chart1.Series[0].XValue[ValueIndex]);
     except
       Chart1.Hint:='??????'
     end
@@ -3259,6 +3272,7 @@ begin
      lFailPerc.Caption:='0%';
   end;
 end;
+
 procedure TForm1.ModemsAfterOpen(DataSet: TDataSet);
 begin
   Modems.AfterScroll:=ModemsAfterScroll;
@@ -4024,8 +4038,8 @@ begin
         Query.sql.Text := Query.sql.Text +
           ' statss.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
       end;
-      Query.sql.Text := Query.sql.Text + ' and statss.id_modem='+
-          Modemsid_modem.AsString+' and statss.x > 0 order by date, time';
+      Query.sql.Text := Query.sql.Text + ' and statss.id_equipment='+
+          Modems.FieldByName('id_equipment').AsString+' and statss.x > 0 order by date, time';
   try
     Query.Open;
   except
@@ -4711,8 +4725,8 @@ begin
         Query.sql.Text := Query.sql.Text +
           ' statss.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
       end;
-      Query.sql.Text := Query.sql.Text + ' and statss.id_modem='+
-          Modemsid_modem.AsString+' and statss.x > 0 order by date, time';
+      Query.sql.Text := Query.sql.Text + ' and statss.id_equipment='+
+          Modems.FieldByName('id_equipment').AsString+' and statss.x > 0 order by date, time';
   try
     Query.Open;
   except
@@ -4756,8 +4770,8 @@ begin
         Query.sql.Text := Query.sql.Text +
           ' statss.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
       end;
-      Query.sql.Text := Query.sql.Text + ' and statss.id_modem='+
-          Modemsid_modem.AsString+' and statss.x > 0 order by date, time';
+      Query.sql.Text := Query.sql.Text + ' and statss.id_equipment='+
+          Modems.FieldByName('id_equipment').AsString+' and statss.x > 0 order by date, time';
   try
     Query.Open;
   except

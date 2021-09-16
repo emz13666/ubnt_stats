@@ -455,17 +455,21 @@ object Form1: TForm1
         Top = 1
         Width = 296
         Height = 537
-        ActivePage = TabSheet4
+        ActivePage = TabSheet2
         Align = alClient
         TabOrder = 0
         object TabSheet1: TTabSheet
           Caption = '1'
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object MonthCalendar1: TMonthCalendar
             Left = 0
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.762746712960000000
+            Date = 41178.963051516210000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -821,7 +825,7 @@ object Form1: TForm1
             end
             object Button7: TButton
               Left = 16
-              Top = 80
+              Top = 82
               Width = 75
               Height = 25
               Caption = #1055#1086'c'#1095#1080#1090#1072#1090#1100
@@ -1024,6 +1028,10 @@ object Form1: TForm1
         object TabSheet3: TTabSheet
           Caption = 'log and setup'
           ImageIndex = 2
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object ToolTipsDBGrid2: TDBGrid
             Left = 0
             Top = 0
@@ -1185,6 +1193,10 @@ object Form1: TForm1
           Caption = 'ReleaseNotes'
           ImageIndex = 3
           OnShow = TabSheet4Show
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Memo1: TMemo
             Left = 0
             Top = 0
@@ -1854,16 +1866,28 @@ object Form1: TForm1
           Caption = #1069#1082#1089#1082#1072#1074#1072#1090#1086#1088#1099
           ImageIndex = 1
           OnShow = tabExShow
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
         end
         object tabBur: TTabSheet
           Caption = #1041#1091#1088#1089#1090#1072#1085#1082#1080' '#1080' '#1057#1047#1052
           ImageIndex = 2
           OnShow = tabBurShow
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
         end
         object tabBase: TTabSheet
           Caption = #1041#1072#1079#1086#1074#1099#1077' '#1089#1090#1072#1085#1094#1080#1080
           ImageIndex = 3
           OnShow = tabBaseShow
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
         end
       end
     end
@@ -2489,8 +2513,8 @@ object Form1: TForm1
   object Query: TADOQuery
     Connection = DBConnection
     Parameters = <>
-    Left = 224
-    Top = 192
+    Left = 184
+    Top = 144
   end
   object DataSource2: TDataSource
     DataSet = Query
@@ -2556,8 +2580,8 @@ object Form1: TForm1
   object Query_2: TADOQuery
     Connection = DBConnection
     Parameters = <>
-    Left = 288
-    Top = 247
+    Left = 248
+    Top = 207
   end
   object DataSource3: TDataSource
     DataSet = TableLog
