@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DBXpress, Provider, SqlExpr, DB, ExtCtrls, TeeProcs, TeEngine,
+  Dialogs,  Provider, SqlExpr, DB, ExtCtrls, TeeProcs, TeEngine,
   Chart, StdCtrls, Grids, DBGrids, DBClient,
   FMTBcd, Series, BubbleCh, ComCtrls, Clipbrd, ComObj, ActiveX, Menus, snmpsend, asn1util,
   ADODB, jpeg, shellapi, DelphiCryptlib, cryptlib,  updater, ReloadDriver, UnitMemo, MyUtils, UnitChangePTX,
@@ -463,6 +463,7 @@ var
 function AddIPaddress(ip_addr: WideString; val:integer):WideString;
 function IsOLEObjectInstalled(Name: String): boolean;
 procedure AddToListFromDB(Query: TADOQuery; List: TStrings; Pole, Table, Where: Widestring);
+function GetSQLWhereDateTime: string;
 
 implementation
 
@@ -945,6 +946,21 @@ end;//try
 ToolTipsDBGrid1.Tag := 0;
 end;//procedure
 
+function GetSQLWhereDateTime: string;
+begin
+  with Form1 do begin
+    if CheckBox3.Checked then //если стоит галка "Строить за период"
+      Result := ' ((st.datetime >= '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date)+' ' +
+                                                FormatDateTime('hh:nn:59',DateTimePicker3.Time))+
+                ') and (st.datetime < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date)+' '+
+                                                  FormatDateTime('hh:nn:00',DateTimePicker4.Time))+')) '
+    else
+      Result := ' ((st.datetime >= '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 00:00:00') +
+                ') and (st.datetime < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 23:59:59') + ')) ';
+
+  end;
+end;
+
 procedure TForm1.Button1Click(Sender: TObject);
 var tmpDateTime: TDateTime;
     successPing, failPing:integer;
@@ -960,42 +976,22 @@ begin
   Chart1.ShowHint := true;
   Chart1.LeftAxis.Automatic := true;
   Query.Close;
-  sql_query1ap := 'select date, time, signal_level, color, e.name, 0 as x, 0 as y from stats_ap st' +
+  sql_query1ap := 'select datetime, signal_level, color, e.name, 0 as x, 0 as y from stats_ap st' +
    ' left join modems m on m.id_equipment=st.id_equipment left join equipment e on e.id=st.id_equipment where ';
-  sql_query1 := 'select date, time, signal_level, color, status, e.name, x,y from statss st'+
+  sql_query1 := 'select datetime, signal_level, color, status, e.name, x,y from statss st'+
    ' left join modems m on m.mac_address=st.mac_ap left join equipment e on e.id=m.id_equipment where ';
-  sql_query2anydays :=
-            ' (((st.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
-            ' and (st.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
-            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') and ' +
-            '(st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+')) ' +
-            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+') and ' +
-            '(st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+'))) ';
-  sql_query2oneday :=
-            ' (st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+' and ' +
-            'st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
-            'st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') ';
-  sql_query2onedaycalendar := ' st.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
-  sql_query3ap := ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString+' order by date, time';
+  sql_query3ap := ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString;//+' order by datetime';
   sql_query3 := sql_query3ap;
   (*
   //выбрать все статусы по оборудованию из таблицы ststs_status:
   Query_2.Close;
   Query_2.SQL.Text := 'SELECT * FROM stats_status where id_equipment='+Modems.FieldByName('id_equipment').AsString+'(select id from equipment WHERE name='A159') and datetimeend>='2021-09-15 00:00:00' ORDER BY `stats_status`.`datetimeend` ASC';
   *)
-    if CheckBox3.Checked then //если стоит галка "Строить за период"
-    begin
-      //если в выбранном интервале одинаковые даты
-      if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
-         sql_query2 := sql_query2anydays
-      else sql_query2 := sql_query2oneday;
-    end
-    else  sql_query2 := sql_query2onedaycalendar;
 
   if Modemsis_access_point.AsInteger=0 then
-    Query.SQL.Text := sql_query1+sql_query2+sql_query3
+      Query.SQL.Text := sql_query1 + GetSQLWhereDateTime + sql_query3
   else
-      Query.SQL.Text := sql_query1ap + sql_query2+sql_query3ap;
+      Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime +sql_query3ap;
 
 (* Забыл, зачем это
    if (Sender as TButton).Name = 'btnUnion' then Query.SQL.Text :=   sql_query1ap+sql_query2+
@@ -1041,7 +1037,8 @@ begin
   if (not CheckBox3.Checked)or(Query.RecordCount = 0) then
     tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
   else
-    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+    tmpDateTime := Query.FieldByName('datetime').AsDateTime;
+
   Chart1.Series[2].Color := clRed;
   Chart1.Series[2].AddXY(tmpDateTime,-78,'',clred);
 
@@ -1061,7 +1058,7 @@ begin
     end;
       SetLength(NamesModems,Length(NamesModems)+1);
       SetLength(CoordsModems,Length(CoordsModems)+1);
-      tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+      tmpDateTime := Query.FieldByName('datetime').AsDateTime;
       if Modemsis_access_point.AsInteger=1 then a_status:=2
          else a_status := query.FieldByName('status').AsInteger;
        if Query.Fields[2].AsInteger<=156 then
@@ -1102,7 +1099,7 @@ begin
     else tmpDateTime := MonthCalendar1.Date+1
   end
   else
-    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+    tmpDateTime := Query.FieldByName('datetime').AsDateTime;
 
   if Query.RecordCount<>0 then Chart1.Series[0].AddXY(tmpDateTime,(Query.FieldByName('signal_level').AsInteger-256),'',Query.FieldByName('color').AsInteger);
   Chart1.Series[2].AddXY(tmpDateTime,-78,'',clred);
@@ -1127,7 +1124,6 @@ begin
      lSuccessPerc.Caption:='0%';
      lFailPerc.Caption:='0%';
   end;
-
 end;
 
 //потерянные пакеты по всем за выбранный диапазон
@@ -1721,33 +1717,11 @@ begin
   flagWLANConnections := false;
   Chart1.ShowHint := true;
   Query.Close;
-  sql_query1ap := 'select st.date, st.time, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name  from stats_lte st, modems m, lte lt where ';
-  sql_query2anydays :=
-            ' (((st.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
-            ' and (st.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
-            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') and ' +
-            '(st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+')) ' +
-            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+') and ' +
-            '(st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+'))) ';
-  sql_query2oneday :=
-            ' (st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+' and ' +
-            'st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
-            'st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') ';
-  sql_query2onedaycalendar := ' st.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
+  sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name  from stats_lte st, modems m, lte lt where ';
   sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id_equipment ' +
-                   'and st.id_equipment=lt.id_equipment order by date, time';
+                   'and st.id_equipment=lt.id_equipment';// order by st.datetime';
 
-    if CheckBox3.Checked then //если стоит галка "Строить за период"
-    begin
-      //если в выбранном интервале одинаковые даты
-      if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
-         sql_query2 := sql_query2anydays
-      else sql_query2 := sql_query2oneday;
-    end
-    else  sql_query2 := sql_query2onedaycalendar;
-
-    Query.SQL.Text := sql_query1ap + sql_query2+sql_query3ap;
-
+  Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime + sql_query3ap;
 
   try
     Query.Open;
@@ -1784,7 +1758,7 @@ begin
   if (not CheckBox3.Checked)or(Query.RecordCount = 0) then
     tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
   else
-    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+    tmpDateTime := Query.FieldByName('datetime').AsDateTime;
   Chart1.Series[2].Color := color_mediana;
   if (Sender as TMenuItem).Name='chartRSRQ' then
   begin
@@ -1828,7 +1802,7 @@ begin
       Application.ProcessMessages;
     end;
       SetLength(NamesModems,Length(NamesModems)+1);
-      tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+      tmpDateTime := Query.FieldByName('datetime').AsDateTime;
        if Query.FieldByName(field_name).AsInteger<=fail_value then
        begin
         inc(failPing);
@@ -1849,7 +1823,7 @@ begin
     else tmpDateTime := MonthCalendar1.Date+1
   end
   else
-    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+    tmpDateTime := Query.FieldByName('datetime').AsDateTime;
 
   if Query.RecordCount<>0 then Chart1.Series[0].AddXY(tmpDateTime,(Query.FieldByName(field_name).AsInteger),'',color_chart);
   Chart1.Series[2].AddXY(tmpDateTime,mediana,'',color_mediana);
@@ -1874,7 +1848,6 @@ begin
      lSuccessPerc.Caption:='0%';
      lFailPerc.Caption:='0%';
   end;
-
 end;
 
 
@@ -1914,7 +1887,6 @@ begin
        snmp.Free;
        ToolTipsDBGrid1.Tag := 0;
      end;
-
 end;
 
 
@@ -2303,9 +2275,8 @@ begin
   flagWLANConnections := true;
   ToolTipsDBGrid1.Tag := 1;
   Query.Close;
-  Query.sql.Text := 'select date, DATE_FORMAT(time,"%H:%i") t, count(distinct id_modem) from statss where date='+
-    QuotedStr(FormatDateTime('yyyy-mm-dd', MonthCalendar1.Date))+
-    ' and mac_ap='+QuotedStr(Modemsmac_address.AsString)+' Group by t';
+  Query.sql.Text := 'select datetime, DATE_FORMAT(datetime,"%H:%i") t, count(distinct id_modem) as kolvo from statss st where '+
+    GetSQLWhereDateTime + ' and mac_ap='+QuotedStr(Modemsmac_address.AsString)+' Group by t';
   try
     Query.Open;
     Query.FindLast;
@@ -2345,8 +2316,8 @@ begin
       ProgressBar1.Position := ProgressBar1.Position +1;
       Application.ProcessMessages;
     end;
-      tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
-      Chart1.Series[0].AddXY(tmpDateTime,Query.Fields[2].AsInteger,'',Modemscolor.AsInteger);
+      tmpDateTime := Query.FieldByName('datetime').AsDateTime;
+      Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName('kolvo').AsInteger,'',Modemscolor.AsInteger);
       awg_count := awg_count + Query.Fields[2].AsInteger;
     Query.Next;
   end;
@@ -3144,32 +3115,10 @@ begin
   flagWLANConnections := false;
   Chart1.ShowHint := true;
   Query.Close;
-  sql_query1ap := 'select st.date, st.time, st.time_ping, st.id_equipment, m.name  from stats_ping st, equipment m where ';
-  sql_query2anydays :=
-            ' (((st.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
-            ' and (st.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
-            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') and ' +
-            '(st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+')) ' +
-            ' or ((st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+') and ' +
-            '(st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+'))) ';
-  sql_query2oneday :=
-            ' (st.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+' and ' +
-            'st.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
-            'st.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') ';
-  sql_query2onedaycalendar := ' st.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
-  sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id ' +
-                   'order by date, time';
-
-    if CheckBox3.Checked then //если стоит галка "Строить за период"
-    begin
-      //если в выбранном интервале одинаковые даты
-      if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
-         sql_query2 := sql_query2anydays
-      else sql_query2 := sql_query2oneday;
-    end
-    else  sql_query2 := sql_query2onedaycalendar;
-
-    Query.SQL.Text := sql_query1ap + sql_query2+sql_query3ap;
+  sql_query1ap := 'select st.datetime, st.time_ping, st.id_equipment, m.name  from stats_ping st, equipment m where ';
+    sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id ';
+//                   'order by date, time';
+    Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime + sql_query3ap;
 
 
   try
@@ -3206,7 +3155,7 @@ begin
   if (not CheckBox3.Checked)or(Query.RecordCount = 0) then
     tmpDateTime := StrToDateTime(FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date)+' 0:00:00')
   else
-    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+    tmpDateTime := Query.FieldByName('datetime').AsDateTime;
 
   field_name := 'time_ping';
   fail_value := -100;
@@ -3227,7 +3176,7 @@ begin
       Application.ProcessMessages;
     end;
       SetLength(NamesModems,Length(NamesModems)+1);
-      tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+      tmpDateTime := Query.FieldByName('datetime').AsDateTime;
        if Query.FieldByName(field_name).AsInteger<=fail_value then
        begin
         inc(failPing);
@@ -3248,7 +3197,7 @@ begin
     else tmpDateTime := MonthCalendar1.Date+1
   end
   else
-    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+    tmpDateTime := Query.FieldByName('datetime').AsDateTime;
 
   if Query.RecordCount <> 0 then Chart1.Series[3].AddXY(tmpDateTime,(Query.FieldByName(field_name).AsInteger),'',color_chart);
   ProgressBar1.Position := 0;
@@ -4231,32 +4180,9 @@ begin
     else}
   color1 := Modemscolor.AsInteger;
 
-      Query.sql.Text := 'select s.date, s.time, AVG(s.signal_level) signal_level, DATE_FORMAT(s.time,"%H:%i") t from statss s, modems m where s.mac_ap='+
-          QuotedStr(Modemsmac_address.AsString) + ' and ';
-      if CheckBox3.Checked then
-      begin
-        if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
-          Query.sql.Text := Query.sql.Text +
-            ' (((s.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
-            ' and (s.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
-            ' or ((s.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') and ' +
-            '(s.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+')) ' +
-            ' or ((s.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+') and ' +
-            '(s.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+'))) '
-         else
-           Query.sql.Text := Query.sql.Text +
-            ' (s.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+' and ' +
-            's.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
-            's.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') '
-
-      end
-      else
-      begin
-        Query.sql.Text := Query.sql.Text +
-          ' s.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
-      end;
-      Query.sql.Text := Query.sql.Text + ' and s.id_modem<>'+
-          Modemsid_modem.AsString+' and s.id_modem=m.id_modem  group by t order by s.date, s.time';
+      Query.sql.Text := 'select st.datetime, AVG(st.signal_level) signal_level, DATE_FORMAT(st.datetime,"%H:%i") t from statss st, modems m where st.mac_ap='+
+          QuotedStr(Modemsmac_address.AsString) + ' and ' + GetSQLWhereDateTime + ' and st.id_equipment<>'+
+          Modemsid_equipment.AsString+' and st.id_equipment=m.id_equipment  group by t order by st.datetime';
   try
     Query.Open;
   except
@@ -4288,7 +4214,7 @@ begin
   Chart1.Series[11].Active:= false;
 
   SetLength(NamesModems,0);
-  tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+  tmpDateTime := Query.FieldByName('datetime').AsDateTime;
   Chart1.Series[2].AddXY(tmpDateTime,-78,'',clred);
   while not Query.Eof do
   begin
@@ -4297,12 +4223,12 @@ begin
       ProgressBar1.Position := ProgressBar1.Position +1;
       Application.ProcessMessages;
     end;
-    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+    tmpDateTime := Query.FieldByName('datetime').AsDateTime;
     Chart1.Series[0].AddXY(tmpDateTime,round(Query.FieldByName('signal_level').AsFloat),'',color1);
     sumAvg := sumAvg + round(Query.FieldByName('signal_level').AsFloat);
     Query.Next;
   end;
-  tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+  tmpDateTime := Query.FieldByName('datetime').AsDateTime;
   Chart1.Series[0].AddXY(tmpDateTime,round(Query.FieldByName('signal_level').AsFloat),'',color1);
   Chart1.Series[2].AddXY(tmpDateTime,-78,'',clred);
   ProgressBar1.Position := 0;
@@ -4702,31 +4628,9 @@ begin
 //  (Chart1.Series[0] as TPointSeries).Pointer.HorizSize := 2;  (Chart1.Series[0] as TPointSeries).Pointer.VertSize :=2;
 
   Query.Close;
-  Query.sql.Text := 'select max(x) as max_x, min(x) as min_x from statss where ';
-      if CheckBox3.Checked then
-      begin
-        if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
-          Query.sql.Text := Query.sql.Text +
-            ' (((statss.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
-            ' and (statss.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
-            ' or ((statss.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') and ' +
-            '(statss.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+')) ' +
-            ' or ((statss.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+') and ' +
-            '(statss.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+'))) '
-         else
-           Query.sql.Text := Query.sql.Text +
-            ' (statss.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+' and ' +
-            'statss.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
-            'statss.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') '
-
-      end
-      else
-      begin
-        Query.sql.Text := Query.sql.Text +
-          ' statss.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
-      end;
-      Query.sql.Text := Query.sql.Text + ' and statss.id_equipment='+
-          Modems.FieldByName('id_equipment').AsString+' and statss.x > 0 order by date, time';
+  Query.sql.Text := 'select max(x) as max_x, min(x) as min_x from statss st where ' + GetSQLWhereDateTime +
+                    ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString+
+                    ' and st.x > 0 order by st.datetime';
   try
     Query.Open;
   except
@@ -4747,31 +4651,9 @@ begin
   end;
 
   Query.Close;
-  Query.sql.Text := 'select date, time, signal_level, status, x from statss where ';
-      if CheckBox3.Checked then
-      begin
-        if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
-          Query.sql.Text := Query.sql.Text +
-            ' (((statss.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
-            ' and (statss.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
-            ' or ((statss.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') and ' +
-            '(statss.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+')) ' +
-            ' or ((statss.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+') and ' +
-            '(statss.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+'))) '
-         else
-           Query.sql.Text := Query.sql.Text +
-            ' (statss.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+' and ' +
-            'statss.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
-            'statss.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') '
-
-      end
-      else
-      begin
-        Query.sql.Text := Query.sql.Text +
-          ' statss.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
-      end;
-      Query.sql.Text := Query.sql.Text + ' and statss.id_equipment='+
-          Modems.FieldByName('id_equipment').AsString+' and statss.x > 0 order by date, time';
+  Query.sql.Text := 'select datetime, signal_level, status, x from statss st where ' + GetSQLWhereDateTime +
+                    ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString +
+                    ' and st.x > 0 order by datetime';
   try
     Query.Open;
   except
@@ -4785,7 +4667,6 @@ begin
   ProgressBar1.Max := Query.RecordCount;
   Query.First;
 
-
  //строим график по полученным данным
   while not Query.Eof do
   begin
@@ -4794,7 +4675,7 @@ begin
       ProgressBar1.Position := ProgressBar1.Position +1;
       Application.ProcessMessages;
     end;
-    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+    tmpDateTime := Query.FieldByName('datetime').AsDateTime;
     Chart1.Series[1].AddXY(tmpDateTime,Query.FieldByName('x').AsSingle*(wifi_max-wifi_min)/(f_max_x-f_min_x)-f_sdvig,'',clBlack);
     Query.Next;
   end;
