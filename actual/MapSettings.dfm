@@ -396,9 +396,9 @@ object frmMapSettings: TfrmMapSettings
     Width = 257
     Height = 25
     Anchors = [akBottom]
+    Kind = bkOK
     TabOrder = 4
     OnClick = bbOkClick
-    Kind = bkOK
   end
   object bbCancel: TBitBtn
     Left = 376
@@ -407,22 +407,17 @@ object frmMapSettings: TfrmMapSettings
     Height = 25
     Anchors = [akBottom]
     Caption = #1054#1090#1084#1077#1085#1072
+    Kind = bkCancel
     TabOrder = 5
     OnClick = bbCancelClick
-    Kind = bkCancel
   end
   object Date_begin: TDateTimePicker
     Left = 23
     Top = 7
     Width = 89
     Height = 21
-    CalAlignment = dtaLeft
-    Date = 41328.4673025116
-    Time = 41328.4673025116
-    DateFormat = dfShort
-    DateMode = dmComboBox
-    Kind = dtkDate
-    ParseInput = False
+    Date = 41328.467302511600000000
+    Time = 41328.467302511600000000
     TabOrder = 6
   end
   object Date_end: TDateTimePicker
@@ -430,13 +425,8 @@ object frmMapSettings: TfrmMapSettings
     Top = 8
     Width = 89
     Height = 21
-    CalAlignment = dtaLeft
-    Date = 41328.4673025116
-    Time = 41328.4673025116
-    DateFormat = dfShort
-    DateMode = dmComboBox
-    Kind = dtkDate
-    ParseInput = False
+    Date = 41328.467302511600000000
+    Time = 41328.467302511600000000
     TabOrder = 7
   end
   object edtSignalBegin: TSpinEdit
@@ -500,7 +490,6 @@ object frmMapSettings: TfrmMapSettings
     TabOrder = 13
   end
   object ColorDialog1: TColorDialog
-    Ctl3D = True
     Left = 160
     Top = 248
   end

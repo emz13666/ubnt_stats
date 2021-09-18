@@ -307,7 +307,7 @@ type
     Modemscomment: TMemoField;
     ModemsuseInMonitoring: TSmallintField;
     ModemsLastGPSDateTime: TDateTimeField;
-    function SSH_Client(Server, Userid, Pass: string): TCryptSession;
+    function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -463,7 +463,7 @@ var
 function AddIPaddress(ip_addr: WideString; val:integer):WideString;
 function IsOLEObjectInstalled(Name: String): boolean;
 procedure AddToListFromDB(Query: TADOQuery; List: TStrings; Pole, Table, Where: Widestring);
-function GetSQLWhereDateTime: string;
+function GetSQLWhereDateTime(FieldName: AnsiString): AnsiString;
 
 implementation
 
@@ -471,6 +471,7 @@ uses Unit3, MapSettings, MapFail;
 
 {$R *.dfm}
 {$R res_vnc.res}
+
 procedure AddToListFromDB(Query: TADOQuery; List: TStrings; Pole, Table, Where: Widestring);
 begin
   Query.Close;
@@ -573,7 +574,7 @@ begin
   keybd_event(Key,0,KEYEVENTF_EXTENDEDKEY or KEYEVENTF_KEYUP,0);
 end;
 
-function TForm1.SSH_Client(Server, Userid, Pass: string): TCryptSession;
+function TForm1.SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
 begin
  result := TCryptSession.Create(CRYPT_SESSION_SSH);
  with result do begin
@@ -946,17 +947,17 @@ end;//try
 ToolTipsDBGrid1.Tag := 0;
 end;//procedure
 
-function GetSQLWhereDateTime: string;
+function GetSQLWhereDateTime(FieldName: AnsiString): AnsiString;
 begin
   with Form1 do begin
     if CheckBox3.Checked then //если стоит галка "Строить за период"
-      Result := ' ((st.datetime >= '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date)+' ' +
+      Result := ' ('+FieldName+' BETWEEN '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date)+' ' +
                                                 FormatDateTime('hh:nn:59',DateTimePicker3.Time))+
-                ') and (st.datetime < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date)+' '+
-                                                  FormatDateTime('hh:nn:00',DateTimePicker4.Time))+')) '
+                ' and '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date)+' '+
+                                                  FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') '
     else
-      Result := ' ((st.datetime >= '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 00:00:00') +
-                ') and (st.datetime < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 23:59:59') + ')) ';
+      Result := ' ('+FieldName+' BETWEEN '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 00:00:00') +
+                ' and '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 23:59:59') + ') ';
 
   end;
 end;
@@ -965,10 +966,9 @@ procedure TForm1.Button1Click(Sender: TObject);
 var tmpDateTime: TDateTime;
     successPing, failPing:integer;
     sumAvg: real;
-    color1:TColor;
+    clr: TColor;
     a_status:integer;
-    sql_query1, sql_query2, sql_query3, sql_query2anydays,
-    sql_query2oneday, sql_query2onedaycalendar, sql_query1ap, sql_query3ap: string;
+    sql_query1, sql_query1ap, sql_query3ap: string;
 begin
   ToolTipsDBGrid1.Tag := 1;
   Label8.Caption := 'Средний уровень сигнала';
@@ -978,20 +978,20 @@ begin
   Query.Close;
   sql_query1ap := 'select datetime, signal_level, color, e.name, 0 as x, 0 as y from stats_ap st' +
    ' left join modems m on m.id_equipment=st.id_equipment left join equipment e on e.id=st.id_equipment where ';
-  sql_query1 := 'select datetime, signal_level, color, status, e.name, x,y from statss st'+
+  sql_query1 := 'select datetime, signal_level, color, e.name, x,y from statss st'+
    ' left join modems m on m.mac_address=st.mac_ap left join equipment e on e.id=m.id_equipment where ';
-  sql_query3ap := ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString;//+' order by datetime';
-  sql_query3 := sql_query3ap;
-  (*
+  sql_query3ap := ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString + ' order by datetime';
+
   //выбрать все статусы по оборудованию из таблицы ststs_status:
   Query_2.Close;
-  Query_2.SQL.Text := 'SELECT * FROM stats_status where id_equipment='+Modems.FieldByName('id_equipment').AsString+'(select id from equipment WHERE name='A159') and datetimeend>='2021-09-15 00:00:00' ORDER BY `stats_status`.`datetimeend` ASC';
-  *)
+  Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
+    ' and '+ GetSQLWhereDateTime('st.datetimeend')+ ' ORDER BY st.datetimeend';
+
 
   if Modemsis_access_point.AsInteger=0 then
-      Query.SQL.Text := sql_query1 + GetSQLWhereDateTime + sql_query3
+      Query.SQL.Text := sql_query1 + GetSQLWhereDateTime('st.datetime') + sql_query3ap
   else
-      Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime +sql_query3ap;
+      Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime('st.datetime') +sql_query3ap;
 
 (* Забыл, зачем это
    if (Sender as TButton).Name = 'btnUnion' then Query.SQL.Text :=   sql_query1ap+sql_query2+
@@ -1000,6 +1000,8 @@ begin
 
   try
     Query.Open;
+    if Modemsis_access_point.AsInteger=0 then Query_2.Open;
+
   except
     DBConnection.Close;
     ToolTipsDBGrid1.Tag := 0;
@@ -1010,6 +1012,7 @@ begin
   ProgressBar1.Position := 0;
   ProgressBar1.Max := Query.RecordCount;
   Query.First;
+  if Modemsis_access_point.AsInteger=0 then Query_2.First;
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
   Chart1.Series[3].Clear;
@@ -1060,33 +1063,38 @@ begin
       SetLength(CoordsModems,Length(CoordsModems)+1);
       tmpDateTime := Query.FieldByName('datetime').AsDateTime;
       if Modemsis_access_point.AsInteger=1 then a_status:=2
-         else a_status := query.FieldByName('status').AsInteger;
-       if Query.Fields[2].AsInteger<=156 then
+         else
+           while (not Query_2.Eof)and
+            (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
+             if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
+               a_status := Query_2.FieldByName('status').AsInteger
+             else a_status:=0;
+       if Query.FieldByName('signal_level').AsInteger<=156 then
        begin
-        color1:=clLtGray;
-        // [2020-02-14] Разделил не обработанные статусы от неготовности для удобства просмотра
-        if a_status<1 then color1:=clWebAliceBlue;
+        clr:=clLtGray;
+        // [2020-02-14] Разделил необработанные статусы от неготовности для удобства просмотра
+        if a_status<1 then clr:=clWebAliceBlue;
+
         // Если статус оборудования - готов, то это неудачный пинг (пропадание связи).
         // Иначе считаем, что в это время PTX не работал, значит это не проблема связи
-
-          if a_status=2 then begin
-           color1:=clYellow;
-           inc(failPing);
-           end;
-        Chart1.Series[0].AddXY(tmpDateTime,-100,'',color1);
+        if a_status=2 then begin
+            clr:=clYellow;
+            inc(failPing);
+        end;
+        Chart1.Series[0].AddXY(tmpDateTime,-100,'',clr);
         NamesModems[High(NamesModems)] := '';
        end
        else
        begin
-        color1:=clLtGray;
+        clr:=clLtGray;
         // [2020-02-14] Разделил не обработанные статусы от неготовности для удобства просмотра
-        if a_status<1 then color1:=clWebAliceBlue;
-         if a_status=2 then begin
-           color1:=Query.FieldByName('color').AsInteger;
+        if a_status<1 then clr:=clWebAliceBlue;
+        if a_status=2 then begin
+           clr:=Query.FieldByName('color').AsInteger;
            inc(successPing);
            sumAvg:=sumAvg+(Query.FieldByName('signal_level').AsInteger-256);
         end;
-        Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName('signal_level').AsInteger-256,'',color1);
+        Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName('signal_level').AsInteger-256,'',clr);
         NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
        end;
       // Присваиваем конкретной точке графика координаты
@@ -1105,7 +1113,7 @@ begin
   Chart1.Series[2].AddXY(tmpDateTime,-78,'',clred);
   ProgressBar1.Position := 0;
   Query.Close;
-
+  Query_2.Close;
   Chart1.Series[0].Active := true;
   Chart1.Series[2].Active := true;
   ToolTipsDBGrid1.Tag := 0;
@@ -1219,7 +1227,7 @@ procedure TForm1.Button21Click(Sender: TObject);
 //Это когда-то давно делал для Сорокина на скорую руку - сейчас не актуально и работать будет не так как раньше
 var successPing, failPing:integer;
     sumAvg: real;
-    color1:TColor;
+    clr:TColor;
     a_status:integer;
     sql_query1, sql_query2, sql_query3, sql_query2anydays,
     sql_query2oneday, sql_query2onedaycalendar, sql_query1ap, sql_query3ap,namebur: string;
@@ -1292,9 +1300,9 @@ begin
       SetLength(CoordsModems,Length(CoordsModems)+1);
       if Modemsis_access_point.AsInteger=1 then a_status:=2
          else a_status := query.FieldByName('status').AsInteger;
-       if Query.Fields[2].AsInteger<=156 then
+       if Query.FieldByName('signal_level').AsInteger<=156 then
        begin
-        color1:=clLtGray;
+        clr:=clLtGray;
         // Если статус оборудования - готов, то это неудачный пинг (пропадание связи).
         // Иначе считаем, что в это время PTX не работал, значит это не проблема связи
           if a_status=2 then inc(failPing);
@@ -1700,12 +1708,11 @@ end;
 
 procedure TForm1.chartRSRPClick(Sender: TObject);
 var tmpDateTime: TDateTime;
-    successPing, failPing:integer;
+    successPing, failPing, a_status:integer;
     sumAvg: real;
-    color_chart, color_fail, color_mediana: TColor;
+    color_chart, color_fail, color_mediana, clr: TColor;
     fail_value,mediana:integer;
-    sql_query1, sql_query2, sql_query3, sql_query2anydays,
-    sql_query2oneday, sql_query2onedaycalendar, sql_query1ap, sql_query3ap: string;
+    sql_query1, sql_query1ap, sql_query3ap: AnsiString;
     field_name: string;
 begin
   color_chart := clYellow;
@@ -1719,12 +1726,18 @@ begin
   Query.Close;
   sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name  from stats_lte st, modems m, lte lt where ';
   sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id_equipment ' +
-                   'and st.id_equipment=lt.id_equipment';// order by st.datetime';
+                   'and st.id_equipment=lt.id_equipment order by st.datetime';
 
-  Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime + sql_query3ap;
+  Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime('st.datetime') + sql_query3ap;
+
+  //выбрать все статусы по оборудованию из таблицы ststs_status:
+  Query_2.Close;
+  Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
+    ' and '+ GetSQLWhereDateTime('st.datetimeend')+ ' ORDER BY st.datetimeend';
 
   try
     Query.Open;
+    Query_2.Open;
   except
     DBConnection.Close;
     ToolTipsDBGrid1.Tag := 0;
@@ -1735,6 +1748,7 @@ begin
   ProgressBar1.Position := 0;
   ProgressBar1.Max := Query.RecordCount;
   Query.First;
+  Query_2.First;
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
   Chart1.Title.Text.Clear;
@@ -1803,17 +1817,39 @@ begin
     end;
       SetLength(NamesModems,Length(NamesModems)+1);
       tmpDateTime := Query.FieldByName('datetime').AsDateTime;
+
+      //Ищем, какой статус у оборудования в момент времени tmpDateTime
+       while (not Query_2.Eof)and
+            (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
+       if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
+               a_status := Query_2.FieldByName('status').AsInteger
+       else a_status:=0;
+
        if Query.FieldByName(field_name).AsInteger<=fail_value then
        begin
-        inc(failPing);
-        Chart1.Series[0].AddXY(tmpDateTime,fail_value,'',color_fail);
-        NamesModems[High(NamesModems)] := '';
+          clr:=clLtGray;
+          if a_status<1 then clr:=clWebAliceBlue;
+
+          // Если статус оборудования - готов, то это неудачный пинг (пропадание связи).
+          // Иначе считаем, что в это время PTX не работал, значит это не проблема связи
+          if a_status=2 then begin
+              clr:=color_fail;
+              inc(failPing);
+          end;
+
+          Chart1.Series[0].AddXY(tmpDateTime,fail_value,'',clr);
+          NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
        end
        else
        begin
-           inc(successPing);
-           sumAvg:=sumAvg+(Query.FieldByName(field_name).AsInteger);
-           Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',color_chart);
+          clr := clLtGray;
+          if a_status<1 then clr:=clWebAliceBlue;
+          if a_status=2 then begin
+             clr := color_chart;
+             inc(successPing);
+             sumAvg:=sumAvg+(Query.FieldByName(field_name).AsInteger);
+          end;
+           Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',clr);
            NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
        end;
     Query.Next;
@@ -2276,7 +2312,7 @@ begin
   ToolTipsDBGrid1.Tag := 1;
   Query.Close;
   Query.sql.Text := 'select datetime, DATE_FORMAT(datetime,"%H:%i") t, count(distinct id_modem) as kolvo from statss st where '+
-    GetSQLWhereDateTime + ' and mac_ap='+QuotedStr(Modemsmac_address.AsString)+' Group by t';
+    GetSQLWhereDateTime('st.datetime') + ' and mac_ap='+QuotedStr(Modemsmac_address.AsString)+' Group by t';
   try
     Query.Open;
     Query.FindLast;
@@ -3101,10 +3137,9 @@ procedure TForm1.menuChartPingClick(Sender: TObject);
 var tmpDateTime: TDateTime;
     successPing, failPing, maximumLeftAxis:integer;
     sumAvg: real;
-    color_chart, color_fail: TColor;
-    fail_value:integer;
-    sql_query1, sql_query2, sql_query3, sql_query2anydays,
-    sql_query2oneday, sql_query2onedaycalendar, sql_query1ap, sql_query3ap: string;
+    color_chart, color_fail, color1: TColor;
+    a_status, fail_value:integer;
+    sql_query1, sql_query1ap, sql_query3ap: string;
     field_name: string;
 begin
   color_chart := clGreen;
@@ -3116,13 +3151,18 @@ begin
   Chart1.ShowHint := true;
   Query.Close;
   sql_query1ap := 'select st.datetime, st.time_ping, st.id_equipment, m.name  from stats_ping st, equipment m where ';
-    sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id ';
-//                   'order by date, time';
-    Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime + sql_query3ap;
+    sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id '+
+                    ' order by datetime';
+    Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime('st.datetime') + sql_query3ap;
 
+   //выбрать все статусы по оборудованию из таблицы ststs_status:
+  Query_2.Close;
+  Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
+    ' and '+ GetSQLWhereDateTime('st.datetimeend')+ ' ORDER BY st.datetimeend';
 
   try
     Query.Open;
+    Query_2.Open;
   except
     DBConnection.Close;
     ToolTipsDBGrid1.Tag := 0;
@@ -3133,6 +3173,7 @@ begin
   ProgressBar1.Position := 0;
   ProgressBar1.Max := Query.RecordCount;
   Query.First;
+  Query_2.First;
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
   Chart1.Series[3].Clear;
@@ -3177,19 +3218,40 @@ begin
     end;
       SetLength(NamesModems,Length(NamesModems)+1);
       tmpDateTime := Query.FieldByName('datetime').AsDateTime;
+
+      //Ищем, какой статус у оборудования в момент времени tmpDateTime
+       while (not Query_2.Eof)and
+            (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
+       if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
+               a_status := Query_2.FieldByName('status').AsInteger
+       else a_status:=0;
+      
        if Query.FieldByName(field_name).AsInteger<=fail_value then
        begin
-        inc(failPing);
-        Chart1.Series[3].AddXY(tmpDateTime,fail_value,'',color_fail);
-        NamesModems[High(NamesModems)] := '';
+          color1 :=clLtGray;
+          if a_status<1 then color1:=clWebAliceBlue;
+
+          // Если статус оборудования - готов, то это неудачный пинг (пропадание связи).
+          // Иначе считаем, что в это время PTX не работал, значит это не проблема связи
+          if a_status=2 then begin
+              color1:=color_fail;
+              inc(failPing);
+          end;
+        
+        Chart1.Series[3].AddXY(tmpDateTime,fail_value,'',color1);
        end
        else
        begin
-           inc(successPing);
-           sumAvg:=sumAvg+(Query.FieldByName(field_name).AsInteger);
-           Chart1.Series[3].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',color_chart);
-           NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
+          color1:=clLtGray;
+          if a_status<1 then color1:=clWebAliceBlue;
+          if a_status=2 then begin
+             color1:=color_chart;
+             inc(successPing);
+             sumAvg:=sumAvg+(Query.FieldByName(field_name).AsInteger);
+          end;
+           Chart1.Series[3].AddXY(tmpDateTime,Query.FieldByName(field_name).AsInteger,'',color1);
        end;
+    NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
     Query.Next;
   end;
   if (not CheckBox3.Checked)or(Query.RecordCount = 0) then begin
@@ -4181,7 +4243,7 @@ begin
   color1 := Modemscolor.AsInteger;
 
       Query.sql.Text := 'select st.datetime, AVG(st.signal_level) signal_level, DATE_FORMAT(st.datetime,"%H:%i") t from statss st, modems m where st.mac_ap='+
-          QuotedStr(Modemsmac_address.AsString) + ' and ' + GetSQLWhereDateTime + ' and st.id_equipment<>'+
+          QuotedStr(Modemsmac_address.AsString) + ' and ' + GetSQLWhereDateTime('st.datetime') + ' and st.id_equipment<>'+
           Modemsid_equipment.AsString+' and st.id_equipment=m.id_equipment  group by t order by st.datetime';
   try
     Query.Open;
@@ -4628,7 +4690,7 @@ begin
 //  (Chart1.Series[0] as TPointSeries).Pointer.HorizSize := 2;  (Chart1.Series[0] as TPointSeries).Pointer.VertSize :=2;
 
   Query.Close;
-  Query.sql.Text := 'select max(x) as max_x, min(x) as min_x from statss st where ' + GetSQLWhereDateTime +
+  Query.sql.Text := 'select max(x) as max_x, min(x) as min_x from statss st where ' + GetSQLWhereDateTime('st.datetime') +
                     ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString+
                     ' and st.x > 0 order by st.datetime';
   try
@@ -4651,7 +4713,7 @@ begin
   end;
 
   Query.Close;
-  Query.sql.Text := 'select datetime, signal_level, status, x from statss st where ' + GetSQLWhereDateTime +
+  Query.sql.Text := 'select datetime, signal_level, status, x from statss st where ' + GetSQLWhereDateTime('st.datetime') +
                     ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString +
                     ' and st.x > 0 order by datetime';
   try

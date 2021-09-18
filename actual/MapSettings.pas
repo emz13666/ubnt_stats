@@ -56,7 +56,7 @@ type
 
 var
   frmMapSettings: TfrmMapSettings;
-  color1, color2: TColor;
+  color_1, color2: TColor;
 
 implementation
 
@@ -89,7 +89,7 @@ procedure TfrmMapSettings.FormCreate(Sender: TObject);
 var coltrucks, colexcavs:integer;
 begin
      SpeedButton1.Glyph.Canvas.Brush.Color := clRed;
-     color1 := clRed;
+     color_1 := clRed;
      SpeedButton1.Glyph.Canvas.FillRect(Rect(10,9,SpeedButton1.Width,SpeedButton1.Height));
      SpeedButton2.Glyph.Canvas.Brush.Color := clBlue;
      color2 := clBlue;
@@ -243,7 +243,7 @@ begin
            painty:=round(img_height-((form1.query.fieldByName('y').AsInteger-img_starty)*ky));
            //ShowMessage(form1.Query.FieldByName('signal_level').AsString);
            if (form1.Query.FieldByName('signal_level').AsInteger-256 <= edtColor1.Value) then begin
-              frmShowMap.imgmap.Canvas.Pixels[paintx,painty]:=color1;
+              frmShowMap.imgmap.Canvas.Pixels[paintx,painty]:=color_1;
            end else begin
               if form1.Query.FieldByName('signal_level').AsInteger-256 <= edtColor2.Value then
                 frmShowMap.imgmap.Canvas.Pixels[paintx,painty]:=Color2
@@ -298,7 +298,7 @@ begin
   begin
      SpeedButton1.Glyph.Canvas.Brush.Color := ColorDialog1.Color;
      SpeedButton1.Glyph.Canvas.FillRect(Rect(10,9,SpeedButton1.Width,SpeedButton1.Height));
-     color1 := ColorDialog1.Color;
+     color_1 := ColorDialog1.Color;
   end;
 end;
 
