@@ -1064,11 +1064,20 @@ begin
       tmpDateTime := Query.FieldByName('datetime').AsDateTime;
       if Modemsis_access_point.AsInteger=1 then a_status:=2
          else
-           while (not Query_2.Eof)and
-            (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
-             if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
-               a_status := Query_2.FieldByName('status').AsInteger
-             else a_status:=0;
+           // если статуса в таблице stats_status нет (у бурстанков и сзм - только простои), то - статус = ГОТОВ
+           if tmpDateTime < Query_2.FieldByName('datetimestart').AsDateTime then a_status:=2
+           else begin
+             //Ищем, какой статус у оборудования в момент времени tmpDateTime
+             while (not Query_2.Eof)and
+              (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
+               if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
+                 a_status := Query_2.FieldByName('status').AsInteger
+               else
+                 // если это бурстанок или сзм - то статус-готов, иначе - неопределён
+                 if Modems.FieldByName('equipment_type').AsInteger in [5,6] then
+                   a_status:=2
+                 else a_status:=0;
+           end;
        if Query.FieldByName('signal_level').AsInteger<=156 then
        begin
         clr:=clLtGray;
@@ -1817,13 +1826,20 @@ begin
     end;
       SetLength(NamesModems,Length(NamesModems)+1);
       tmpDateTime := Query.FieldByName('datetime').AsDateTime;
-
+       // если статуса в таблице stats_status нет (у бурстанков и сзм - только простои), то - статус = ГОТОВ
+       if tmpDateTime < Query_2.FieldByName('datetimestart').AsDateTime then a_status:=2
+       else begin
       //Ищем, какой статус у оборудования в момент времени tmpDateTime
-       while (not Query_2.Eof)and
-            (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
-       if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
-               a_status := Query_2.FieldByName('status').AsInteger
-       else a_status:=0;
+         while (not Query_2.Eof)and
+              (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
+         if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
+                 a_status := Query_2.FieldByName('status').AsInteger
+         else
+           // если это бурстанок или сзм - то статус-готов, иначе - неопределён
+           if Modems.FieldByName('equipment_type').AsInteger in [5,6] then
+             a_status:=2
+           else a_status:=0;
+       end;
 
        if Query.FieldByName(field_name).AsInteger<=fail_value then
        begin
@@ -3216,15 +3232,22 @@ begin
       ProgressBar1.Position := ProgressBar1.Position +1;
       Application.ProcessMessages;
     end;
-      SetLength(NamesModems,Length(NamesModems)+1);
-      tmpDateTime := Query.FieldByName('datetime').AsDateTime;
-
+    SetLength(NamesModems,Length(NamesModems)+1);
+    tmpDateTime := Query.FieldByName('datetime').AsDateTime;
+    // если статуса в таблице stats_status нет (у бурстанков и сзм - только простои), то - статус = ГОТОВ
+    if tmpDateTime < Query_2.FieldByName('datetimestart').AsDateTime then a_status:=2
+    else begin
       //Ищем, какой статус у оборудования в момент времени tmpDateTime
        while (not Query_2.Eof)and
             (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
        if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
                a_status := Query_2.FieldByName('status').AsInteger
-       else a_status:=0;
+       else
+           // если это бурстанок или сзм - то статус-готов, иначе - неопределён
+           if Modems.FieldByName('equipment_type').AsInteger in [5,6] then
+             a_status:=2
+           else a_status:=0;
+    end;
       
        if Query.FieldByName(field_name).AsInteger<=fail_value then
        begin
