@@ -464,6 +464,7 @@ function AddIPaddress(ip_addr: WideString; val:integer):WideString;
 function IsOLEObjectInstalled(Name: String): boolean;
 procedure AddToListFromDB(Query: TADOQuery; List: TStrings; Pole, Table, Where: Widestring);
 function GetSQLWhereDateTime(FieldName: AnsiString): AnsiString;
+function FindStatus(fDateTime: TDateTime; fQueryStatus: TADOQuery): Integer;
 
 implementation
 
@@ -471,6 +472,25 @@ uses Unit3, MapSettings, MapFail;
 
 {$R *.dfm}
 {$R res_vnc.res}
+
+function FindStatus(fDateTime: TDateTime; fQueryStatus: TADOQuery): Integer;
+begin
+  Result := 0;
+  if Form1.Modemsis_access_point.AsInteger=1 then Result:=2
+  else begin
+   //Ищем, какой статус у оборудования в момент времени tmpDateTime
+   while (fDateTime > fQueryStatus.FieldByName('datetimeend').AsDateTime) and (not fQueryStatus.Eof) do fQueryStatus.Next;
+
+   if fQueryStatus.Eof or (fDateTime < fQueryStatus.FieldByName('datetimestart').AsDateTime) then begin
+           // Для бурстанков и СЗМ: если статуса в таблице stats_status нет (у бурстанков и сзм - только простои), то - статус = ГОТОВ
+           if Form1.Modems.FieldByName('equipment_type').AsInteger in [5,6] then
+             Result:=2
+           else Result:=0;
+       end
+       else
+         Result := fQueryStatus.FieldByName('status').AsInteger;
+   end
+end;
 
 procedure AddToListFromDB(Query: TADOQuery; List: TStrings; Pole, Table, Where: Widestring);
 begin
@@ -1062,22 +1082,7 @@ begin
       SetLength(NamesModems,Length(NamesModems)+1);
       SetLength(CoordsModems,Length(CoordsModems)+1);
       tmpDateTime := Query.FieldByName('datetime').AsDateTime;
-      if Modemsis_access_point.AsInteger=1 then a_status:=2
-         else
-           // если статуса в таблице stats_status нет (у бурстанков и сзм - только простои), то - статус = ГОТОВ
-           if tmpDateTime < Query_2.FieldByName('datetimestart').AsDateTime then a_status:=2
-           else begin
-             //Ищем, какой статус у оборудования в момент времени tmpDateTime
-             while (not Query_2.Eof)and
-              (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
-               if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
-                 a_status := Query_2.FieldByName('status').AsInteger
-               else
-                 // если это бурстанок или сзм - то статус-готов, иначе - неопределён
-                 if Modems.FieldByName('equipment_type').AsInteger in [5,6] then
-                   a_status:=2
-                 else a_status:=0;
-           end;
+      a_status := FindStatus(tmpDateTime, Query_2);
        if Query.FieldByName('signal_level').AsInteger<=156 then
        begin
         clr:=clLtGray;
@@ -1126,10 +1131,12 @@ begin
   Chart1.Series[0].Active := true;
   Chart1.Series[2].Active := true;
   ToolTipsDBGrid1.Tag := 0;
+
+  lSuccessPing.Caption:=inttostr(successPing);
+  lFailPing.Caption:=inttostr(failPing);
+
   if successPing>0 then begin
      lAvgLevel.Caption:=FloatToStrF(sumavg/successPing,ffFixed,7,1);
-     lSuccessPing.Caption:=inttostr(successPing);
-     lFailPing.Caption:=inttostr(failPing);
   end else begin
      lAvgLevel.Caption:='-100';
   end;
@@ -1330,10 +1337,12 @@ begin
   Chart1.Series[0].Active := true;
   Chart1.Series[2].Active := true;
   ToolTipsDBGrid1.Tag := 0;
+
+  lSuccessPing.Caption:=inttostr(successPing);
+  lFailPing.Caption:=inttostr(failPing);
+
   if successPing>0 then begin
      lAvgLevel.Caption:=FloatToStrF(sumavg/successPing,ffFixed,7,1);
-     lSuccessPing.Caption:=inttostr(successPing);
-     lFailPing.Caption:=inttostr(failPing);
   end else begin
      lAvgLevel.Caption:='-100';
      lSuccessPing.Caption:=inttostr(successPing);
@@ -1826,23 +1835,9 @@ begin
     end;
       SetLength(NamesModems,Length(NamesModems)+1);
       tmpDateTime := Query.FieldByName('datetime').AsDateTime;
-       // если статуса в таблице stats_status нет (у бурстанков и сзм - только простои), то - статус = ГОТОВ
-       if tmpDateTime < Query_2.FieldByName('datetimestart').AsDateTime then a_status:=2
-       else begin
-      //Ищем, какой статус у оборудования в момент времени tmpDateTime
-         while (not Query_2.Eof)and
-              (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
-         if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
-                 a_status := Query_2.FieldByName('status').AsInteger
-         else
-           // если это бурстанок или сзм - то статус-готов, иначе - неопределён
-           if Modems.FieldByName('equipment_type').AsInteger in [5,6] then
-             a_status:=2
-           else a_status:=0;
-       end;
-
-       if Query.FieldByName(field_name).AsInteger<=fail_value then
-       begin
+      a_status := FindStatus(tmpDateTime, Query_2);
+      if Query.FieldByName(field_name).AsInteger<=fail_value then
+      begin
           clr:=clLtGray;
           if a_status<1 then clr:=clWebAliceBlue;
 
@@ -1855,7 +1850,7 @@ begin
 
           Chart1.Series[0].AddXY(tmpDateTime,fail_value,'',clr);
           NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
-       end
+      end
        else
        begin
           clr := clLtGray;
@@ -1885,10 +1880,12 @@ begin
   Chart1.Series[0].Active := true;
   Chart1.Series[2].Active := true;
   ToolTipsDBGrid1.Tag := 0;
+
+  lSuccessPing.Caption:=inttostr(successPing);
+  lFailPing.Caption:=inttostr(failPing);
+
   if successPing>0 then begin
      lAvgLevel.Caption:=FloatToStrF(sumavg/successPing,ffFixed,7,1);
-     lSuccessPing.Caption:=inttostr(successPing);
-     lFailPing.Caption:=inttostr(failPing);
   end else begin
      lAvgLevel.Caption:=IntToStr(fail_value);
   end;
@@ -3234,21 +3231,8 @@ begin
     end;
     SetLength(NamesModems,Length(NamesModems)+1);
     tmpDateTime := Query.FieldByName('datetime').AsDateTime;
-    // если статуса в таблице stats_status нет (у бурстанков и сзм - только простои), то - статус = ГОТОВ
-    if tmpDateTime < Query_2.FieldByName('datetimestart').AsDateTime then a_status:=2
-    else begin
-      //Ищем, какой статус у оборудования в момент времени tmpDateTime
-       while (not Query_2.Eof)and
-            (tmpDateTime > Query_2.FieldByName('datetimeend').AsDateTime) do Query_2.Next;
-       if (tmpDateTime <= Query_2.FieldByName('datetimeend').AsDateTime) then
-               a_status := Query_2.FieldByName('status').AsInteger
-       else
-           // если это бурстанок или сзм - то статус-готов, иначе - неопределён
-           if Modems.FieldByName('equipment_type').AsInteger in [5,6] then
-             a_status:=2
-           else a_status:=0;
-    end;
-      
+    a_status := FindStatus(tmpDateTime, Query_2);
+
        if Query.FieldByName(field_name).AsInteger<=fail_value then
        begin
           color1 :=clLtGray;
@@ -3290,10 +3274,12 @@ begin
 
   Chart1.Series[3].Active := true;
   ToolTipsDBGrid1.Tag := 0;
+
+  lSuccessPing.Caption:=inttostr(successPing);
+  lFailPing.Caption:=inttostr(failPing);
+
   if successPing > 0 then begin
      lAvgLevel.Caption:=FloatToStrF(sumavg/successPing,ffFixed,7,1);
-     lSuccessPing.Caption:=inttostr(successPing);
-     lFailPing.Caption:=inttostr(failPing);
   end else begin
      lAvgLevel.Caption:=IntToStr(fail_value);
   end;
@@ -3458,6 +3444,7 @@ begin
     lastByteInt := StrToInt(lastByte);
     Result := Copy(ip_addr,1,lastpos_point)+IntToStr(lastByteInt+val);
 end;
+
 
 
 procedure TForm1.Ping1Click(Sender: TObject);

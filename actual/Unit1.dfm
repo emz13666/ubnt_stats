@@ -455,7 +455,7 @@ object Form1: TForm1
         Top = 1
         Width = 296
         Height = 537
-        ActivePage = TabSheet4
+        ActivePage = TabSheet1
         Align = alClient
         TabOrder = 0
         object TabSheet1: TTabSheet
@@ -465,7 +465,7 @@ object Form1: TForm1
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.930213472220000000
+            Date = 41178.341482835650000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
