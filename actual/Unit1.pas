@@ -2698,9 +2698,8 @@ begin
 
  Query123.Connection.Close;
  Query123.sql.Text := 'SELECT m.id_modem, m.is_access_point, m.mac_address, m.color, e.name, e.ip_address, ' +
-        'e.equipment_type, e.useInMonitoring  FROM modems m, equipment e WHERE' +
-        ' e.useInMonitoring=1 and e.ip_address=' +
-        'm.ip_address and (m.is_access_point=1 or m.is_ap_repeater=1)  order by e.name';
+                      'e.equipment_type, e.useInMonitoring  FROM modems m, equipment e WHERE ' +
+                      'e.useInMonitoring=1 and e.id=m.id_equipment and (m.is_access_point=1 or m.is_ap_repeater=1) order by e.name';
   MassAccessPoints := TStringList.Create;
   MassAccessPoints.Clear;
   SetLength(MassColorsAP,0);
@@ -2731,9 +2730,10 @@ begin
       Query123 := TADOQuery.Create(Form1);
       Query123.Connection := ADOConnection_query;
 
-      Query123.sql.Text := 'select date, DATE_FORMAT(time,"%H:%i") t, count(distinct id_modem) from statss where date='+
-        QuotedStr(FormatDateTime('yyyy-mm-dd', MonthCalendar1.Date))+
-        ' and mac_ap='+QuotedStr(MassAccessPoints[i])+' Group by t';
+      Query123.sql.Text := 'select date, DATE_FORMAT(datetime,"%H:%i") t, count(distinct id_equipment) from statss where '+
+                           '(datetime between '+ QuotedStr(FormatDateTime('yyyy-mm-dd 00:00:00', MonthCalendar1.Date))+ ' and '+
+                           QuotedStr(FormatDateTime('yyyy-mm-dd 23:59:59', MonthCalendar1.Date))+
+                           ') and mac_ap='+QuotedStr(MassAccessPoints[i])+' Group by t';
 
       try
         Query123.Open;
@@ -4252,8 +4252,9 @@ begin
     else}
   color1 := Modemscolor.AsInteger;
 
-      Query.sql.Text := 'select st.datetime, AVG(st.signal_level) signal_level, DATE_FORMAT(st.datetime,"%H:%i") t from statss st, modems m where st.mac_ap='+
-          QuotedStr(Modemsmac_address.AsString) + ' and ' + GetSQLWhereDateTime('st.datetime') + ' and st.id_equipment<>'+
+      Query.sql.Text := 'select st.datetime, AVG(st.signal_level) signal_level, DATE_FORMAT(st.datetime,"%H:%i") t from '+
+          '(select * from statss where ' + GetSQLWhereDateTime('datetime') + ') st, modems m where st.mac_ap=' +
+          QuotedStr(Modemsmac_address.AsString) + ' and st.id_equipment<>'+
           Modemsid_equipment.AsString+' and st.id_equipment=m.id_equipment  group by t order by st.datetime';
   try
     Query.Open;
@@ -4271,7 +4272,7 @@ begin
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
   Chart1.Title.Text.Clear;
-  Chart1.Title.Text.Add('График среднего уровня сигнала wi-fi для клиентов'+Modemsname_2.Asstring);
+  Chart1.Title.Text.Add('График среднего уровня сигнала wi-fi для всех клиентов '+Modemsname_2.Asstring);
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
