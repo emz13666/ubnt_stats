@@ -128,7 +128,6 @@ type
     Query_2: TADOQuery;
     Button14: TButton;
     Button15: TButton;
-    Button16: TButton;
     Ping1: TMenuItem;
     GPSARRIVE1: TMenuItem;
     VNC1: TMenuItem;
@@ -351,7 +350,6 @@ type
     procedure Button14Click(Sender: TObject);
     procedure Button15Click(Sender: TObject);
     procedure lAvgLevelDblClick(Sender: TObject);
-    procedure Button16Click(Sender: TObject);
     procedure Ping1Click(Sender: TObject);
     procedure GPSARRIVE1Click(Sender: TObject);
     procedure VNC1Click(Sender: TObject);
@@ -465,7 +463,7 @@ var
 function AddIPaddress(ip_addr: WideString; val:integer):WideString;
 function IsOLEObjectInstalled(Name: String): boolean;
 procedure AddToListFromDB(Query: TADOQuery; List: TStrings; Pole, Table, Where: Widestring);
-function GetSQLWhereDateTime(FieldName: AnsiString): AnsiString;
+function GetSQLWhereDateTime(FieldDate1: AnsiString; FieldDate2: AnsiString=''): AnsiString;
 function FindStatus(fDateTime: TDateTime; fQueryStatus: TADOQuery): Integer;
 
 implementation
@@ -969,18 +967,32 @@ end;//try
 ToolTipsDBGrid1.Tag := 0;
 end;//procedure
 
-function GetSQLWhereDateTime(FieldName: AnsiString): AnsiString;
+function GetSQLWhereDateTime(FieldDate1: AnsiString; FieldDate2: AnsiString=''): AnsiString;
 begin
+  if FieldDate2='' then FieldDate2:= FieldDate1;
   with Form1 do begin
-    if CheckBox3.Checked then //если стоит галка "Строить за период"
-      Result := ' ('+FieldName+' BETWEEN '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date)+' ' +
-                                                FormatDateTime('hh:nn:59',DateTimePicker3.Time))+
-                ' and '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date)+' '+
-                                                  FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') '
-    else
-      Result := ' ('+FieldName+' BETWEEN '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 00:00:00') +
-                ' and '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 23:59:59') + ') ';
+    if FieldDate1=FieldDate2 then begin
 
+        if CheckBox3.Checked then //если стоит галка "Строить за период"
+          Result := ' ('+FieldDate1+' BETWEEN '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date)+' ' +
+                                                    FormatDateTime('hh:nn:59',DateTimePicker3.Time))+
+                    ' and '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date)+' '+
+                                                      FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') '
+        else
+          Result := ' ('+FieldDate1+' BETWEEN '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 00:00:00') +
+                    ' and '+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 23:59:59') + ') ';
+    end
+    else begin
+        if CheckBox3.Checked then //если стоит галка "Строить за период"
+          Result := ' ('+FieldDate1+'>='+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date)+' ' +
+                                                    FormatDateTime('hh:nn:59',DateTimePicker3.Time))+
+                    ' and '+ FieldDate2+'<='+QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date)+' '+
+                                                      FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') '
+        else
+          Result := ' ('+FieldDate1+'>='+ QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 00:00:00') +
+                    ' and '+FieldDate2 +'<='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+' 23:59:59') + ') ';
+
+    end;
   end;
 end;
 
@@ -1007,7 +1019,7 @@ begin
   //выбрать все статусы по оборудованию из таблицы ststs_status:
   Query_2.Close;
   Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
-    ' and '+ GetSQLWhereDateTime('st.datetimeend')+ ' ORDER BY st.datetimeend';
+    ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
 
 
   if Modemsis_access_point.AsInteger=0 then
@@ -1760,7 +1772,7 @@ begin
   //выбрать все статусы по оборудованию из таблицы ststs_status:
   Query_2.Close;
   Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
-    ' and '+ GetSQLWhereDateTime('st.datetimeend')+ ' ORDER BY st.datetimeend';
+    ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
 
   try
     Query.Open;
@@ -3046,7 +3058,6 @@ end;
 
 procedure TForm1.lAvgLevelDblClick(Sender: TObject);
 begin
-  Button16.Visible := not Button16.Visible;
   Button17.Visible := not Button17.Visible;
   Button23.Visible := not Button23.Visible;
   btnApplyMacAclEx.Visible := not btnApplyMacAclEx.Visible;
@@ -3182,7 +3193,7 @@ begin
    //выбрать все статусы по оборудованию из таблицы ststs_status:
   Query_2.Close;
   Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
-    ' and '+ GetSQLWhereDateTime('st.datetimeend')+ ' ORDER BY st.datetimeend';
+    ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
 
   try
     Query.Open;
@@ -3322,17 +3333,6 @@ begin
   Modems.AfterScroll := nil;
 end;
 
-procedure TForm1.Button16Click(Sender: TObject);
-begin
-  Query_2.Close;
-  Query_2.SQL.Clear;
-  Query_2.SQL.Add('Update statss set status=1 where id_modem='+Modemsid_modem.AsString);
-  Query_2.SQL.Add('and signal_level=-100 and date='+QuotedStr(FormatDateTime('yyy-mm-dd',MonthCalendar1.Date)));
-  Query_2.SQL.Add('and time>'+QuotedStr(FormatDateTime('hh:mm',DateTimePicker3.Time)));
-  Query_2.SQL.Add('and time<'+QuotedStr(FormatDateTime('hh:mm',DateTimePicker4.Time)));
-  Query_2.ExecSQL;
-  Query_2.Close;
-end;
 
 procedure TForm1.Button17Click(Sender: TObject);
 var

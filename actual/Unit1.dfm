@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 278
   Top = 121
   Caption = 'Ubiquiti Statistics (C) EMZ ('#1045#1074#1075#1077#1085#1080#1081' '#1052#1080#1093#1072#1081#1083#1086#1074#1080#1095' '#1047#1080#1085#1086#1074#1100#1077#1074')'
-  ClientHeight = 791
+  ClientHeight = 734
   ClientWidth = 1115
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object Form1: TForm1
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 598
+    Top = 541
     Width = 1115
     Height = 3
     Cursor = crVSplit
@@ -29,7 +29,7 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Top = 601
+    Top = 544
     Width = 1115
     Height = 190
     Align = alBottom
@@ -432,13 +432,13 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 1115
-    Height = 598
+    Height = 541
     Align = alClient
     TabOrder = 1
     object Splitter3: TSplitter
       Left = 813
       Top = 1
-      Height = 596
+      Height = 539
       Align = alRight
       ExplicitLeft = 712
       ExplicitHeight = 487
@@ -447,15 +447,15 @@ object Form1: TForm1
       Left = 816
       Top = 1
       Width = 298
-      Height = 596
+      Height = 539
       Align = alRight
       TabOrder = 0
       object PageControl1: TPageControl
         Left = 1
         Top = 1
         Width = 296
-        Height = 594
-        ActivePage = TabSheet4
+        Height = 537
+        ActivePage = TabSheet2
         Align = alClient
         TabOrder = 0
         object TabSheet1: TTabSheet
@@ -465,7 +465,7 @@ object Form1: TForm1
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.577514988430000000
+            Date = 41178.828599270830000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -858,23 +858,13 @@ object Form1: TForm1
             Visible = False
             OnClick = Button12Click
           end
-          object Button16: TButton
-            Left = 168
-            Top = 384
-            Width = 75
-            Height = 25
-            Caption = 'Set status=1'
-            TabOrder = 5
-            Visible = False
-            OnClick = Button16Click
-          end
           object Button17: TButton
             Left = 16
             Top = 488
             Width = 105
             Height = 25
             Caption = 'Apply MAC ACL'
-            TabOrder = 6
+            TabOrder = 5
             Visible = False
             OnClick = Button17Click
           end
@@ -884,7 +874,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = 'xreboot'
-            TabOrder = 7
+            TabOrder = 6
             OnClick = Button18Click
           end
           object Button19: TButton
@@ -893,7 +883,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = 'Reload_Drivers'
-            TabOrder = 8
+            TabOrder = 7
             OnClick = Button19Click
           end
           object btnChangePTX: TButton
@@ -902,7 +892,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = #1047#1072#1084#1077#1085#1080#1090#1100' '#1056#1058#1061
-            TabOrder = 9
+            TabOrder = 8
             OnClick = btnChangePTXClick
           end
           object btnAddBullet: TButton
@@ -911,7 +901,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = #1044#1086#1073#1072#1074#1080#1090#1100' Bullet'
-            TabOrder = 10
+            TabOrder = 9
           end
           object btnAddPTX: TButton
             Left = 8
@@ -919,7 +909,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1056#1058#1061
-            TabOrder = 11
+            TabOrder = 10
           end
           object btnUninstallPTX: TButton
             Left = 127
@@ -927,7 +917,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = #1057#1085#1103#1090#1100' '#1056#1058#1061
-            TabOrder = 12
+            TabOrder = 11
             OnClick = btnChangePTXClick
           end
           object btnInstallPTX: TButton
@@ -936,7 +926,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1056#1058#1061
-            TabOrder = 13
+            TabOrder = 12
             OnClick = btnChangePTXClick
           end
           object btnUnion: TButton
@@ -948,7 +938,7 @@ object Form1: TForm1
             Caption = #1057#1090#1088#1086#1080#1090#1100' UNION'
             ParentShowHint = False
             ShowHint = True
-            TabOrder = 14
+            TabOrder = 13
             OnClick = btnUnionClick
           end
           object Button20: TButton
@@ -957,7 +947,7 @@ object Form1: TForm1
             Width = 273
             Height = 25
             Caption = #1055#1086#1090#1077#1088#1103#1085#1099#1077' '#1087#1072#1082#1077#1090#1099' '#1087#1086' '#1074#1089#1077#1084' '#1079#1072' '#1074#1099#1073#1088#1072#1085#1085#1099#1081' '#1076#1080#1072#1087#1072#1079#1086#1085
-            TabOrder = 15
+            TabOrder = 14
             OnClick = Button20Click
           end
           object checkAP_Repeater: TCheckBox
@@ -966,7 +956,7 @@ object Form1: TForm1
             Width = 97
             Height = 17
             Caption = 'AP_Repeater'
-            TabOrder = 16
+            TabOrder = 15
             OnClick = checkAP_RepeaterClick
           end
           object cbAP_Repeater: TComboBox
@@ -974,7 +964,7 @@ object Form1: TForm1
             Top = 7
             Width = 145
             Height = 21
-            TabOrder = 17
+            TabOrder = 16
             OnChange = cbAP_RepeaterChange
           end
           object Button21: TButton
@@ -983,7 +973,7 @@ object Form1: TForm1
             Width = 273
             Height = 25
             Caption = #1054#1090#1095#1105#1090' '#1087#1086' Wifi '#1087#1086' '#1073#1091#1088#1089#1090#1072#1085#1082#1072#1084' ('#1086#1076#1085#1086#1088#1072#1079#1086#1074#1099#1081' '#1086#1090#1095#1077#1090')'
-            TabOrder = 18
+            TabOrder = 17
             OnClick = Button21Click
           end
           object Button22: TButton
@@ -992,7 +982,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = #1047#1072#1084#1077#1085#1080#1090#1100' Bullet'
-            TabOrder = 19
+            TabOrder = 18
           end
           object btnGetOffBullet: TButton
             Left = 128
@@ -1000,7 +990,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = #1057#1085#1103#1090#1100' Bullet'
-            TabOrder = 20
+            TabOrder = 19
           end
           object btnBulletInstall: TButton
             Left = 128
@@ -1008,7 +998,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' Bullet'
-            TabOrder = 21
+            TabOrder = 20
           end
           object Button23: TButton
             Left = 136
@@ -1016,7 +1006,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = 'Delete MAC ACL'
-            TabOrder = 22
+            TabOrder = 21
             Visible = False
             OnClick = Button23Click
           end
@@ -1026,7 +1016,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = 'Apply MAC ACL EX'
-            TabOrder = 23
+            TabOrder = 22
             Visible = False
             OnClick = Button17Click
           end
@@ -1036,7 +1026,7 @@ object Form1: TForm1
             Width = 105
             Height = 25
             Caption = 'Delete MAC ACL EX'
-            TabOrder = 24
+            TabOrder = 23
             Visible = False
             OnClick = Button23Click
           end
@@ -1209,7 +1199,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 288
-            Height = 566
+            Height = 509
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -1767,7 +1757,13 @@ object Form1: TForm1
               ''
               'Version 1.1.22.5'
               #1044#1086#1073#1072#1074#1080#1083' 2 '#1089#1082#1099#1090#1099#1093' '#1082#1085#1086#1087#1082#1080' '#1076#1083#1103' '#1091#1087#1088#1072#1074#1083#1077#1085#1080#1103' MAC ACL '
-              #1088#1077#1087#1080#1090#1077#1088#1086#1074)
+              #1088#1077#1087#1080#1090#1077#1088#1086#1074
+              ''
+              'Version 1.1.22.6'
+              #1059#1076#1072#1083#1080#1083' '#1086#1076#1085#1091' '#1089#1082#1088#1099#1090#1091#1102' '#1082#1085#1086#1087#1082#1091' '#1076#1083#1103' "'#1079#1072#1082#1088#1072#1096#1080#1074#1072#1085#1080#1103'" '
+              #1087#1086#1090#1077#1088#1103#1085#1099#1093' '#1087#1072#1082#1077#1090#1086#1074'.'
+              #1048#1089#1087#1088#1072#1074#1080#1083' '#1079#1072#1087#1088#1086#1089' '#1076#1083#1103' '#1074#1099#1073#1086#1088#1072' '#1080#1079' stats_status - '
+              #1087#1086#1089#1083#1077#1076#1085#1080#1081' '#1089#1090#1072#1090#1091#1089' '#1079#1072' '#1089#1091#1090#1082#1080' '#1085#1077' '#1086#1073#1088#1072#1073#1072#1090#1099#1074#1072#1083#1089#1103'.')
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
@@ -1779,14 +1775,14 @@ object Form1: TForm1
       Left = 1
       Top = 1
       Width = 812
-      Height = 596
+      Height = 539
       Align = alClient
       TabOrder = 1
       object pagesTables: TPageControl
         Left = 1
         Top = 1
         Width = 810
-        Height = 594
+        Height = 537
         ActivePage = tabAvto
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -1805,7 +1801,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 802
-            Height = 549
+            Height = 492
             Align = alClient
             DataSource = DataSource1
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
