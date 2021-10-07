@@ -307,6 +307,8 @@ type
     Modemscomment: TMemoField;
     ModemsuseInMonitoring: TSmallintField;
     ModemsLastGPSDateTime: TDateTimeField;
+    btnApplyMacAclEx: TButton;
+    btnDelMacAclEx: TButton;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -1422,7 +1424,14 @@ begin
   MacAclList.Clear;
   MacAclList.Add('@ECHO OFF');
   Query.Close;
-  Query.SQL.Text := 'select m.ip_address, eq.name from modems as m LEFT JOIN equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by m.ip_address';
+  //выбираем все базовые станции (или ap-repeater-ы)
+  Query.SQL.Text := 'select m.ip_address, eq.name from modems as m LEFT JOIN equipment eq on m.id_equipment = eq.id ';
+  if (Sender as TButton).Name = 'btnDelMacAclEx' then
+    Query.SQL.Text := Query.SQL.Text + 'where eq.equipment_type <> 3 and m.is_ap_repeater=1 order by m.ip_address'
+  else
+    Query.SQL.Text := Query.SQL.Text + 'where eq.equipment_type = 3 order by m.ip_address';
+
+
   try
     Query.Open;
     while not Query.Eof do
@@ -3040,6 +3049,8 @@ begin
   Button16.Visible := not Button16.Visible;
   Button17.Visible := not Button17.Visible;
   Button23.Visible := not Button23.Visible;
+  btnApplyMacAclEx.Visible := not btnApplyMacAclEx.Visible;
+  btnDelMacAclEx.Visible := not btnDelMacAclEx.Visible;
 end;
 
 procedure TForm1.loadavg1minute1Click(Sender: TObject);
@@ -3336,7 +3347,8 @@ begin
   Query.Close;
   Query.SQL.Text := 'SELECT distinct mac_address, id_modem, name  FROM modems '+
     'WHERE (mac_address is not Null) and (mac_address <> ' + QuotedStr('00:00:00:00:00:00') + ') and (mac_address <> '+
-    QuotedStr('') + ')' + ' order by name';
+    QuotedStr('') + ')';
+  Query.SQL.Text := Query.SQL.Text + ' order by name';
   try
     Query.Open;
     count_acl := 1;
@@ -3377,7 +3389,14 @@ begin
   MacAclList.Clear;
   MacAclList.Add('@ECHO OFF');
   Query.Close;
-  Query.SQL.Text := 'select m.ip_address, eq.name from modems as m LEFT JOIN equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by m.ip_address';
+  //выбираем все базовые станции (или ap-repeater-ы)
+  Query.SQL.Text := 'select m.ip_address, eq.name from modems as m LEFT JOIN equipment eq on m.id_equipment = eq.id ';
+  if (Sender as TButton).Name = 'btnApplyMacAclEx' then
+    Query.SQL.Text := Query.SQL.Text + 'where eq.equipment_type <> 3 and m.is_ap_repeater=1 order by m.ip_address'
+  else
+    Query.SQL.Text := Query.SQL.Text + 'where eq.equipment_type = 3 order by m.ip_address';
+
+
   try
     Query.Open;
     while not Query.Eof do

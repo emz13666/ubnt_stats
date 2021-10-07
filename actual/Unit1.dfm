@@ -34,7 +34,6 @@ object Form1: TForm1
     Height = 190
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 544
     object Chart1: TChart
       Left = 1
       Top = 33
@@ -436,7 +435,6 @@ object Form1: TForm1
     Height = 598
     Align = alClient
     TabOrder = 1
-    ExplicitHeight = 541
     object Splitter3: TSplitter
       Left = 813
       Top = 1
@@ -452,7 +450,6 @@ object Form1: TForm1
       Height = 596
       Align = alRight
       TabOrder = 0
-      ExplicitHeight = 539
       object PageControl1: TPageControl
         Left = 1
         Top = 1
@@ -461,16 +458,14 @@ object Form1: TForm1
         ActivePage = TabSheet4
         Align = alClient
         TabOrder = 0
-        ExplicitHeight = 537
         object TabSheet1: TTabSheet
           Caption = '1'
-          ExplicitHeight = 509
           object MonthCalendar1: TMonthCalendar
             Left = 0
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.469429016200000000
+            Date = 41178.577514988430000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -737,7 +732,6 @@ object Form1: TForm1
         object TabSheet2: TTabSheet
           Caption = '2'
           ImageIndex = 1
-          ExplicitHeight = 509
           object RadioGroup1: TRadioGroup
             Left = 8
             Top = 32
@@ -1019,10 +1013,30 @@ object Form1: TForm1
           object Button23: TButton
             Left = 136
             Top = 488
-            Width = 96
+            Width = 105
             Height = 25
             Caption = 'Delete MAC ACL'
             TabOrder = 22
+            Visible = False
+            OnClick = Button23Click
+          end
+          object btnApplyMacAclEx: TButton
+            Left = 16
+            Top = 519
+            Width = 105
+            Height = 25
+            Caption = 'Apply MAC ACL EX'
+            TabOrder = 23
+            Visible = False
+            OnClick = Button17Click
+          end
+          object btnDelMacAclEx: TButton
+            Left = 136
+            Top = 519
+            Width = 105
+            Height = 25
+            Caption = 'Delete MAC ACL EX'
+            TabOrder = 24
             Visible = False
             OnClick = Button23Click
           end
@@ -1030,7 +1044,6 @@ object Form1: TForm1
         object TabSheet3: TTabSheet
           Caption = 'log and setup'
           ImageIndex = 2
-          ExplicitHeight = 509
           object ToolTipsDBGrid2: TDBGrid
             Left = 0
             Top = 0
@@ -1192,7 +1205,6 @@ object Form1: TForm1
           Caption = 'ReleaseNotes'
           ImageIndex = 3
           OnShow = TabSheet4Show
-          ExplicitHeight = 509
           object Memo1: TMemo
             Left = 0
             Top = 0
@@ -1751,11 +1763,14 @@ object Form1: TForm1
               'Version 1.1.22.4'
               #1048#1089#1087#1088#1072#1074#1080#1083' '#1087#1086#1089#1090#1088#1086#1077#1085#1080#1077' '#1075#1088#1072#1092#1080#1082#1072' '#39#1053#1072#1075#1088#1091#1079#1082#1072' '#1041#1057#39' '#1080' '
               #1075#1088#1072#1092#1080#1082' '#1091#1088#1086#1074#1085#1103' '#1089#1080#1075#1085#1072#1083#1072' '#1074#1089#1077#1093' '#1082#1083#1080#1077#1085#1090#1086#1074' '#1087#1086' '#1073#1072#1079#1086#1074#1086#1081' '
-              #1089#1090#1072#1085#1094#1080#1080)
+              #1089#1090#1072#1085#1094#1080#1080
+              ''
+              'Version 1.1.22.5'
+              #1044#1086#1073#1072#1074#1080#1083' 2 '#1089#1082#1099#1090#1099#1093' '#1082#1085#1086#1087#1082#1080' '#1076#1083#1103' '#1091#1087#1088#1072#1074#1083#1077#1085#1080#1103' MAC ACL '
+              #1088#1077#1087#1080#1090#1077#1088#1086#1074)
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
-            ExplicitLeft = -2
           end
         end
       end
@@ -1767,7 +1782,6 @@ object Form1: TForm1
       Height = 596
       Align = alClient
       TabOrder = 1
-      ExplicitHeight = 539
       object pagesTables: TPageControl
         Left = 1
         Top = 1
@@ -1784,11 +1798,9 @@ object Form1: TForm1
         ParentFont = False
         TabHeight = 35
         TabOrder = 0
-        ExplicitHeight = 537
         object tabAvto: TTabSheet
           Caption = #1040#1074#1090#1086#1089#1072#1084#1086#1089#1074#1072#1083#1099
           OnShow = tabAvtoShow
-          ExplicitHeight = 492
           object ToolTipsDBGrid1: TDBGrid
             Left = 0
             Top = 0
@@ -1897,19 +1909,16 @@ object Form1: TForm1
           Caption = #1069#1082#1089#1082#1072#1074#1072#1090#1086#1088#1099
           ImageIndex = 1
           OnShow = tabExShow
-          ExplicitHeight = 492
         end
         object tabBur: TTabSheet
           Caption = #1041#1091#1088#1089#1090#1072#1085#1082#1080' '#1080' '#1057#1047#1052
           ImageIndex = 2
           OnShow = tabBurShow
-          ExplicitHeight = 492
         end
         object tabBase: TTabSheet
           Caption = #1041#1072#1079#1086#1074#1099#1077' '#1089#1090#1072#1085#1094#1080#1080
           ImageIndex = 3
           OnShow = tabBaseShow
-          ExplicitHeight = 492
         end
       end
     end
