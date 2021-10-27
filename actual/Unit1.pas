@@ -308,6 +308,7 @@ type
     ModemsLastGPSDateTime: TDateTimeField;
     btnApplyMacAclEx: TButton;
     btnDelMacAclEx: TButton;
+    chkAP: TCheckBox;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -401,6 +402,7 @@ type
     procedure Button23Click(Sender: TObject);
     procedure chartRSRPClick(Sender: TObject);
     procedure menuChartPingClick(Sender: TObject);
+    procedure chkAPClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -476,7 +478,7 @@ uses Unit3, MapSettings, MapFail;
 function FindStatus(fDateTime: TDateTime; fQueryStatus: TADOQuery): Integer;
 begin
   Result := 0;
-  if Form1.Modemsis_access_point.AsInteger=1 then Result:=2
+  if Form1.Modemsequipment_type.AsInteger=3 then Result:=2
   else begin
    //Ищем, какой статус у оборудования в момент времени tmpDateTime
    while (fDateTime > fQueryStatus.FieldByName('datetimeend').AsDateTime) and (not fQueryStatus.Eof) do fQueryStatus.Next;
@@ -659,7 +661,7 @@ begin
   ToolTipsDBGrid1.Parent := tabAvto;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 1 order by m.name';
+  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 1 order by eq.name';
   try
     Modems.Open;
   except
@@ -704,7 +706,7 @@ begin
   ToolTipsDBGrid1.Parent := tabBase;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by m.name';
+  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by eq.name';
   try
     Modems.Open;
   except
@@ -753,7 +755,7 @@ begin
   ToolTipsDBGrid1.Parent := tabBur;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type=5 or eq.equipment_type=6 order by m.name';
+  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type=5 or eq.equipment_type=6 order by eq.name';
   try
     Modems.Open;
   except
@@ -802,7 +804,7 @@ begin
   ToolTipsDBGrid1.Parent := tabEx;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by m.name';
+  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by eq.name';
   try
     Modems.Open;
   except
@@ -1022,9 +1024,8 @@ begin
     ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
 
 
-  if Modemsis_access_point.AsInteger=0 then
-      Query.SQL.Text := sql_query1 + GetSQLWhereDateTime('st.datetime') + sql_query3ap
-  else
+  Query.SQL.Text := sql_query1 + GetSQLWhereDateTime('st.datetime') + sql_query3ap;
+  if Modemsequipment_type.AsInteger=3 then
       Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime('st.datetime') +sql_query3ap;
 
 (* Забыл, зачем это
@@ -1034,7 +1035,7 @@ begin
 
   try
     Query.Open;
-    if Modemsis_access_point.AsInteger=0 then Query_2.Open;
+    if Modemsequipment_type.AsInteger<>3 then Query_2.Open;
 
   except
     DBConnection.Close;
@@ -1046,7 +1047,7 @@ begin
   ProgressBar1.Position := 0;
   ProgressBar1.Max := Query.RecordCount;
   Query.First;
-  if Modemsis_access_point.AsInteger=0 then Query_2.First;
+  if Modemsequipment_type.AsInteger<>3 then Query_2.First;
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
   Chart1.Series[3].Clear;
@@ -1119,6 +1120,9 @@ begin
         if a_status<1 then clr:=clWebAliceBlue;
         if a_status=2 then begin
            clr:=Query.FieldByName('color').AsInteger;
+           //если это точка доступа на мобильном оборудовании - то цвет  какой-нибудь яркий
+           if (Modemsis_access_point.AsInteger = 1)and(Modemsequipment_type.AsInteger<>3) then
+             clr := RGB(232, 26, 163);
            inc(successPing);
            sumAvg:=sumAvg+(Query.FieldByName('signal_level').AsInteger-256);
         end;
@@ -1439,9 +1443,9 @@ begin
   //выбираем все базовые станции (или ap-repeater-ы)
   Query.SQL.Text := 'select m.ip_address, eq.name from modems as m LEFT JOIN equipment eq on m.id_equipment = eq.id ';
   if (Sender as TButton).Name = 'btnDelMacAclEx' then
-    Query.SQL.Text := Query.SQL.Text + 'where eq.equipment_type <> 3 and m.is_ap_repeater=1 order by m.ip_address'
+    Query.SQL.Text := Query.SQL.Text + 'where eq.equipment_type <> 3 and m.is_ap_repeater=1 order by eq.name'
   else
-    Query.SQL.Text := Query.SQL.Text + 'where eq.equipment_type = 3 order by m.ip_address';
+    Query.SQL.Text := Query.SQL.Text + 'where eq.equipment_type = 3 order by eq.name';
 
 
   try
@@ -1562,7 +1566,7 @@ procedure TForm1.Chart1ClickSeries(Sender: TCustomChart;
 var
   pt:TPoint;
 begin
- if (Series.Name<>Series1.Name)and(Series.Name <> Chart1.Series[3].Name) then begin
+ if (Series.Name<>Series1.Name)and(Series.Name<>Chart1.Series[3].Name) then begin
       Chart1.Hint:='Здесь нельзя щелкать. Ха ха ха';
       if button<>mbLeft then Chart1ClickSeries(sender,series,valueindex,mbLeft,shift,x,y);
       exit;
@@ -1570,7 +1574,8 @@ begin
 
  // Если щелкнули правой кнопкой, то отрисовать местоположение для точки
  if (Button=mbRight)and (not flagWLANConnections) then begin
-    ShowPointPosition(valueindex-2);//здесь нужно valueindex-2, потому что первые 2 точки рисуются для масштабирования графика по оси х
+    if Series.Name<>Chart1.Series[3].Name then
+      ShowPointPosition(valueindex-2);//здесь нужно valueindex-2, потому что первые 2 точки рисуются для масштабирования графика по оси х
     exit;
  end;
  if not flagWLANConnections then   //если график - не WLANConnections для БС
@@ -1595,7 +1600,8 @@ end;
 procedure TForm1.checkAP_RepeaterClick(Sender: TObject);
 var a_chk_is_ap_rep: byte; BoookMark: pointer;
 begin
-  if Modemsis_access_point.AsInteger=1  then exit;
+
+  if Modemsequipment_type.AsInteger=3  then exit;
 
   a_chk_is_ap_rep := 0;
   if checkAP_Repeater.Checked then a_chk_is_ap_rep := 1;
@@ -2039,6 +2045,28 @@ end;
 procedure TForm1.CheckBox4Click(Sender: TObject);
 begin
  Timer1.Enabled :=   CheckBox4.Checked;
+end;
+
+procedure TForm1.chkAPClick(Sender: TObject);
+var a_chk_is_ap: byte; BoookMark: pointer;
+begin
+  if Modems.FieldByName('equipment_type').AsInteger=3  then begin
+    chkAP.Checked := true;
+    exit;
+  end;
+
+  a_chk_is_ap := 0;
+  if chkAP.Checked then a_chk_is_ap := 1;
+  Query_3.Close;
+  Query_3.SQL.Text := 'Update modems set is_access_point='+IntToStr(a_chk_is_ap)+
+    ' where id_modem='+Modemsid_modem.AsString;
+  Query_3.ExecSQL;
+  Query_3.Close;
+  BoookMark := Modems.GetBookmark;
+  Modems.Close;
+  Modems.Open;
+  Modems.GotoBookmark(BoookMark);
+  Modems.FreeBookmark(BoookMark);
 end;
 
 procedure TForm1.Create_Process(FName, FTitle: string);
@@ -3326,6 +3354,10 @@ begin
   checkAP_Repeater.Checked := Modemsis_ap_repeater.AsInteger = 1;
   cbAP_Repeater.Text := Modemsmac_wds_peer.AsString;
   checkAP_Repeater.OnClick := checkAP_RepeaterClick;
+
+  chkAP.OnClick := nil;
+  chkAP.Checked := Modemsis_access_point.AsInteger = 1;
+  chkAP.OnClick := chkAPClick;
 end;
 
 procedure TForm1.ModemsBeforeClose(DataSet: TDataSet);
