@@ -248,7 +248,7 @@ type
     Label18: TLabel;
     G1: TMenuItem;
     BulletSSH1: TMenuItem;
-    Button22: TButton;
+    btnChangeBullet: TButton;
     btnGetOffBullet: TButton;
     btnBulletInstall: TButton;
     Button23: TButton;
@@ -257,10 +257,22 @@ type
     chartRSRQ: TMenuItem;
     chartSINR: TMenuItem;
     menuChartPing: TMenuItem;
+    btnApplyMacAclEx: TButton;
+    btnDelMacAclEx: TButton;
+    chkAP: TCheckBox;
+    Modemsid: TLargeintField;
+    Modemsname: TStringField;
+    Modemsequipment_type: TIntegerField;
+    Modemsip_address: TStringField;
+    Modemsip_pc: TStringField;
+    Modemsip_alias: TStringField;
+    Modemscomment: TMemoField;
+    ModemsuseInMonitoring: TSmallintField;
+    ModemsLastGPSDateTime: TDateTimeField;
     Modemsid_modem: TLargeintField;
     Modemsis_access_point: TSmallintField;
-    Modemsname: TStringField;
-    Modemsip_address: TStringField;
+    Modemsname_1: TStringField;
+    Modemsip_address_1: TStringField;
     Modemsmac_address: TStringField;
     Modemsplace_install: TStringField;
     Modemspower: TSmallintField;
@@ -274,15 +286,14 @@ type
     Modemsid_ptx: TLargeintField;
     Modemsid_modem_1: TLargeintField;
     Modemsserial: TStringField;
-    Modemsip_address_1: TStringField;
+    Modemsip_address_2: TStringField;
     Modemsos_ver: TStringField;
     Modemsdispatch_ver: TStringField;
     Modemsoem_driver_ver: TStringField;
     Modemsprim_1: TStringField;
     Modemsmac_address_1: TStringField;
     Modemsid_equipment_1: TLargeintField;
-    Modemsid: TLargeintField;
-    Modemsname_1: TStringField;
+    Modemsname_2: TStringField;
     Modemsip_lte: TStringField;
     Modemsip_vpn: TStringField;
     Modemsmac_eth01: TStringField;
@@ -297,18 +308,6 @@ type
     Modemsimei_modem: TStringField;
     Modemsmodel_modem: TStringField;
     Modemsprim_2: TStringField;
-    Modemsid_1: TLargeintField;
-    Modemsname_2: TStringField;
-    Modemsequipment_type: TIntegerField;
-    Modemsip_address_2: TStringField;
-    Modemsip_pc: TStringField;
-    Modemsip_alias: TStringField;
-    Modemscomment: TMemoField;
-    ModemsuseInMonitoring: TSmallintField;
-    ModemsLastGPSDateTime: TDateTimeField;
-    btnApplyMacAclEx: TButton;
-    btnDelMacAclEx: TButton;
-    chkAP: TCheckBox;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -403,6 +402,7 @@ type
     procedure chartRSRPClick(Sender: TObject);
     procedure menuChartPingClick(Sender: TObject);
     procedure chkAPClick(Sender: TObject);
+    procedure btnChangeBulletClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -661,7 +661,8 @@ begin
   ToolTipsDBGrid1.Parent := tabAvto;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 1 order by eq.name';
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON m.id_equipment=lte.id_equipment where e.equipment_type = 1 and e.useInMonitoring=1 order by e.name';
+//  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 1 order by eq.name';
   try
     Modems.Open;
   except
@@ -706,7 +707,8 @@ begin
   ToolTipsDBGrid1.Parent := tabBase;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by eq.name';
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON m.id_equipment=lte.id_equipment where e.equipment_type = 3 and e.useInMonitoring=1 order by e.name';
+//  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by eq.name';
   try
     Modems.Open;
   except
@@ -755,7 +757,8 @@ begin
   ToolTipsDBGrid1.Parent := tabBur;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type=5 or eq.equipment_type=6 order by eq.name';
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON m.id_equipment=lte.id_equipment where (e.equipment_type=5 or e.equipment_type=6) and e.useInMonitoring=1 order by e.name';
+//  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type=5 or eq.equipment_type=6 order by eq.name';
   try
     Modems.Open;
   except
@@ -804,7 +807,9 @@ begin
   ToolTipsDBGrid1.Parent := tabEx;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by eq.name';
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment where e.equipment_type = 2 and e.useInMonitoring=1 order by e.name';
+//  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by eq.name';
+
   try
     Modems.Open;
   except
@@ -1401,6 +1406,43 @@ end;
 ProgressBar1.Position := 0;
 temp_memo.Free;
 ShowMessage('Отчёт сохранен в файле '+ExtractFilePath(Application.ExeName)+ 'temp_report_bur.txt');
+end;
+
+procedure TForm1.btnChangeBulletClick(Sender: TObject);
+begin
+  if (Modemsname.AsString='A500')or(Modemsname.AsString='A501')or(Modemsname.AsString='EX500') then
+    ShowMessage('Текущий - виртуальный самосвал/экскаватор. Выберите другой.')
+  else
+      if Modemsid_modem.AsInteger=0 then begin
+        if (sender as TComponent).Name <> 'btnBulletInstall' then
+          ShowMessage('Это оборудование без Bullet. Можно только установить Bullet.')
+        else
+        begin
+          //нажали "установка Bullet"
+          faction := 2;
+          fTypeEquipment := 2;
+          frmChangePTX := TfrmChangePTX.Create(Application);
+          frmChangePTX.ShowModal;
+        end;
+      end
+      else
+      begin
+        if (sender as TComponent).Name = 'btnGetOffBullet' then
+        begin
+          //снятие Bullet
+          faction := 3;
+          fTypeEquipment := 2;
+          frmChangePTX := TfrmChangePTX.Create(Application);
+          frmChangePTX.ShowModal;
+        end
+        else begin
+          //замена Bullet
+          faction := 1;
+          fTypeEquipment := 2;
+          frmChangePTX := TfrmChangePTX.Create(Application);
+          frmChangePTX.ShowModal;
+        end;
+      end;
 end;
 
 procedure TForm1.Button23Click(Sender: TObject);
@@ -4417,21 +4459,18 @@ end;
 
 procedure TForm1.btnChangePTXClick(Sender: TObject);
 begin
-  if Modemsname_2.AsString='A500' then
-    ShowMessage('Текущий - виртуальный самосвал. Выберите другой.')
+  if (Modemsname.AsString='A500')or(Modemsname.AsString='A501')or(Modemsname.AsString='EX500') then
+    ShowMessage('Текущий - виртуальный самосвал/экскаватор. Выберите другой.')
   else
-    if Modemsid_modem.AsInteger=0 then begin
-      ShowMessage('Нельзя заменить/снять/установить резервный РТХ.')
-    end
-    else
       if Modemsid_ptx.AsInteger=0 then begin
         if (sender as TComponent).Name <> 'btnInstallPTX' then
           ShowMessage('Это оборудование без РТХ. Можно только установить РТХ.')
         else
         begin
           //нажали "установка ртх"
-          faction := 2;
           frmChangePTX := TfrmChangePTX.Create(Application);
+          faction := 2;
+          fTypeEquipment := 1;
           frmChangePTX.ShowModal;
         end;
       end
@@ -4440,14 +4479,16 @@ begin
         if (sender as TComponent).Name = 'btnUninstallPTX' then
         begin
           //снятие РТХ
-          faction := 3;
           frmChangePTX := TfrmChangePTX.Create(Application);
+          faction := 3;
+          fTypeEquipment := 1;
           frmChangePTX.ShowModal;
         end
         else begin
           //замена РТХ
-          faction := 1;
           frmChangePTX := TfrmChangePTX.Create(Application);
+          faction := 1;
+          fTypeEquipment := 1;
           frmChangePTX.ShowModal;
         end;
       end;

@@ -34,7 +34,6 @@ object Form1: TForm1
     Height = 190
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 544
     object Chart1: TChart
       Left = 1
       Top = 33
@@ -436,7 +435,6 @@ object Form1: TForm1
     Height = 617
     Align = alClient
     TabOrder = 1
-    ExplicitHeight = 541
     object Splitter3: TSplitter
       Left = 813
       Top = 1
@@ -452,7 +450,6 @@ object Form1: TForm1
       Height = 615
       Align = alRight
       TabOrder = 0
-      ExplicitHeight = 539
       object PageControl1: TPageControl
         Left = 1
         Top = 1
@@ -461,16 +458,14 @@ object Form1: TForm1
         ActivePage = TabSheet4
         Align = alClient
         TabOrder = 0
-        ExplicitHeight = 537
         object TabSheet1: TTabSheet
           Caption = '1'
-          ExplicitHeight = 509
           object MonthCalendar1: TMonthCalendar
             Left = 0
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.902929097220000000
+            Date = 41178.470621770830000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -737,7 +732,6 @@ object Form1: TForm1
         object TabSheet2: TTabSheet
           Caption = '2'
           ImageIndex = 1
-          ExplicitHeight = 509
           object RadioGroup1: TRadioGroup
             Left = 8
             Top = 49
@@ -982,13 +976,14 @@ object Form1: TForm1
             TabOrder = 17
             OnClick = Button21Click
           end
-          object Button22: TButton
+          object btnChangeBullet: TButton
             Left = 128
             Top = 194
             Width = 105
             Height = 25
             Caption = #1047#1072#1084#1077#1085#1080#1090#1100' Bullet'
             TabOrder = 18
+            OnClick = btnChangeBulletClick
           end
           object btnGetOffBullet: TButton
             Left = 128
@@ -997,6 +992,7 @@ object Form1: TForm1
             Height = 25
             Caption = #1057#1085#1103#1090#1100' Bullet'
             TabOrder = 19
+            OnClick = btnChangeBulletClick
           end
           object btnBulletInstall: TButton
             Left = 128
@@ -1005,6 +1001,7 @@ object Form1: TForm1
             Height = 25
             Caption = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' Bullet'
             TabOrder = 20
+            OnClick = btnChangeBulletClick
           end
           object Button23: TButton
             Left = 136
@@ -1049,7 +1046,6 @@ object Form1: TForm1
         object TabSheet3: TTabSheet
           Caption = 'log and setup'
           ImageIndex = 2
-          ExplicitHeight = 509
           object ToolTipsDBGrid2: TDBGrid
             Left = 0
             Top = 0
@@ -1211,7 +1207,6 @@ object Form1: TForm1
           Caption = 'ReleaseNotes'
           ImageIndex = 3
           OnShow = TabSheet4Show
-          ExplicitHeight = 509
           object Memo1: TMemo
             Left = 0
             Top = 0
@@ -1798,11 +1793,20 @@ object Form1: TForm1
               #1048#1089#1087#1088#1072#1074#1080#1083' '#1087#1086#1089#1090#1088#1086#1077#1085#1080#1077' '#1075#1088#1072#1092#1080#1082#1072' '#1076#1083#1103' '#1084#1086#1073#1080#1083#1100#1085#1099#1093' '
               #1086#1073#1098#1077#1082#1090#1086#1074' '#1074' '#1088#1077#1078#1080#1084#1077' Access point'
               #1048#1089#1087#1088#1072#1074#1080#1083' '#1086#1096#1080#1073#1082#1091', '#1074#1086#1079#1085#1080#1082#1072#1102#1097#1091#1102' '#1087#1088#1080' '#1087#1088#1072#1074#1086#1084' '#1082#1083#1080#1082#1077' '
-              #1085#1072' '#1075#1088#1072#1092#1080#1082#1077' ping')
+              #1085#1072' '#1075#1088#1072#1092#1080#1082#1077' ping'
+              ''
+              '17.11.2021'
+              'Version 1.1.23.0'
+              #1055#1077#1088#1077#1076#1077#1083#1072#1083' '#1079#1072#1087#1088#1086#1089#1099' '#1076#1083#1103' '#1086#1090#1086#1073#1088#1072#1078#1077#1085#1080#1103' '#1090#1072#1073#1083#1080#1094' '
+              '('#1088#1072#1085#1100#1096#1077' '#1075#1083#1072#1074#1085#1072#1103' '#1090#1072#1073#1083#1080#1094#1072' '#1073#1099#1083#1072' modems, '#1090#1077#1087#1077#1088#1100' - '
+              'equipment)'
+              #1057#1076#1077#1083#1072#1083' '#1082#1085#1086#1087#1082#1080' '#1076#1083#1103' '#1089#1085#1103#1090#1080#1103'/'#1079#1072#1084#1077#1085#1099'/'#1091#1089#1090#1072#1085#1086#1074#1082#1080' bullet '
+              #1080' '#1090#1072#1082#1086#1081' '#1078#1077' '#1092#1091#1085#1082#1094#1080#1086#1085#1072#1083'  '#1076#1083#1103' LTE-'#1084#1086#1076#1077#1084#1086#1074
+              #1044#1086#1073#1072#1074#1080#1083' '#1077#1097#1105' 2 '#1090#1072#1073#1083#1080#1094#1099' '#1074' '#1041#1044': lte_history '#1080' '
+              'bullet_history.')
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
-            ExplicitHeight = 509
           end
         end
       end
@@ -1814,7 +1818,6 @@ object Form1: TForm1
       Height = 615
       Align = alClient
       TabOrder = 1
-      ExplicitHeight = 539
       object pagesTables: TPageControl
         Left = 1
         Top = 1
@@ -1831,11 +1834,9 @@ object Form1: TForm1
         ParentFont = False
         TabHeight = 35
         TabOrder = 0
-        ExplicitHeight = 537
         object tabAvto: TTabSheet
           Caption = #1040#1074#1090#1086#1089#1072#1084#1086#1089#1074#1072#1083#1099
           OnShow = tabAvtoShow
-          ExplicitHeight = 492
           object ToolTipsDBGrid1: TDBGrid
             Left = 0
             Top = 0
@@ -1858,7 +1859,7 @@ object Form1: TForm1
             Columns = <
               item
                 Expanded = False
-                FieldName = 'name_2'
+                FieldName = 'name'
                 Title.Caption = #1048#1084#1103
                 Width = 84
                 Visible = True
@@ -1886,7 +1887,7 @@ object Form1: TForm1
               end
               item
                 Expanded = False
-                FieldName = 'ip_address_1'
+                FieldName = 'ip_pc'
                 Title.Caption = 'IP PTX'
                 Visible = True
               end
@@ -1905,7 +1906,7 @@ object Form1: TForm1
               end
               item
                 Expanded = False
-                FieldName = 'name_1'
+                FieldName = 'name_2'
                 Title.Caption = #1048#1084#1103' LTE'
                 Width = 85
                 Visible = True
@@ -1944,19 +1945,16 @@ object Form1: TForm1
           Caption = #1069#1082#1089#1082#1072#1074#1072#1090#1086#1088#1099
           ImageIndex = 1
           OnShow = tabExShow
-          ExplicitHeight = 492
         end
         object tabBur: TTabSheet
           Caption = #1041#1091#1088#1089#1090#1072#1085#1082#1080' '#1080' '#1057#1047#1052
           ImageIndex = 2
           OnShow = tabBurShow
-          ExplicitHeight = 492
         end
         object tabBase: TTabSheet
           Caption = #1041#1072#1079#1086#1074#1099#1077' '#1089#1090#1072#1085#1094#1080#1080
           ImageIndex = 3
           OnShow = tabBaseShow
-          ExplicitHeight = 492
         end
       end
     end
@@ -2308,24 +2306,56 @@ object Form1: TForm1
     Parameters = <>
     SQL.Strings = (
       
-        'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_' +
-        'modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join' +
-        ' equipment eq on m.id_equipment = eq.id  where eq.equipment_type' +
-        ' = 1 order by m.name')
+        'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipm' +
+        'ent LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON m.id' +
+        '_equipment=lte.id_equipment where e.equipment_type = 1 and e.use' +
+        'InMonitoring=1 order by e.name')
     Left = 232
     Top = 304
+    object Modemsid: TLargeintField
+      FieldName = 'id'
+    end
+    object Modemsname: TStringField
+      FieldName = 'name'
+      Size = 50
+    end
+    object Modemsequipment_type: TIntegerField
+      FieldName = 'equipment_type'
+    end
+    object Modemsip_address: TStringField
+      FieldName = 'ip_address'
+      Size = 50
+    end
+    object Modemsip_pc: TStringField
+      FieldName = 'ip_pc'
+      Size = 50
+    end
+    object Modemsip_alias: TStringField
+      FieldName = 'ip_alias'
+      Size = 15
+    end
+    object Modemscomment: TMemoField
+      FieldName = 'comment'
+      BlobType = ftMemo
+    end
+    object ModemsuseInMonitoring: TSmallintField
+      FieldName = 'useInMonitoring'
+    end
+    object ModemsLastGPSDateTime: TDateTimeField
+      FieldName = 'LastGPSDateTime'
+    end
     object Modemsid_modem: TLargeintField
       FieldName = 'id_modem'
     end
     object Modemsis_access_point: TSmallintField
       FieldName = 'is_access_point'
     end
-    object Modemsname: TStringField
-      FieldName = 'name'
+    object Modemsname_1: TStringField
+      FieldName = 'name_1'
       Size = 50
     end
-    object Modemsip_address: TStringField
-      FieldName = 'ip_address'
+    object Modemsip_address_1: TStringField
+      FieldName = 'ip_address_1'
       Size = 50
     end
     object Modemsmac_address: TStringField
@@ -2373,8 +2403,8 @@ object Form1: TForm1
     object Modemsserial: TStringField
       FieldName = 'serial'
     end
-    object Modemsip_address_1: TStringField
-      FieldName = 'ip_address_1'
+    object Modemsip_address_2: TStringField
+      FieldName = 'ip_address_2'
       Size = 15
     end
     object Modemsos_ver: TStringField
@@ -2399,11 +2429,8 @@ object Form1: TForm1
     object Modemsid_equipment_1: TLargeintField
       FieldName = 'id_equipment_1'
     end
-    object Modemsid: TLargeintField
-      FieldName = 'id'
-    end
-    object Modemsname_1: TStringField
-      FieldName = 'name_1'
+    object Modemsname_2: TStringField
+      FieldName = 'name_2'
       Size = 50
     end
     object Modemsip_lte: TStringField
@@ -2460,38 +2487,6 @@ object Form1: TForm1
     object Modemsprim_2: TStringField
       FieldName = 'prim_2'
       Size = 100
-    end
-    object Modemsid_1: TLargeintField
-      FieldName = 'id_1'
-    end
-    object Modemsname_2: TStringField
-      FieldName = 'name_2'
-      Size = 50
-    end
-    object Modemsequipment_type: TIntegerField
-      FieldName = 'equipment_type'
-    end
-    object Modemsip_address_2: TStringField
-      FieldName = 'ip_address_2'
-      Size = 50
-    end
-    object Modemsip_pc: TStringField
-      FieldName = 'ip_pc'
-      Size = 50
-    end
-    object Modemsip_alias: TStringField
-      FieldName = 'ip_alias'
-      Size = 15
-    end
-    object Modemscomment: TMemoField
-      FieldName = 'comment'
-      BlobType = ftMemo
-    end
-    object ModemsuseInMonitoring: TSmallintField
-      FieldName = 'useInMonitoring'
-    end
-    object ModemsLastGPSDateTime: TDateTimeField
-      FieldName = 'LastGPSDateTime'
     end
   end
   object modems_avg: TADOQuery
@@ -2693,8 +2688,8 @@ object Form1: TForm1
       'edtKoeffPingFromSymbols.Value'
       'Panel1.Height')
     StoredValues = <>
-    Left = 672
-    Top = 448
+    Left = 616
+    Top = 392
   end
   object sAlphaImageList1: TsAlphaImageList
     ColorDepth = cd32Bit
