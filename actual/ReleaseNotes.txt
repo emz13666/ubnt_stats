@@ -564,3 +564,8 @@ Version 1.1.23.0
 Добавил ещё 2 таблицы в БД: lte_history и bullet_history.
 В таблице lte переименовал поле id в поле id_lte
 В таблице ptx_history вместо 2 полей date и time сделал одно: datetime
+
+18.11.2021
+Version 1.1.23.1
+После изменения полей в Query не заменил 
+modemsname_2 на modemsname. Исправил.

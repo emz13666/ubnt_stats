@@ -1058,9 +1058,9 @@ begin
   Chart1.Series[3].Clear;
   Chart1.Title.Text.Clear;
   if Modemsis_access_point.AsInteger=1 then
-    Chart1.Title.Text.Add('График доступности по протоколу SNMP для '+Modemsname_2.Asstring)
+    Chart1.Title.Text.Add('График доступности по протоколу SNMP для '+Modemsname.Asstring)
   else
-    Chart1.Title.Text.Add('График изменения уровня сигнала wi-fi для '+Modemsname_2.Asstring);
+    Chart1.Title.Text.Add('График изменения уровня сигнала wi-fi для '+Modemsname.Asstring);
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
@@ -1584,7 +1584,7 @@ begin
  wnd1:=FindWindow(nil,PChar('10.70.121.3 - PuTTY'));
 
  if wnd1>0 then begin
-    Cmd1 := 'grep '+Modemsname_2.AsString+' /local/clientcode/lgk/opns/sh' + FormatDateTime('yymmdd',MonthCalendar1.Date);
+    Cmd1 := 'grep '+Modemsname.AsString+' /local/clientcode/lgk/opns/sh' + FormatDateTime('yymmdd',MonthCalendar1.Date);
     if (Sender as TMenuItem).Name = 'Tranzact_d' then cmd1 := cmd1 + 'd.transact'#13;
     if (Sender as TMenuItem).Name = 'Tranzact_n' then cmd1 := cmd1 + 'n.transact'#13;
     if (Sender as TMenuItem).Name = 'Tranzact_mon' then
@@ -1592,7 +1592,7 @@ begin
         cmd1 := 'watch '+ QuotedStr(cmd1 + 'n.transact|tail -15')+#13
       else
        if Time > StrToTime('19:30')  then
-        cmd1 := 'watch '+ QuotedStr('grep '+Modemsname_2.AsString+' /local/clientcode/lgk/opns/sh' +
+        cmd1 := 'watch '+ QuotedStr('grep '+Modemsname.AsString+' /local/clientcode/lgk/opns/sh' +
          FormatDateTime('yymmdd',MonthCalendar1.Date+1) + 'n.transact|tail -15')+#13
        else
         cmd1 := 'watch '+ QuotedStr(cmd1 + 'd.transact|tail -15')+#13;
@@ -2022,7 +2022,7 @@ begin
   begin
     if Length(Modemsmac_address.AsString) > 5 then
     begin
-      S.Add('wireless.1.mac_acl.'+IntToStr(counter)+'.comment='+Modemsname_2.AsString);
+      S.Add('wireless.1.mac_acl.'+IntToStr(counter)+'.comment='+Modemsname.AsString);
       S.Add('wireless.1.mac_acl.'+IntToStr(counter)+'.mac='+Modemsmac_address.AsString);
       S.Add('wireless.1.mac_acl.'+IntToStr(counter)+'.status=enabled');
       inc(counter);
@@ -2435,7 +2435,7 @@ begin
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
   Chart1.Title.Text.Clear;
-  Chart1.Title.Text.Add('График изменения количества клиентов на базовой станции '+Modemsname_2.Asstring);
+  Chart1.Title.Text.Add('График изменения количества клиентов на базовой станции '+Modemsname.Asstring);
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
@@ -3193,7 +3193,7 @@ begin
   Chart1.Series[3].Clear;
   Chart1.LeftAxis.Automatic:= true;
   Chart1.Title.Text.Clear;
-  Chart1.Title.Text.Add((Sender as TMenuItem).Caption+' (для '+Modemsname_2.Asstring+')');
+  Chart1.Title.Text.Add((Sender as TMenuItem).Caption+' (для '+Modemsname.Asstring+')');
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
@@ -3283,7 +3283,7 @@ begin
   Chart1.Series[2].Clear;
   Chart1.Series[3].Clear;
   Chart1.Title.Text.Clear;
-  Chart1.Title.Text.Add('График ping (по оси у - задежка в ms) - '+ Modemsname_2.AsString);
+  Chart1.Title.Text.Add('График ping (по оси у - задежка в ms) - '+ Modemsname.AsString);
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
@@ -3549,11 +3549,11 @@ begin
    begin
      if checkPing.Checked then
      begin
-       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname_2.AsString+' - bullet');
-       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_pc').AsString,Modemsname_2.AsString+' - PTX');
+       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString+' - bullet');
+       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_pc').AsString,Modemsname.AsString+' - PTX');
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname_2.AsString+' - LTE VPN');
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname_2.AsString+' - LTE SIM');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
        end;
      end
      else
@@ -3574,7 +3574,7 @@ begin
    if Modems.FieldByName('ip_address').AsString <>'' then
    begin
       if checkPing.Checked then
-        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname_2.AsString)
+        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString)
       else
         ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_address').AsString),nil,SW_restore)
    end
@@ -3587,13 +3587,13 @@ begin
    begin
     ip_addresss :=Modems.FieldByName('ip_address').AsString;
     if checkPing.Checked then begin
-      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,-1),Modemsname_2.AsString+' - Switch');
-      Create_Process('cmd.exe /K ping -t '+ip_addresss,Modemsname_2.AsString+' - BulletSt');
-      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,1),Modemsname_2.AsString+' - BulletAP');
-      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,2),Modemsname_2.AsString+' - Kobus');
+      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,-1),Modemsname.AsString+' - Switch');
+      Create_Process('cmd.exe /K ping -t '+ip_addresss,Modemsname.AsString+' - BulletSt');
+      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,1),Modemsname.AsString+' - BulletAP');
+      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,2),Modemsname.AsString+' - Kobus');
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname_2.AsString+' - LTE VPN');
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname_2.AsString+' - LTE SIM');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
        end;
 
     end
@@ -3617,7 +3617,7 @@ end;
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
 begin
   if  tabBur.Visible then
-   if copy(Modemsname_2.AsString, 1, 3) <> 'SZM'  then
+   if copy(Modemsname.AsString, 1, 3) <> 'SZM'  then
     begin
       G1.Visible := false;
       BulletSSH1.Visible := false;
@@ -3667,7 +3667,7 @@ var
  tmpDateTime: TDateTime;
 
 begin
-  if (Copy(Modemsname_2.AsString,1,1)<>'A')and(Copy(Modemsname_2.AsString,1,1)<>'E')then begin
+  if (Copy(Modemsname.AsString,1,1)<>'A')and(Copy(Modemsname.AsString,1,1)<>'E')then begin
     ShowMessage('Выберите авто или экскаватор');
     exit;
   end;
@@ -3678,7 +3678,7 @@ begin
   Chart1.Series[3].Clear;
   Chart1.LeftAxis.Automatic:= true;
   Chart1.Title.Text.Clear;
-  Chart1.Title.Text.Add('GPS ARRIVE для '+Modemsname_2.Asstring);
+  Chart1.Title.Text.Add('GPS ARRIVE для '+Modemsname.Asstring);
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
@@ -3697,10 +3697,10 @@ begin
    SSH := SSH_Client('10.70.121.3', 'lgktech', '20gtkasu');
    if SSH = nil then begin ShowMessage('SSH=nil');   Exit;end;
 
-  if Copy(Modemsname_2.AsString,1,1)='A' then begin
-     currentNumAutoOrExcav := StrToInt(Copy(Modemsname_2.AsString,2,length(Modemsname_2.AsString)-1));
+  if Copy(Modemsname.AsString,1,1)='A' then begin
+     currentNumAutoOrExcav := StrToInt(Copy(Modemsname.AsString,2,length(Modemsname.AsString)-1));
   end else begin
-     currentNumAutoOrExcav := StrToInt(Copy(Modemsname_2.AsString,3,length(Modemsname_2.AsString)-2));
+     currentNumAutoOrExcav := StrToInt(Copy(Modemsname.AsString,3,length(Modemsname.AsString)-2));
   end;
   Chart1.Series[0].AddXY(MonthCalendar1.Date,currentNumAutoOrExcav-1);
   Chart1.Series[0].AddXY(MonthCalendar1.Date,currentNumAutoOrExcav+1);
@@ -3723,8 +3723,8 @@ begin
   //Формируем запрос и посылаем серверу
   FillChar(Data,255,#0);
   DataString := 'cat /local/clientcode/lgk/opns/sh'+formatDateTime('yymmdd',MonthCalendar1.Date)+
-     'n.transact |grep "'+Modemsname_2.AsString+' .*GPS_ARR" ; cat /local/clientcode/lgk/opns/sh'+formatDateTime('yymmdd',MonthCalendar1.Date)+
-     'd.transact |grep "'+Modemsname_2.AsString+' .*GPS_ARR"'#13;
+     'n.transact |grep "'+Modemsname.AsString+' .*GPS_ARR" ; cat /local/clientcode/lgk/opns/sh'+formatDateTime('yymmdd',MonthCalendar1.Date)+
+     'd.transact |grep "'+Modemsname.AsString+' .*GPS_ARR"'#13;
   move(Datastring[1],Data,Length(DataString));
   LenData := length(DataString);
   SSH.PushData(addr(Data), LenData, BytePushed);
@@ -4013,7 +4013,7 @@ begin
  BytePoped := SSH.PopData(addr(Data), LenData);
  frmMEMO.Memo11.Lines.Add(Data);
  FillChar(Data,255,#0);
-   DataString := 'cat OMSsniff/'+formatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+'.sniff.eth0.raw | grep "'+Modemsname_2.AsString+'.*VEI"'#13;
+   DataString := 'cat OMSsniff/'+formatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+'.sniff.eth0.raw | grep "'+Modemsname.AsString+'.*VEI"'#13;
    frmMEMO.Memo11.Lines.Add(DataString);
    move(Datastring[1],Data,Length(DataString));
  LenData := length(DataString);
@@ -4068,7 +4068,7 @@ begin
   frmMEMO.Memo11.Lines.Clear;
   Application.ProcessMessages;
 
-  DataString := 'cat OMSsniff/'+formatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+'.sniff.eth0.raw | grep '+Modemsname_2.AsString+'.*VEI';
+  DataString := 'cat OMSsniff/'+formatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+'.sniff.eth0.raw | grep '+Modemsname.AsString+'.*VEI';
   File_name := ExtractFilePath(Application.ExeName)+'tmpVeiDump.txt';
   CommandString := '"c:\Program files (x86)\putty\plink.exe" -ssh  -pw "20gtkasu" lgktech@10.70.121.3 "'+ datastring +'" > "'+File_name+'"';
 
@@ -4280,7 +4280,7 @@ begin
      // коэффициент для х=978/4083, для y=631/2634
      kx:=img_width/(img_endx-img_startx);
      ky:=img_height/(img_endy-img_starty);
-     frmShowMap.Caption := 'Зона покрытия базовой станции '+Modemsname_2.AsString + ' за '+FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date);
+     frmShowMap.Caption := 'Зона покрытия базовой станции '+Modemsname.AsString + ' за '+FormatDateTime('dd.mm.yyyy',MonthCalendar1.Date);
      while not form1.Query.Eof do begin
            paintx:=round((form1.query.fieldByName('x').AsInteger-img_startx)*kx);
            // на плане карьера координатная ось у перевернута. Координаты идут снизу вверх
@@ -4365,7 +4365,7 @@ begin
   Chart1.Series[0].Clear;
   Chart1.Series[2].Clear;
   Chart1.Title.Text.Clear;
-  Chart1.Title.Text.Add('График среднего уровня сигнала wi-fi для всех клиентов '+Modemsname_2.Asstring);
+  Chart1.Title.Text.Add('График среднего уровня сигнала wi-fi для всех клиентов '+Modemsname.Asstring);
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
@@ -4534,7 +4534,7 @@ if not FileExists('c:\Program files (x86)\putty\putty.exe') then begin
  if Length(Lastwnd1)>0 then begin
   if LastEqip.Count>0 then
   begin
-   indx1 := LastEqip.IndexOf(Modemsname_2.AsString);
+   indx1 := LastEqip.IndexOf(Modemsname.AsString);
    if indx1>-1 then begin
     SendMessage(Lastwnd1[indx1],WM_DESTROY,0,0);
     LastEqip.Delete(indx1);
@@ -4549,27 +4549,27 @@ if not FileExists('c:\Program files (x86)\putty\putty.exe') then begin
  if wnd1>0 then begin
     SetLength(Lastwnd1,Length(Lastwnd1)+1);
     Lastwnd1[high(Lastwnd1)] := wnd1;
-    LastEqip.Add(Modemsname_2.AsString);
+    LastEqip.Add(Modemsname.AsString);
     cmd2:=(Sender as TMenuItem).Caption;
     cmd2 := StringReplace(cmd2, '&', '', [rfReplaceAll]);
-    Cmd1 := 'expect -c ''spawn OMStip '+Modemsname_2.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO"; '+
+    Cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO"; '+
      'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
      '{set flag "TRUCK"};if {$flag=="GSP"} {set timeout 600;send "exit\r"; expect ">" {send "'+
       cmd2+'\r";expect ">"}};if {$flag=="TRUCK"} {set timeout 600;send "'+cmd2+'\r"; expect ">"};interact'''#13;
 
     if ((Sender as TMenuItem).Name = ConnectCan1281.Name)or((Sender as TMenuItem).Name = ConnectCan1291.Name) then
     begin
-      Cmd1 := 'expect -c ''spawn OMStip '+Modemsname_2.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
+      Cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
      'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
      '{set flag "TRUCK"};if {$flag=="GSP"} {set timeout 600;send "exit\r"; expect ")>" {send "'+cmd2+'\r";expect ">"}};if {$flag=="TRUCK"} {send "'+
      cmd2+'\r"; expect ">"};interact'''#13;
     end;
     if (Sender as TMenuItem).Name = 'OMStip2' then
-      Cmd1 := 'expect -c ''spawn OMStip '+Modemsname_2.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
+      Cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
      'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
      '{set flag "TRUCK"};if {$flag=="GSP"} {set timeout 600;send "exit\r"; expect ">"};interact'''#13;
     if (Sender as TMenuItem).Name = 'rmdirHubGoicReset1' then begin
-      Cmd1 := 'expect -c ''spawn OMStip '+Modemsname_2.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
+      Cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
      'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
      '{set flag "TRUCK"};expect ")>" {set flag "TRUCK"};if {$flag=="GSP"} {'+
         'set timeout 600;send "exit\r"; expect ">" {set timeout 600;send "rmdir pfs\r";expect ">" {send "net/Hub/All\r"; expect ">" {send "net/Goic/All\r";'+
@@ -4578,7 +4578,7 @@ if not FileExists('c:\Program files (x86)\putty\putty.exe') then begin
       Ping1Click(sender);
     end;
     if (Sender as TMenuItem).Name = 'reset1' then begin
-      cmd1 := 'expect -c ''spawn OMStip '+Modemsname_2.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
+      cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
      'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
      '{set flag "TRUCK"};if {$flag=="GSP"} {set timeout 600;send "exit\r"; expect ">" {send "reset\r";expect ">"}};if {$flag=="TRUCK"} {send "reset\r"; expect ")>" };interact'''#13;
         Ping1Click(sender);
@@ -4646,7 +4646,7 @@ begin
  wnd1:=FindWindow(nil,PChar('10.70.121.3 - PuTTY'));
 
  if wnd1>0 then begin
-    Cmd1 := 'cat OMSsniff/' + FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+'.sniff.eth0.raw |grep '+Modemsname_2.AsString+':';
+    Cmd1 := 'cat OMSsniff/' + FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+'.sniff.eth0.raw |grep '+Modemsname.AsString+':';
     if (Sender as TMenuItem).Name = 'OMSsniffMenu' then cmd1 := cmd1 + #13;
     if (Sender as TMenuItem).Name = 'N9' then cmd1 := cmd1 + '|egrep -e  "VS-DATA.*1023475713"'#13;
     if (Sender as TMenuItem).Name = 'PressurePro1' then cmd1 := cmd1 + '|grep 8389'#13;
@@ -4661,7 +4661,7 @@ begin
     if (Sender as TMenuItem).Name = 'PTXPWRUP1' then cmd1 := cmd1 + '|grep PWRUP'#13;
     if (Sender as TMenuItem).Name = 'N10' then
           Cmd1 := 'watch '+QuotedStr('cat OMSsniff/' + FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date)+
-            '.sniff.eth0.raw |grep '+Modemsname_2.AsString+':|tail -15')+#13;
+            '.sniff.eth0.raw |grep '+Modemsname.AsString+':|tail -15')+#13;
     for i:=1 to Length(Cmd1) do
           SendMessage(wnd1,WM_CHAR,Ord(Cmd1[i]),0);
  end
@@ -4681,7 +4681,7 @@ var nameEQ:string;
     kx,ky:real;
     paintx,painty:integer;
 begin
-    nameEQ:=Modemsname_2.AsString;
+    nameEQ:=Modemsname.AsString;
     i:=pointindex;
     x:=CoordsModems[i].x;
     y:=CoordsModems[i].y;
