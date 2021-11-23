@@ -4468,9 +4468,9 @@ begin
         else
         begin
           //нажали "установка ртх"
-          frmChangePTX := TfrmChangePTX.Create(Application);
           faction := 2;
           fTypeEquipment := 1;
+          frmChangePTX := TfrmChangePTX.Create(Application);
           frmChangePTX.ShowModal;
         end;
       end
@@ -4479,16 +4479,16 @@ begin
         if (sender as TComponent).Name = 'btnUninstallPTX' then
         begin
           //снятие РТХ
-          frmChangePTX := TfrmChangePTX.Create(Application);
           faction := 3;
           fTypeEquipment := 1;
+          frmChangePTX := TfrmChangePTX.Create(Application);
           frmChangePTX.ShowModal;
         end
         else begin
           //замена РТХ
-          frmChangePTX := TfrmChangePTX.Create(Application);
           faction := 1;
           fTypeEquipment := 1;
+          frmChangePTX := TfrmChangePTX.Create(Application);
           frmChangePTX.ShowModal;
         end;
       end;

@@ -111,7 +111,7 @@ object frmChangePTX: TfrmChangePTX
     CursorType = ctStatic
     Parameters = <>
     SQL.Strings = (
-      'Select * from PTX where id_equipment is null')
+      'Select * from ptx where id_equipment is null')
     Left = 160
     Top = 120
   end
