@@ -661,7 +661,7 @@ begin
   ToolTipsDBGrid1.Parent := tabAvto;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON m.id_equipment=lte.id_equipment where e.equipment_type = 1 and e.useInMonitoring=1 order by e.name';
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON e.id=lte.id_equipment where e.equipment_type = 1 and e.useInMonitoring=1 order by e.name';
 //  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 1 order by eq.name';
   try
     Modems.Open;
@@ -707,7 +707,7 @@ begin
   ToolTipsDBGrid1.Parent := tabBase;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON m.id_equipment=lte.id_equipment where e.equipment_type = 3 and e.useInMonitoring=1 order by e.name';
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON e.id=lte.id_equipment where e.equipment_type = 3 and e.useInMonitoring=1 order by e.name';
 //  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 3 order by eq.name';
   try
     Modems.Open;
@@ -757,7 +757,7 @@ begin
   ToolTipsDBGrid1.Parent := tabBur;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON m.id_equipment=lte.id_equipment where (e.equipment_type=5 or e.equipment_type=6) and e.useInMonitoring=1 order by e.name';
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON e.id=lte.id_equipment where (e.equipment_type=5 or e.equipment_type=6) and e.useInMonitoring=1 order by e.name';
 //  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type=5 or eq.equipment_type=6 order by eq.name';
   try
     Modems.Open;
@@ -807,7 +807,7 @@ begin
   ToolTipsDBGrid1.Parent := tabEx;
   ToolTipsDBGrid1.Tag := 1;
   Modems.Close;
-  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment where e.equipment_type = 2 and e.useInMonitoring=1 order by e.name';
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON e.id=lte.id_equipment where e.equipment_type = 2 and e.useInMonitoring=1 order by e.name';
 //  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by eq.name';
 
   try
