@@ -126,7 +126,7 @@ procedure TfrmChangePTX.Button1Click(Sender: TObject);
 var id_ptx_old,id_equipment,id_ptx_new: string;
     ip_ptx: string;
 begin
-  id_equipment := Form1.Modemsid_equipment.AsString;
+  id_equipment := Form1.Modemsid.AsString;
   id_ptx_old := Form1.Modems.FieldByName(NameFieldId).AsString;
   id_ptx_new := mass_id_ptx[ComboBox1.ItemIndex];
   ip_ptx := IP_Current;
