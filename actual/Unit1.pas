@@ -3551,9 +3551,11 @@ begin
      begin
        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString+' - bullet');
        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_pc').AsString,Modemsname.AsString+' - PTX');
+       if Modems.FieldByName('ip_lte').AsString <>'' then begin
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
+       end;
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
           Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
        end;
      end
      else
@@ -3562,6 +3564,8 @@ begin
         ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_pc').AsString),nil,SW_restore);
         if Modems.FieldByName('ip_vpn').AsString <>'' then begin
            ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_vpn').AsString),nil,SW_restore);
+        end;
+        if Modems.FieldByName('ip_lte').AsString <>'' then begin
            ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_lte').AsString),nil,SW_restore);
         end;
      end;
@@ -3593,9 +3597,10 @@ begin
       Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,2),Modemsname.AsString+' - Kobus');
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
           Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
+       end;
+       if Modems.FieldByName('ip_lte').AsString <>'' then begin
           Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
        end;
-
     end
     else begin
       ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+AddIPaddress(ip_addresss,-1)),nil,SW_restore);
@@ -3604,9 +3609,10 @@ begin
       ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+AddIPaddress(ip_addresss,2)),nil,SW_restore);
         if Modems.FieldByName('ip_vpn').AsString <>'' then begin
            ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_vpn').AsString),nil,SW_restore);
+        end;
+        if Modems.FieldByName('ip_lte').AsString <>'' then begin
            ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_lte').AsString),nil,SW_restore);
         end;
-
     end;
    end
    else
