@@ -423,6 +423,11 @@ type TMyProcessPing = Record
      Top: integer;
 end;
 
+type TEQInfo = record
+     id:TLargeInteger;
+     name:string;
+end;
+
 const
 // Характеристики плана карьера
   img_width = 1280;
@@ -461,6 +466,7 @@ var
   ping_height_without_borders,
   ping_width_without_borders: integer;
   hwnd_window: HWND;
+  ChartEQInfo:TEQInfo; // Здесь хранится информация об оборудовании с графика
 
 function AddIPaddress(ip_addr: WideString; val:integer):WideString;
 function IsOLEObjectInstalled(Name: String): boolean;
@@ -1022,7 +1028,8 @@ begin
   sql_query1 := 'select datetime, signal_level, color, e.name, x,y from statss st'+
    ' left join modems m on m.mac_address=st.mac_ap left join equipment e on e.id=m.id_equipment where ';
   sql_query3ap := ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString + ' order by datetime';
-
+  ChartEQInfo.id:=Modems.FieldByName('id_equipment').AsLargeInt;
+  ChartEQInfo.name:=Modems.FieldByName('name').AsString;
   //выбрать все статусы по оборудованию из таблицы ststs_status:
   Query_2.Close;
   Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
@@ -4675,7 +4682,7 @@ begin
 end;
 
 procedure TForm1.ShowPointPosition(pointindex:integer);
-var nameEQ:string;
+var
     dttm:TDateTime;
     sig_lev:integer;
     x:integer;
@@ -4687,7 +4694,6 @@ var nameEQ:string;
     kx,ky:real;
     paintx,painty:integer;
 begin
-    nameEQ:=Modemsname.AsString;
     i:=pointindex;
     x:=CoordsModems[i].x;
     y:=CoordsModems[i].y;
@@ -4712,12 +4718,14 @@ begin
     sig_lev:=Trunc(Chart1.Series[0].YValue[i]);
     // Рисуем карту и отображаем на ней точку
     if not Assigned(frmShowMap) then frmShowMap := TfrmShowMap.Create(Application);
-    frmShowMap.Caption:='Местоположение '+nameEQ+' '+FormatDateTime('dd.mm.yyyy hh:nn:ss',dttm);
+    frmShowMap.Caption:='Местоположение '+ChartEQInfo.name+' '+FormatDateTime('dd.mm.yyyy hh:nn:ss',dttm);
     frmShowMap.Gauge1.Visible:=false;
     frmShowMap.Label1.Visible:=false;
     // Задаем параметры для анализа данных
     frmWiFiAnalize.date:=trunc(dttm);
-    frmWiFiAnalize.ModemIndex:=Modemsid_modem.AsInteger;
+    frmWiFiAnalize.EQid:=ChartEQInfo.id;
+    frmWiFiAnalize.EQName:=ChartEQInfo.name;
+    //frmWiFiAnalize.ModemIndex:=Modemsid_modem.AsInteger;
     frmWiFiAnalize.signal:=sig_lev;
     frmWiFiAnalize.StationName:=NamesModems[i];
     frmWiFiAnalize.x:=x;

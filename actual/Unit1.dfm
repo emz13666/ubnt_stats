@@ -34,7 +34,6 @@ object Form1: TForm1
     Height = 190
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 639
     object Chart1: TChart
       Left = 1
       Top = 33
@@ -436,7 +435,6 @@ object Form1: TForm1
     Height = 655
     Align = alClient
     TabOrder = 1
-    ExplicitHeight = 636
     object Splitter3: TSplitter
       Left = 813
       Top = 1
@@ -452,7 +450,6 @@ object Form1: TForm1
       Height = 653
       Align = alRight
       TabOrder = 0
-      ExplicitHeight = 634
       object PageControl1: TPageControl
         Left = 1
         Top = 1
@@ -461,16 +458,14 @@ object Form1: TForm1
         ActivePage = TabSheet4
         Align = alClient
         TabOrder = 0
-        ExplicitHeight = 632
         object TabSheet1: TTabSheet
           Caption = '1'
-          ExplicitHeight = 604
           object MonthCalendar1: TMonthCalendar
             Left = 0
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.489661562500000000
+            Date = 41178.798838969910000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -737,7 +732,6 @@ object Form1: TForm1
         object TabSheet2: TTabSheet
           Caption = '2'
           ImageIndex = 1
-          ExplicitHeight = 604
           object RadioGroup1: TRadioGroup
             Left = 8
             Top = 49
@@ -1052,7 +1046,6 @@ object Form1: TForm1
         object TabSheet3: TTabSheet
           Caption = 'log and setup'
           ImageIndex = 2
-          ExplicitHeight = 604
           object ToolTipsDBGrid2: TDBGrid
             Left = 0
             Top = 0
@@ -1214,7 +1207,6 @@ object Form1: TForm1
           Caption = 'ReleaseNotes'
           ImageIndex = 3
           OnShow = TabSheet4Show
-          ExplicitHeight = 604
           object Memo1: TMemo
             Left = 0
             Top = 0
@@ -1841,11 +1833,17 @@ object Form1: TForm1
               'ip-vpn '#1084#1086#1078#1077#1090' '#1086#1090#1089#1091#1090#1089#1090#1074#1086#1074#1072#1090#1100' ('#1076#1083#1103' lte-'#1084#1086#1076#1077#1084#1086#1074' '
               'teltonika). '
               #1055#1077#1088#1077#1076#1077#1083#1072#1083' '#1087#1088#1086#1074#1077#1088#1082#1091' '#1076#1083#1103' '#1086#1073#1086#1080#1093' '#1087#1086#1083#1077#1081': ip_vpn '#1080' ip_lte '
-              '('#1087#1088#1086#1074#1077#1088#1103#1083#1086#1089#1100' '#1090#1086#1083#1100#1082#1086' ip_vpn)')
+              '('#1087#1088#1086#1074#1077#1088#1103#1083#1086#1089#1100' '#1090#1086#1083#1100#1082#1086' ip_vpn)'
+              ''
+              '03.05.2022'
+              'Version 1.1.24.5'
+              #1048#1089#1087#1088#1072#1074#1083#1077#1085#1072' '#1086#1096#1080#1073#1082#1072' '#1087#1086#1089#1090#1088#1086#1077#1085#1080#1103' '#1090#1072#1073#1083#1080#1094#1099' '#1089#1088#1072#1074#1085#1077#1085#1080#1081' '
+              #1091#1088#1086#1074#1085#1103' '#1089#1080#1075#1085#1072#1083#1072' '#1085#1072' '#1082#1072#1088#1090#1077'.'
+              'PS: '#1053#1086' '#1074#1089#1077' '#1088#1072#1074#1085#1086' '#1089#1090#1088#1086#1080#1090#1089#1103' '#1087#1086' '#1087#1086#1083#1102' date ('#1080' '#1076#1086#1083#1075#1086'). '
+              #1053#1091#1078#1085#1086' '#1087#1077#1088#1077#1076#1077#1083#1099#1074#1072#1090#1100' '#1072#1083#1075#1086#1088#1080#1090#1084'.')
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
-            ExplicitHeight = 604
           end
         end
       end
@@ -1857,13 +1855,12 @@ object Form1: TForm1
       Height = 653
       Align = alClient
       TabOrder = 1
-      ExplicitHeight = 634
       object pagesTables: TPageControl
         Left = 1
         Top = 1
         Width = 810
         Height = 651
-        ActivePage = tabBur
+        ActivePage = tabAvto
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1874,11 +1871,9 @@ object Form1: TForm1
         ParentFont = False
         TabHeight = 35
         TabOrder = 0
-        ExplicitHeight = 632
         object tabAvto: TTabSheet
           Caption = #1040#1074#1090#1086#1089#1072#1084#1086#1089#1074#1072#1083#1099
           OnShow = tabAvtoShow
-          ExplicitHeight = 587
           object ToolTipsDBGrid1: TDBGrid
             Left = 0
             Top = 0
@@ -1987,19 +1982,16 @@ object Form1: TForm1
           Caption = #1069#1082#1089#1082#1072#1074#1072#1090#1086#1088#1099
           ImageIndex = 1
           OnShow = tabExShow
-          ExplicitHeight = 587
         end
         object tabBur: TTabSheet
           Caption = #1041#1091#1088#1089#1090#1072#1085#1082#1080' '#1080' '#1057#1047#1052
           ImageIndex = 2
           OnShow = tabBurShow
-          ExplicitHeight = 587
         end
         object tabBase: TTabSheet
           Caption = #1041#1072#1079#1086#1074#1099#1077' '#1089#1090#1072#1085#1094#1080#1080
           ImageIndex = 3
           OnShow = tabBaseShow
-          ExplicitHeight = 587
         end
       end
     end

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Activex, ADODB, StdCtrls, ComCtrls, Grids, Math;
+  Dialogs, Activex, ADODB, StdCtrls, ComCtrls, Grids, Math, ScorpioDB, MyUtils;
 
 type TMyRect=record
      xstart:integer;
@@ -14,7 +14,7 @@ type TMyRect=record
 end;
 
 type TWiFiQual=record
-     modemName:string;
+     EQName:string;
      count:integer;
      countSuccess:integer;
      countSuccessCurrentBS:integer;
@@ -43,7 +43,9 @@ type
   public
     { Public declarations }
     date:TDate;
-    ModemIndex:integer;
+    //ModemIndex:integer;
+    EQid:LongInt;
+    EQName:string;
     signal:integer;
     StationName:string;
     x:integer;
@@ -66,7 +68,7 @@ uses Unit1;
 {$R *.dfm}
 
 procedure TfrmWiFiAnalize.FormShow(Sender: TObject);
-var QTemp:TADOQuery;
+var QTemp:TMyADOQuery;
     QTemp2:TADOQuery;
   currentidmodem: Integer;
   i:integer;
@@ -75,13 +77,13 @@ var QTemp:TADOQuery;
   currentlevel:shortint;
   sumQual:TWiFiQual;
   NeedHeight:integer;
+  currEQId:Largeint;
 begin
      i:=0;
-     equipname:='';
+     equipname:=Self.EQName;
      SetLength(WiFiQual,i);
      CoInitialize(nil);
-     QTemp:=TADOQuery.Create(nil);
-     QTemp.Connection:=Form1.DBConnection;
+     QTemp:=TMyADOQuery.Create(nil,Form1.DBConnection);
      QTemp2:=TADOQuery.Create(nil);
      QTemp2.Connection:=Form1.DBConnection;
      // Получаем мак-адрес базовой станции, по которой проводится расчет
@@ -103,14 +105,34 @@ begin
         QTemp2.Close;
      end;
      // Закончили получать мак-адрес
-     QTemp.SQL.Clear;
+     QTemp.Clear;
      // Выбираем данные по квадрату карты
-     QTemp.SQL.Add('select signal_level, mac_ap, id_modem from statss');
+     {QTemp.SQL.Add('select signal_level, mac_ap, id_modem from statss');
      QTemp.SQL.Add('where (date="'+FormatDateTime('yyyy-mm-dd',self.date)+'")');
      QTemp.SQL.Add('and (x between '+inttostr(mapcoords.xstart)+' and '+inttostr(mapcoords.xend)+')');
      QTemp.SQL.Add('and (y between '+inttostr(mapcoords.ystart)+' and '+inttostr(mapcoords.yend)+')');
      QTemp.SQL.Add('and (status=2)');
-     QTemp.SQL.Add('order by id_modem');
+     QTemp.SQL.Add('order by id_modem');}
+     QTemp.SQL.Add('select s.signal_level, s.mac_ap, e.name, e.id as EQid from statss s');
+     QTemp.SQL.Add('inner join equipment e on (e.id=s.id_equipment)');
+     QTemp.SQL.Add('inner join stats_status ss on ((ss.id_equipment=s.id_equipment) and (s.datetime >= ss.datetimestart) and (s.datetime < ss.datetimeend))');
+     QTemp.SQL.Add('where (s.date="@dt1")');
+     QTemp.SQL.Add('and (s.x between @xstart and @xend)');
+     QTemp.SQL.Add('and (s.y between @ystart and @yend)');
+     QTemp.SQL.Add('and (ss.datetimeend > "@dttmstart" )');
+     QTemp.SQL.Add('and (ss.datetimestart <= "@dttmend")');
+     QTemp.SQL.Add('and (ss.status=2)');
+     QTemp.SQL.Add('and (e.useInMonitoring=1)');
+     QTemp.SQL.Add('order by e.name');
+     QTemp.vars.Add('dt1',MySQLDate(self.date));
+     QTemp.vars.Add('dttmstart',MySQLDateTime(self.date));
+     QTemp.vars.Add('dttmend',MySQLDateTime(self.date+1-1/24/3600));
+     QTemp.vars.Add('xstart',inttostr(mapcoords.xstart));
+     QTemp.vars.Add('xend',inttostr(mapcoords.xend));
+     QTemp.vars.Add('ystart',inttostr(mapcoords.ystart));
+     QTemp.vars.Add('yend',inttostr(mapcoords.yend));
+     QTemp.ReplaceVars;
+     QTemp.SQL.SaveToFile('SQL1.txt');
      try
         QTemp.Open;
      except
@@ -120,14 +142,13 @@ begin
         exit;
      end;
      QTemp.First;
-     currentidmodem:=0;
+     currEQId:=0;
      while not QTemp.Eof do begin
-         // Все записи отсортированы по id_modem,
-         // поэтому, если имя отличается от предыдущего,
+         // Eсли имя отличается от предыдущего,
          // создать новую запись в массиве WiFiQual
-         if QTemp.FieldByName('id_modem').AsInteger<>currentidmodem then begin
+         if QTemp.FieldByName('EQid').AsLargeInt<>currEQId then begin
             // Определить имя модема по id
-            if QTemp2.Active then QTemp2.Close;
+            {if QTemp2.Active then QTemp2.Close;
             QTemp2.SQL.Clear;
             QTemp2.SQL.Add('select name from modems where id_modem='+QTemp.FieldByName('id_modem').AsString);
             try
@@ -139,18 +160,18 @@ begin
                 exit;
             end;
             QTemp2.Last;
-            if QTemp2.RecordCount<>0 then modemname:=QTemp2.FieldByName('name').AsString else modemname:='';
+            if QTemp2.RecordCount<>0 then modemname:=QTemp2.FieldByName('name').AsString else modemname:='';}
+            currEQId:=QTemp.FieldByName('EQId').AsLargeInt;
             inc(i);
             SetLength(WiFiQual,i);
-            WiFiQual[i-1].modemName:=modemname;
+            WiFiQual[i-1].EQName:=QTemp.FieldByName('name').AsString;
             WiFiQual[i-1].count:=0;
             WiFiQual[i-1].countSuccess:=0;
             WiFiQual[i-1].signal_avg:=-100;
             QTemp2.Close;
-            currentidmodem:=QTemp.FieldByName('id_modem').AsInteger;
             // Если id соответствует тому, по которому проводим анализ,
             // то записываем его имя, чтобы два раза не проверять
-            if QTemp.FieldByName('id_modem').AsInteger=self.ModemIndex then equipname:=modemname;
+            //if QTemp.FieldByName('id_modem').AsInteger=self.ModemIndex then equipname:=modemname;
          end;
          inc(WiFiQual[i-1].count);
          // Если уровень сигнала >-100, то записываем в удачные попытки связи
@@ -185,19 +206,19 @@ begin
      SGWiFiQual.Cells[6,0]:=StationName+' Ср. ур.';
      SGWiFiQual.Font.Style:=[];
      // Выводим результаты анализа на форму
-     sumQual.modemName:='Среднее';
+     sumQual.EQName:='Среднее';
      sumQual.count:=0;
      sumQual.countSuccess:=0;
      sumQual.countSuccessCurrentBS:=0;
      sumQual.signal_avg:=-100;
      sumQual.signal_avgCurrentBS:=-100;
      for I := 0 to Length(WiFiQual)-1 do begin
-         if WiFiQual[i].modemName=equipname then SGWiFiQual.Font.Style:=[fsBold]
+         if WiFiQual[i].EQName=equipname then SGWiFiQual.Font.Style:=[fsBold]
             else SGWiFiQual.Font.Style:=[];
          // Если количество удачных попыток связи 0, то ставим средний уровень сигнала -100
          if WiFiQual[i].countSuccess=0 then WiFiQual[i].signal_avg:=-100;
          if WiFiQual[i].countSuccessCurrentBS=0 then WiFiQual[i].signal_avgCurrentBS:=-100;
-         SGWiFiQual.Cells[0,i+1]:=WiFiQual[i].modemName;
+         SGWiFiQual.Cells[0,i+1]:=WiFiQual[i].EQName;
          SGWiFiQual.Cells[1,i+1]:=inttostr(WiFiQual[i].count);
          SGWiFiQual.Cells[2,i+1]:=inttostr(WiFiQual[i].count-WiFiQual[i].countSuccess);
          SGWiFiQual.Cells[3,i+1]:=inttostr(WiFiQual[i].countSuccess);
