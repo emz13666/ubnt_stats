@@ -148,70 +148,41 @@ end;
 
 procedure TfrmReloadDrv.Button1Click(Sender: TObject);
  var
-  Layout: array[0.. KL_NAMELENGTH] of char;
+  ip_addr: AnsiString;
   PStr: PChar;
- // p:string;
-//  hwnd_active: HWND;
- // c: cardinal;
-//  i:word;
+  wnd2: HWND;
+  i133: integer;
 begin
-    PStr := pchar('/K "'+ExtractFilePath(Application.ExeName)+
-      'mmsShell.exe"'+' /hostname='+ MassIPAdress[ComboBox2.Items.IndexOf(ComboBox2.Text)]);
-    ShellExecute(0,nil,PChar('cmd.exe'),PStr,nil,SW_restore);
 
-(*    sleep(3000);
-    hwnd_active := GetForegroundWindow;
+        ip_addr := MassIPAdress[ComboBox2.Items.IndexOf(ComboBox2.Text)];
+        PStr := pchar('/K "'+ExtractFilePath(Application.ExeName)+
+      'mmsShell.exe"'+' /hostname='+ ip_addr);
+        ShellExecute(0,'open',PChar('cmd.exe'), PStr,nil,SW_SHOWNORMAL);
+        sleep(1000);
+        wnd2 := 0;
+        i133 := 0;
+        wnd2 := GetForegroundWindow;
+        if wnd2>0 then begin
+            //sleep(1500);
+            SendMessage(wnd2,WM_CHAR,ord('s'),0);
+            SendMessage(wnd2,WM_CHAR,ord('h'),0);
+            SendMessage(wnd2,WM_CHAR,ord('o'),0);
+            SendMessage(wnd2,WM_CHAR,ord('w'),0);
+            SendMessage(wnd2,WM_CHAR,ord('D'),0);
+            SendMessage(wnd2,WM_CHAR,ord('r'),0);
+            SendMessage(wnd2,WM_CHAR,ord('i'),0);
+            SendMessage(wnd2,WM_CHAR,ord('v'),0);
+            SendMessage(wnd2,WM_CHAR,ord('e'),0);
+            SendMessage(wnd2,WM_CHAR,ord('r'),0);
+            SendMessage(wnd2,WM_CHAR,ord('H'),0);
+            SendMessage(wnd2,WM_CHAR,ord('e'),0);
+            SendMessage(wnd2,WM_CHAR,ord('a'),0);
+            SendMessage(wnd2,WM_CHAR,ord('l'),0);
+            SendMessage(wnd2,WM_CHAR,ord('t'),0);
+            SendMessage(wnd2,WM_CHAR,ord('h'),0);
+            SendMessage(wnd2,WM_CHAR,ord(#13),0);
+        end;
 
-
-    SetWindowText(hwnd_active, 'My Window');
-   	Sleep(3000);
-	  SendMessage(hwnd_active, WM_SETTEXT, 0, Integer(pchar('My Another Window')));
-
-//    SendMessage(hwnd_active, WM_SETTEXT, 0, Integer(PChar('showDriverHealth')));
-
-    (*
-    p:= 'showDriverHealth'+#13+'exit'+#13;
-    for i:=1 to length(p)do begin
-      if(p[i]in[#10])then continue;
-      c:=1+MapVirtualKey(ord(p[i]),0)shl 16{+(1 shl 24)};
-      if(p[i]in[#13])then begin
-        SendMessage(hwnd_active,WM_KEYDOWN,ord(p[i]),c);
-        sleep(10);
-        SendMessage(hwnd_active,WM_KEYUP,ord(p[i]),c+($C shl 28));
-      end else begin
-        SendMessage(hwnd_active,WM_CHAR,ord(p[i]),c);
-      end;
-      sleep(50);
-    end;
-
-      *)
-
-      // переключаем раскладку на английский
-    LoadKeyboardLayout(StrCopy(Layout,'00000409'),KLF_ACTIVATE);
-     sleep(1000);
-    SetKey(ord('S'));
-    SetKey(ord('H'));
-    SetKey(ord('O'));
-    SetKey(ord('W'));
-    SetKey(VK_CAPITAL); SetKey(ord('D'));SetKey(VK_CAPITAL);
-    SetKey(ord('R'));
-    SetKey(ord('I'));
-    SetKey(ord('V'));
-    SetKey(ord('E'));
-    SetKey(ord('R'));
-    SetKey(VK_CAPITAL);   SetKey(ord('H'));SetKey(VK_CAPITAL);
-        SetKey(ord('E'));
-    SetKey(ord('A'));
-    SetKey(ord('L'));
-    SetKey(ord('T'));
-    SetKey(ord('H'));
-    SetKey(VK_RETURN);
-    sleep(200);
-    SetKey(ord('E'));
-    SetKey(ord('X'));
-    SetKey(ord('I'));
-    SetKey(ord('T'));
-    SetKey(VK_RETURN);
 end;
 
 procedure TfrmReloadDrv.Button2Click(Sender: TObject);
