@@ -4536,12 +4536,12 @@ var Cmd0, Cmd1,cmd2: string;
   wnd1:  hwnd;
   SSHConn: TSSHobj;
 begin
-if not FileExists('c:\Program files (x86)\putty\putty.exe') then begin
-   ShowMessage('c:\Program files (x86)\putty\putty.exe not found');
+if not FileExists('c:\Program files\putty\putty.exe') then begin
+   ShowMessage('c:\Program files\putty\putty.exe not found');
    exit;
  end;
 
- ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('lgktech@10.70.121.3 -pw 20gtkasu'),nil,SW_restore);
+ ShellExecute(0,nil,PChar('c:\program files\putty\putty.exe'),pchar('asugtk@10.70.121.3 -pw !gtkUSK2022'),nil,SW_restore);
  sleep(1000);
  //закрываем окно Lastwnd1 по этой же машине (если есть)
  if Length(Lastwnd1)>0 then begin
@@ -4570,6 +4570,7 @@ if not FileExists('c:\Program files (x86)\putty\putty.exe') then begin
      '{set flag "TRUCK"};if {$flag=="GSP"} {set timeout 600;send "exit\r"; expect ">" {send "'+
       cmd2+'\r";expect ">"}};if {$flag=="TRUCK"} {set timeout 600;send "'+cmd2+'\r"; expect ">"};interact'''#13;
 
+
     if ((Sender as TMenuItem).Name = ConnectCan1281.Name)or((Sender as TMenuItem).Name = ConnectCan1291.Name) then
     begin
       Cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
@@ -4597,6 +4598,8 @@ if not FileExists('c:\Program files (x86)\putty\putty.exe') then begin
         Ping1Click(sender);
     end;
 
+    //Временно - просто соннектимся по OMStip
+    cmd1 := 'OMStip '+Modemsname.AsString + #13;
 
     for i:=1 to Length(Cmd1) do
           SendMessage(wnd1,WM_CHAR,Ord(Cmd1[i]),0);
@@ -4609,11 +4612,11 @@ procedure TForm1.telnet2Click(Sender: TObject);
 var Cmd1,cmd2: string;
   wnd1, i:integer;
 begin
- if not FileExists('c:\Program files (x86)\putty\putty.exe') then begin
-   ShowMessage('c:\Program files (x86)\putty\Putty.exe not found');
+ if not FileExists('c:\Program files\putty\putty.exe') then begin
+   ShowMessage('c:\Program files\putty\Putty.exe not found');
    exit;
  end;
- ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('lgktech@10.70.121.3 -pw 20gtkasu'),nil,SW_restore);
+ ShellExecute(0,nil,PChar('c:\program files\putty\putty.exe'),pchar('asugtk@10.70.121.3 -pw !gtkUSK2022'),nil,SW_restore);
  sleep(1000);
  wnd1:=FindWindow(nil,PChar('10.70.121.3 - PuTTY'));
 
@@ -4650,11 +4653,11 @@ procedure TForm1.OMSsniffMenuClick(Sender: TObject);
 var Cmd1: string;
     wnd1, i:integer;
 begin
- if not FileExists('c:\Program files (x86)\putty\putty.exe') then begin
-   ShowMessage('c:\Program files (x86)\putty\Putty.exe not found');
+ if not FileExists('c:\Program files\putty\putty.exe') then begin
+   ShowMessage('c:\Program files\putty\Putty.exe not found');
    exit;
  end;
- ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('lgktech@10.70.121.3 -pw 20gtkasu'),nil,SW_restore);
+ ShellExecute(0,nil,PChar('c:\program files\putty\putty.exe'),pchar('lgktech@10.70.121.3 -pw 20gtkasu'),nil,SW_restore);
  sleep(1000);
  wnd1:=FindWindow(nil,PChar('10.70.121.3 - PuTTY'));
 
