@@ -431,11 +431,11 @@ end;
 const
 // Характеристики плана карьера
   img_width = 1280;
-  img_height = 1155;
-  img_startx = 12200;
-  img_endx = 16300;
-  img_starty = 2100;
-  img_endy = 5800;
+  img_height = 1024;
+  img_startx = 12000;
+  img_endx = 17000;
+  img_starty = 2000;
+  img_endy = 6000;
   img_sectorsize=50;
 //характеристики окна пинга
 //  ping_border_height = 40;
