@@ -199,8 +199,6 @@ type
     VISTJ19391: TMenuItem;
     Gpswifi1: TMenuItem;
     N11: TMenuItem;
-    Tranzact_d: TMenuItem;
-    Tranzact_mon: TMenuItem;
     ReloadDrivers2: TMenuItem;
     N12: TMenuItem;
     loadavg1minute1: TMenuItem;
@@ -308,6 +306,7 @@ type
     Modemsimei_modem: TStringField;
     Modemsmodel_modem: TStringField;
     Modemsprim_2: TStringField;
+    DispPollers1_menu: TMenuItem;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -473,6 +472,7 @@ function IsOLEObjectInstalled(Name: String): boolean;
 procedure AddToListFromDB(Query: TADOQuery; List: TStrings; Pole, Table, Where: Widestring);
 function GetSQLWhereDateTime(FieldDate1: AnsiString; FieldDate2: AnsiString=''): AnsiString;
 function FindStatus(fDateTime: TDateTime; fQueryStatus: TADOQuery): Integer;
+procedure ExtractResources; //ѕри создании формы: извлекает и сохран€ет файлы из ресурсов EXE, если еще не извлечено
 
 implementation
 
@@ -480,6 +480,73 @@ uses Unit3, MapSettings, MapFail;
 
 {$R *.dfm}
 {$R res_vnc.res}
+
+//ѕри создании формы: извлекает и сохран€ет файлы из ресурсов EXE, если еще не извлечено
+procedure ExtractResources;
+var rs: TResourceStream;
+begin
+  if not FileExists(ExtractFilePath(Application.ExeName)+'mmsShell.exe') then
+    // извлекаем из ресурса и сохран€ем
+    try
+      rs := TResourceStream.Create(HInstance, 'MMS_SHELL_EXE', RT_RCDATA);
+      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'mmsShell.exe');
+      rs.Free;
+    except
+    end;
+  if not FileExists(ExtractFilePath(Application.ExeName)+'Template.vnc') then
+    // извлекаем из ресурса и сохран€ем
+    try
+      rs := TResourceStream.Create(HInstance, 'TEMPLATE_VNC', RT_RCDATA);
+      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'Template.vnc');
+      rs.Free;
+    except
+    end;
+  if not FileExists(ExtractFilePath(Application.ExeName)+'VNC-Viewer.exe') then
+    // извлекаем из ресурса и сохран€ем
+    try
+      rs := TResourceStream.Create(HInstance, 'VNC_EXE', RT_RCDATA);
+      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'VNC-Viewer.exe');
+      rs.Free;
+    except
+    end;
+  if not DirectoryExists(ExtractFilePath(Application.ExeName)+'kitty') then
+  begin
+    CreateDir(ExtractFilePath(Application.ExeName)+'kitty')
+  end;
+
+  if not FileExists(ExtractFilePath(Application.ExeName)+'kitty\kitty.exe') then
+    // извлекаем из ресурса и сохран€ем
+    try
+      rs := TResourceStream.Create(HInstance, 'KITTY_EXE', RT_RCDATA);
+      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'kitty\kitty.exe');
+      rs.Free;
+    except
+    end;
+  if not FileExists(ExtractFilePath(Application.ExeName)+'kitty\kitty.ini') then
+    // извлекаем из ресурса и сохран€ем
+    try
+      rs := TResourceStream.Create(HInstance, 'KITTY_INI', RT_RCDATA);
+      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'kitty\kitty.ini');
+      rs.Free;
+    except
+    end;
+  if not FileExists(ExtractFilePath(Application.ExeName)+'kitty\klink.exe') then
+    // извлекаем из ресурса и сохран€ем
+    try
+      rs := TResourceStream.Create(HInstance, 'KLINK_EXE', RT_RCDATA);
+      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'kitty\klink.exe');
+      rs.Free;
+    except
+    end;
+  if not FileExists(ExtractFilePath(Application.ExeName)+'kitty\kscp.exe') then
+    // извлекаем из ресурса и сохран€ем
+    try
+      rs := TResourceStream.Create(HInstance, 'KSCP_EXE', RT_RCDATA);
+      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'kitty\kscp.exe');
+      rs.Free;
+    except
+    end;
+end;
 
 function FindStatus(fDateTime: TDateTime; fQueryStatus: TADOQuery): Integer;
 begin
@@ -641,8 +708,6 @@ begin
   GPSARRIVE1.Visible := true;
   N11.Visible := true;
   Tranzact_n.Visible := true;
-  Tranzact_d.Visible := true;
-  Tranzact_mon.Visible := true;
   N6.Visible := true;
   Ping1.Visible := true;
   Ping1.Caption := 'ѕинговать PTX, Bullet и LTE';
@@ -692,8 +757,6 @@ begin
   GPSARRIVE1.Visible := false;
   N11.Visible := false;
   Tranzact_n.Visible := false;
-  Tranzact_d.Visible := false;
-  Tranzact_mon.Visible := false;
   N6.Visible := false;
   Ping1.Visible := true;
   Ping1.Caption := 'ѕинговать базовую станцию';
@@ -737,8 +800,6 @@ begin
   GPSARRIVE1.Visible := false;
   N11.Visible := false;
   Tranzact_n.Visible := false;
-  Tranzact_d.Visible := false;
-  Tranzact_mon.Visible := false;
   N6.Visible := false;
   Ping1.Visible := true;
   Ping1.Caption := 'ѕинговать Switch, BulletSt, BulletAp,  обус и LTE';
@@ -788,8 +849,6 @@ begin
   GPSARRIVE1.Visible := false;
   N11.Visible := true;
   Tranzact_n.Visible := true;
-  Tranzact_d.Visible := true;
-  Tranzact_mon.Visible := true;
   N6.Visible := true;
   Ping1.Visible := true;
   Ping1.Caption := 'ѕинговать PTX, Bullet и LTE';
@@ -873,6 +932,7 @@ begin
   LastEqip := TStringList.Create;
   LastEqip.Clear;
   PageControl1.ActivePageIndex := 0;
+  ExtractResources;
   UpdateThread := TUpdater.Create(true);
   UpdateThread.LocationUpdate := 'w:\” и——\”часток ј—” √“ \programs\ubiquiti_stats\ubnt_stats';
   UpdateThread.Resume;
@@ -1470,22 +1530,7 @@ begin
 
 //формируем и запускаем на выполнение файл DisableMacACL.cmd
 //который примен€ет mac_off.txt на все точки доступа
-
-  //сначала провер€ем, установлен ли Putty
-  puttyPath := 'c:\Program Files\Putty\';
-  if not FileExists(puttyPath+'plink.exe') then begin
-    puttyPath := 'C:\Program Files (x86)\Putty\';
-    if not FileExists(puttyPath+'plink.exe') then
-    begin
-      puttyPath := '';
-      if not FileExists(puttyPath+'plink.exe') then begin
-        ShowMessage('Putty не найден.');
-        MacAclList.Free;
-        exit;
-      end;
-    end;
-  end;
-
+  puttyPath := ExtractFilePath(Application.ExeName)+'kitty\';
   MacAclList.Clear;
   MacAclList.Add('@ECHO OFF');
   Query.Close;
@@ -1505,10 +1550,10 @@ begin
       MacAclList.Add('ECHO Disabling MAC ACL to '+Query.FieldByName('name').AsString+' ('+
         Query.FieldByName('ip_address').AsString+'):');
       MacAclList.Add('ECHO ---------------------------------------------------');
-      MacAclList.Add('"'+puttyPath+'pscp.exe" -batch -scp -pw unrfce20 mac_off.txt admin@'+
+      MacAclList.Add('"'+puttyPath+'kscp.exe" -auto-store-sshkey -scp -pw unrfce20 mac_off.txt admin@'+
         Query.FieldByName('ip_address').AsString +
          ':/tmp/mac_off.txt');
-      MacAclList.Add('"'+puttyPath+'plink.exe" -batch -pw unrfce20 admin@'+
+      MacAclList.Add('"'+puttyPath+'klink.exe" -pw unrfce20 admin@'+
         Query.FieldByName('ip_address').AsString +
          ' "cat /tmp/system.cfg | grep -v mac_acl > /tmp/systemnomacacl.tmp;'+
          'cat /tmp/mac_off.txt >> /tmp/systemnomacacl.tmp;'+
@@ -1582,31 +1627,7 @@ procedure TForm1.Tranzact_nClick(Sender: TObject);
 var Cmd1: string;
     wnd1, i:integer;
 begin
- if not FileExists('c:\Program files (x86)\putty\putty.exe') then begin
-   ShowMessage('c:\Program files (x86)\putty\putty.exe not found');
-   exit;
- end;
- ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('lgktech@10.70.121.3 -pw 20gtkasu'),nil,SW_restore);
- sleep(1000);
- wnd1:=FindWindow(nil,PChar('10.70.121.3 - PuTTY'));
-
- if wnd1>0 then begin
-    Cmd1 := 'grep '+Modemsname.AsString+' /local/clientcode/lgk/opns/sh' + FormatDateTime('yymmdd',MonthCalendar1.Date);
-    if (Sender as TMenuItem).Name = 'Tranzact_d' then cmd1 := cmd1 + 'd.transact'#13;
-    if (Sender as TMenuItem).Name = 'Tranzact_n' then cmd1 := cmd1 + 'n.transact'#13;
-    if (Sender as TMenuItem).Name = 'Tranzact_mon' then
-      if Time < StrToTime('7:30') then
-        cmd1 := 'watch '+ QuotedStr(cmd1 + 'n.transact|tail -15')+#13
-      else
-       if Time > StrToTime('19:30')  then
-        cmd1 := 'watch '+ QuotedStr('grep '+Modemsname.AsString+' /local/clientcode/lgk/opns/sh' +
-         FormatDateTime('yymmdd',MonthCalendar1.Date+1) + 'n.transact|tail -15')+#13
-       else
-        cmd1 := 'watch '+ QuotedStr(cmd1 + 'd.transact|tail -15')+#13;
-  for i:=1 to Length(Cmd1) do
-          SendMessage(wnd1,WM_CHAR,Ord(Cmd1[i]),0);
- end
- else ShowMessage('ѕревышен интервал ожидани€. ѕовторите попытку.');
+   ShellExecute(0,nil,PChar('http://d6-db/reports/report/StandardReports/%D0%9E%D1%82%D1%87%D0%B5%D1%82%20%D0%BF%D0%BE%20%D0%96%D1%83%D1%80%D0%BD%D0%B0%D0%BB%D0%B0%D0%BC/%D0%96%D1%83%D1%80%D0%BD%D0%B0%D0%BB%20%D0%A2%D1%80%D0%B0%D0%BD%D0%B7%D0%B0%D0%BA%D1%86%D0%B8%D0%B9'),nil,nil,SW_restore);
 end;
 
 procedure TForm1.Chart1ClickSeries(Sender: TCustomChart;
@@ -3452,20 +3473,7 @@ begin
 //формируем и запускаем на выполнение файл ApplyMac.cmd
 //который примен€ет mac acl на все точки доступа
 
-  //сначала провер€ем, установлен ли Putty
-  puttyPath := 'c:\Program Files\Putty\';
-  if not FileExists(puttyPath+'plink.exe') then begin
-    puttyPath := 'C:\Program Files (x86)\Putty\';
-    if not FileExists(puttyPath+'plink.exe') then
-    begin
-      puttyPath := '';
-      if not FileExists(puttyPath+'plink.exe') then begin
-        ShowMessage('Putty не найден.');
-        MacAclList.Free;
-        exit;
-      end;
-    end;
-  end;
+  puttyPath := ExtractFilePath(Application.ExeName)+'kitty\';
 
   MacAclList.Clear;
   MacAclList.Add('@ECHO OFF');
@@ -3477,7 +3485,6 @@ begin
   else
     Query.SQL.Text := Query.SQL.Text + 'where eq.equipment_type = 3 order by m.ip_address';
 
-
   try
     Query.Open;
     while not Query.Eof do
@@ -3486,10 +3493,10 @@ begin
       MacAclList.Add('ECHO Applying MAC ACL to '+Query.FieldByName('name').AsString+' ('+
         Query.FieldByName('ip_address').AsString+'):');
       MacAclList.Add('ECHO ---------------------------------------------------');
-      MacAclList.Add('"'+puttyPath+'pscp.exe" -batch -scp -pw unrfce20 macacl.txt admin@'+
+      MacAclList.Add('"'+puttyPath+'kscp.exe" -auto-store-sshkey -scp -pw unrfce20 macacl.txt admin@'+
         Query.FieldByName('ip_address').AsString +
          ':/tmp/macacl.txt');
-      MacAclList.Add('"'+puttyPath+'plink.exe" -batch -pw unrfce20 admin@'+
+      MacAclList.Add('"'+puttyPath+'klink.exe" -pw unrfce20 admin@'+
         Query.FieldByName('ip_address').AsString +
          ' "cat /tmp/system.cfg | grep -v mac_acl > /tmp/systemnomacacl.tmp;'+
          'cat /tmp/macacl.txt >> /tmp/systemnomacacl.tmp;'+
@@ -3780,29 +3787,13 @@ begin
 end;
 
 procedure TForm1.VNC1Click(Sender: TObject);
-var i: word;  rs: TResourceStream;
+var i: word;
 begin
    if (pagesTables.ActivePage = tabBur) then
    begin
      ShellExecute(0,nil,PChar('http://'+AddIPaddress(Modemsip_address.AsString,2)),nil,nil,SW_restore);
      exit;
    end;
-  if not FileExists(ExtractFilePath(Application.ExeName)+'Template.vnc') then
-    // извлекаем из ресурса и сохран€ем
-    try
-      rs := TResourceStream.Create(HInstance, 'TEMPLATE_VNC', RT_RCDATA);
-      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'Template.vnc');
-      rs.Free;
-    except
-    end;
-  if not FileExists(ExtractFilePath(Application.ExeName)+'VNC-Viewer.exe') then
-    // извлекаем из ресурса и сохран€ем
-    try
-      rs := TResourceStream.Create(HInstance, 'VNC_EXE', RT_RCDATA);
-      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'VNC-Viewer.exe');
-      rs.Free;
-    except
-    end;
   vncConf:=TStringList.Create;
   vncConf.LoadFromFile(ExtractFilePath(Application.ExeName)+'Template.vnc');
   for i:= 0 to vncConf.Count - 1 do begin
@@ -3814,52 +3805,41 @@ begin
 end;
 
 procedure TForm1.telnet1Click(Sender: TObject);
-var IP:string;
-    wnd1:integer;
+var IP, tmpstr:string;
+    tmpscript: TStrings;
 begin
+  tmpscript := TStringList.Create;
+  tmpscript.Clear;
+  tmpscript.Add('login:');
+  tmpscript.Add('admin');
+  tmpscript.Add('Password:');
+  tmpscript.Add('modular');
+  tmpscript.Add('login:');
+  tmpscript.Add('admin');
+  tmpscript.Add('Password:');
+  tmpscript.Add('modular');
+  tmpscript.Add('\>');
+  tmpstr := ' ';
+  if (Sender as TMenuItem).Name = 'telnet2' then
+      tmpstr :='';
+  if (Sender as TMenuItem).Name = 'windowsptxAdministration1' then
+      tmpstr :='"\windows\\ptx\\Administration\\GPS Information.exe"';
+  if (Sender as TMenuItem).Name = 'logdevicemonitortxt1' then
+      tmpstr := 'type \\sdcard\\dispatchptxb\\log_devicemonitor.txt';
+  if (Sender as TMenuItem).Name ='killprocdeliteexe2' then
+      tmpstr := 'killproc DISPATCHLite.exe';
+  if tmpstr=' ' then tmpstr := (Sender as TMenuItem).Caption;
 
-        IP:=Modemsip_pc.AsString;
-        ShellExecute(0,nil,PChar('cmd.exe'),pchar('/C "'+'telnet '+IP+'"'),nil,SW_restore);
-        sleep(400);
-        wnd1:=FindWindow(nil,PChar('Telnet '+IP));
-        if wnd1>0 then begin
-            sleep(1500);
-            SendMessage(wnd1,WM_CHAR,ord('a'),0);
-            SendMessage(wnd1,WM_CHAR,ord('d'),0);
-            SendMessage(wnd1,WM_CHAR,ord('m'),0);
-            SendMessage(wnd1,WM_CHAR,ord('i'),0);
-            SendMessage(wnd1,WM_CHAR,ord('n'),0);
-            SendMessage(wnd1,WM_CHAR,ord(#13),0);
-            sleep(1500);
-            SendMessage(wnd1,WM_CHAR,ord('m'),0);
-            SendMessage(wnd1,WM_CHAR,ord('o'),0);
-            SendMessage(wnd1,WM_CHAR,ord('d'),0);
-            SendMessage(wnd1,WM_CHAR,ord('u'),0);
-            SendMessage(wnd1,WM_CHAR,ord('l'),0);
-            SendMessage(wnd1,WM_CHAR,ord('a'),0);
-            SendMessage(wnd1,WM_CHAR,ord('r'),0);
-            SendMessage(wnd1,WM_CHAR,ord(#13),0);
-            sleep(1500);
-            SendMessage(wnd1,WM_CHAR,ord('c'),0);
-            SendMessage(wnd1,WM_CHAR,ord('h'),0);
-            SendMessage(wnd1,WM_CHAR,ord('e'),0);
-            SendMessage(wnd1,WM_CHAR,ord('c'),0);
-            SendMessage(wnd1,WM_CHAR,ord('k'),0);
-            SendMessage(wnd1,WM_CHAR,ord('h'),0);
-            SendMessage(wnd1,WM_CHAR,ord('a'),0);
-            SendMessage(wnd1,WM_CHAR,ord('r'),0);
-            SendMessage(wnd1,WM_CHAR,ord('d'),0);
-            SendMessage(wnd1,WM_CHAR,ord('w'),0);
-            SendMessage(wnd1,WM_CHAR,ord('a'),0);
-            SendMessage(wnd1,WM_CHAR,ord('r'),0);
-            SendMessage(wnd1,WM_CHAR,ord('e'),0);
-            SendMessage(wnd1,WM_CHAR,ord('r'),0);
-            SendMessage(wnd1,WM_CHAR,ord('e'),0);
-            SendMessage(wnd1,WM_CHAR,ord('v'),0);
-            SendMessage(wnd1,WM_CHAR,ord(#13),0);
+  tmpstr := StringReplace(tmpstr, '&', '', [rfReplaceAll]);
 
-        end;
+  tmpscript.Add(tmpstr);
+  tmpscript.SaveToFile(ExtractFilePath(Application.ExeName)+'kitty\tmpscript.txt');
+  tmpscript.Free;
+
+  IP:=Modemsip_pc.AsString;
+  ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-initdelay 0 -loginscript kitty\tmpscript.txt -telnet '+IP),nil,SW_restore);
 end;
+
 procedure TForm1.Bullet1Click(Sender: TObject);
 begin
    ShellExecute(0,nil,PChar('http://'+Modemsip_address.AsString),nil,nil,SW_restore);
@@ -3873,23 +3853,24 @@ end;
 procedure TForm1.BulletSSH1Click(Sender: TObject);
 begin
   if not tabBur.Visible then
-    ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('admin@'+AddIPaddress(Modemsip_address.AsString,0)+' -pw unrfce20'),nil,SW_restore)
+    ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-initdelay 0 -auto-store-sshkey -ssh -l admin  -pw unrfce20 '+AddIPaddress(Modemsip_address.AsString,0)),nil,SW_restore)
   else
-    ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('admin@'+Modems.FieldByName('ip_alias').AsString+' -pw gtkbvu19'),nil,SW_restore);
+    ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-initdelay 0 -auto-store-sshkey -ssh -l admin -pw gtkbvu19 '+Modems.FieldByName('ip_alias').AsString),nil,SW_restore);
   sleep(1000);
 end;
 
 procedure TForm1.BulletSSHClick(Sender: TObject);
 begin
   if not tabBur.Visible then
-    ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('admin@'+AddIPaddress(Modemsip_address.AsString,0)+' -pw unrfce20'),nil,SW_restore)
+    ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-ssh -initdelay 0 -auto-store-sshkey -l admin -pw unrfce20 '+AddIPaddress(Modemsip_address.AsString,0)),nil,SW_restore)
   else
-    ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('admin@'+AddIPaddress(Modemsip_address.AsString,0)+' -pw gtkbvu19'),nil,SW_restore);
+    ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-ssh -initdelay 0 -auto-store-sshkey -l admin -pw gtkbvu19 '+AddIPaddress(Modemsip_address.AsString,0)),nil,SW_restore);
   sleep(1000);
 end;
 
 procedure TForm1.xrebootPTX1Click(Sender: TObject);
 var IP:String;
+    tmpscript: TStrings;
     wnd1, i13:integer;
     EventLog:THandle;
     MyMsg:Array[0..2] of PChar;
@@ -3898,7 +3879,7 @@ begin
   if tabBur.Visible then
   begin
      IP := Modemsip_pc.AsString;
-     ShellExecute(0,nil,PChar('c:\program files (x86)\putty\plink.exe'),pchar('root@'+IP+' -pw kobus@2019 "/sbin/reboot"'),nil,SW_restore);
+     ShellExecute(0,nil,PChar('kitty\klink.exe'),pchar('-ssh -auto-store-sshkey root@'+IP+' -pw kobus@2019 "/sbin/reboot"'),nil,SW_restore);
             //«аписываем событие в системный журнал событий Windows
            buf:='reboot on KOBUS '+IP+' execute success.';
            EventLog:=RegisterEventSource(nil,PChar('EMZ_xreboot'));
@@ -3915,41 +3896,24 @@ begin
            Ping1Click(Sender);
   end else begin
         IP := Modemsip_pc.AsString;
-        ShellExecute(0,'open',PChar('cmd.exe'), PChar('/C "telnet.exe '+IP+'"'),nil,SW_SHOWNORMAL);
-        wnd1 := 0;
-        i13 := 0;
-        repeat
-           sleep(500);
-           wnd1 := FindWindow(nil,PChar('Telnet '+IP));
-           inc(i13);
-        until (wnd1 >0)or(i13>4);
-        if wnd1>0 then begin
-            //sleep(1500);
-            SendMessage(wnd1,WM_CHAR,ord('a'),0);
-            SendMessage(wnd1,WM_CHAR,ord('d'),0);
-            SendMessage(wnd1,WM_CHAR,ord('m'),0);
-            SendMessage(wnd1,WM_CHAR,ord('i'),0);
-            SendMessage(wnd1,WM_CHAR,ord('n'),0);
-            SendMessage(wnd1,WM_CHAR,ord(#13),0);
-            sleep(1500);
-            SendMessage(wnd1,WM_CHAR,ord('m'),0);
-            SendMessage(wnd1,WM_CHAR,ord('o'),0);
-            SendMessage(wnd1,WM_CHAR,ord('d'),0);
-            SendMessage(wnd1,WM_CHAR,ord('u'),0);
-            SendMessage(wnd1,WM_CHAR,ord('l'),0);
-            SendMessage(wnd1,WM_CHAR,ord('a'),0);
-            SendMessage(wnd1,WM_CHAR,ord('r'),0);
-            SendMessage(wnd1,WM_CHAR,ord(#13),0);
-            sleep(1500);
-            SendMessage(wnd1,WM_CHAR,ord('x'),0);
-            SendMessage(wnd1,WM_CHAR,ord('r'),0);
-            SendMessage(wnd1,WM_CHAR,ord('e'),0);
-            SendMessage(wnd1,WM_CHAR,ord('b'),0);
-            SendMessage(wnd1,WM_CHAR,ord('o'),0);
-            sleep(50);
-            SendMessage(wnd1,WM_CHAR,ord('o'),0);
-            SendMessage(wnd1,WM_CHAR,ord('t'),0);
-            SendMessage(wnd1,WM_CHAR,ord(#13),0);
+
+            tmpscript := TStringList.Create;
+            tmpscript.Clear;
+            tmpscript.Add('login:');
+            tmpscript.Add('admin');
+            tmpscript.Add('Password:');
+            tmpscript.Add('modular');
+            tmpscript.Add('login:');
+            tmpscript.Add('admin');
+            tmpscript.Add('Password:');
+            tmpscript.Add('modular');
+            tmpscript.Add('\>');
+            tmpscript.Add('xreboot');
+            tmpscript.SaveToFile(ExtractFilePath(Application.ExeName)+'kitty\tmpscript.txt');
+            tmpscript.Free;
+
+            IP:=Modemsip_pc.AsString;
+            ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-initdelay 0 -loginscript kitty\tmpscript.txt -telnet '+IP),nil,SW_restore);
 
             //«аписываем событие в системный журнал событий Windows
            buf:='xreboot on '+IP+' execute success.';
@@ -3963,8 +3927,7 @@ begin
            Query.ExecSQL;
            Query.Close;
         end;
-    Ping1Click(Sender);
-  end;
+  Ping1Click(Sender);
   Button8Click(Sender);//обновл€ем таблицу TableLog
 end;
 
@@ -3979,20 +3942,11 @@ end;
 end;
 
 procedure TForm1.ReloadDrivers1Click(Sender: TObject);
-var rs: TResourceStream;
 begin
-  if not FileExists(ExtractFilePath(Application.ExeName)+'mmsShell.exe') then
-    // извлекаем из ресурса и сохран€ем
-    try
-      rs := TResourceStream.Create(HInstance, 'MMS_SHELL_EXE', RT_RCDATA);
-      rs.SaveToFile(ExtractFilePath(Application.ExeName)+'mmsShell.exe');
-      rs.Free;
-    except
-    end;
   frmReloadDrv := TfrmReloadDrv.Create(Application);
   frmReloadDrv.ShowModal;
 end;
- 
+
 procedure TForm1.VEIDUMP1Click(Sender: TObject);
 type TArrayString = array [0..254] of AnsiChar;
 var
@@ -4525,24 +4479,59 @@ begin
  end;
  if FTPFileZilla1.tag = 0 then
  begin
-    ShellExecute(0,nil,PChar('c:\program files (x86)\putty\putty.exe'),pchar('root@'+AddIPaddress(Modemsip_address.AsString,2)+' -pw kobus@2019'),nil,SW_restore);
+    ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-auto-store-sshkey root@'+AddIPaddress(Modemsip_address.AsString,2)+' -pw kobus@2019'),nil,SW_restore);
     sleep(1000);
  end;
 end;
 
 procedure TForm1.fullversion1Click(Sender: TObject);
-var Cmd0, Cmd1,cmd2: string;
+var
+  Cmd0, Cmd1,cmd2, cmd: string;
+  tmpscript: TStrings;
   i,indx1:integer;
   wnd1:  hwnd;
   SSHConn: TSSHobj;
 begin
-if not FileExists('c:\Program files\putty\putty.exe') then begin
-   ShowMessage('c:\Program files\putty\putty.exe not found');
-   exit;
- end;
+  cmd2 := ExtractFilePath(Application.ExeName);
+  tmpscript := TStringList.Create;
+  tmpscript.Add('\asugtk>');
+  cmd := '\pOMStip '+Modemsname.AsString+'\n\p';
+  Cmd1 := {Modemsname.AsString + }')>';
+  tmpscript.Add('OMStip '+Modemsname.AsString);
+  Cmd0 := ' ';
+  if (Sender as TMenuItem).Name = 'OMStip2' then begin
+    Cmd0 := '';
+  end;
+  if (Sender as TMenuItem).Name = 'rmdirHubGoicReset1' then begin
+    Ping1Click(sender);
+    tmpscript.Add(Cmd1);
+    tmpscript.Add('rmdir pfs');
+    tmpscript.Add(Cmd1);
+    tmpscript.Add('net/Hub/All');
+    tmpscript.Add(Cmd1);
+    tmpscript.Add('net/Goic/All');
+    tmpscript.Add(Cmd1);
+    tmpscript.Add('reset');
+    Cmd0 := '';
+  end;
+  if (Sender as TMenuItem).Name = 'reset1' then begin
+    Ping1Click(sender);
+    tmpscript.Add(Cmd1);
+    tmpscript.Add('reset');
+    Cmd0 :='';
+  end;
+  if Cmd0 = ' ' then begin
+    cmd0:=(Sender as TMenuItem).Caption;
+    cmd0 := StringReplace(cmd0, '&', '', [rfReplaceAll]);
+    tmpscript.Add(Cmd1);
+    tmpscript.Add(Cmd0);
+  end;
 
- ShellExecute(0,nil,PChar('c:\program files\putty\putty.exe'),pchar('asugtk@10.70.121.3 -pw !gtkUSK2022'),nil,SW_restore);
- sleep(1000);
+  tmpscript.SaveToFile('kitty\tmpscript.txt');
+
+  ShellExecute(0,nil,PChar(cmd2+'kitty\kitty.exe'),pchar('-loginscript "'+cmd2+'kitty\tmpscript.txt"'+
+     ' -l asugtk -pw !gtkUSK2022 -auto-store-sshkey -ssh 10.70.121.3'),nil,SW_restore);
+
  //закрываем окно Lastwnd1 по этой же машине (если есть)
  if Length(Lastwnd1)>0 then begin
   if LastEqip.Count>0 then
@@ -4558,95 +4547,55 @@ if not FileExists('c:\Program files\putty\putty.exe') then begin
   end;
  end;
 
- wnd1:=FindWindow(nil,PChar('10.70.121.3 - PuTTY'));
+ wnd1:=FindWindow(nil,PChar('10.70.121.3 - KiTTY'));
  if wnd1>0 then begin
     SetLength(Lastwnd1,Length(Lastwnd1)+1);
     Lastwnd1[high(Lastwnd1)] := wnd1;
     LastEqip.Add(Modemsname.AsString);
-    cmd2:=(Sender as TMenuItem).Caption;
-    cmd2 := StringReplace(cmd2, '&', '', [rfReplaceAll]);
-    Cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO"; '+
-     'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
-     '{set flag "TRUCK"};if {$flag=="GSP"} {set timeout 600;send "exit\r"; expect ">" {send "'+
-      cmd2+'\r";expect ">"}};if {$flag=="TRUCK"} {set timeout 600;send "'+cmd2+'\r"; expect ">"};interact'''#13;
+ end;
 
-
-    if ((Sender as TMenuItem).Name = ConnectCan1281.Name)or((Sender as TMenuItem).Name = ConnectCan1291.Name) then
-    begin
-      Cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
-     'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
-     '{set flag "TRUCK"};if {$flag=="GSP"} {set timeout 600;send "exit\r"; expect ")>" {send "'+cmd2+'\r";expect ">"}};if {$flag=="TRUCK"} {send "'+
-     cmd2+'\r"; expect ">"};interact'''#13;
-    end;
-    if (Sender as TMenuItem).Name = 'OMStip2' then
-      Cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
-     'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
-     '{set flag "TRUCK"};if {$flag=="GSP"} {set timeout 600;send "exit\r"; expect ">"};interact'''#13;
-    if (Sender as TMenuItem).Name = 'rmdirHubGoicReset1' then begin
-      Cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
-     'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
-     '{set flag "TRUCK"};expect ")>" {set flag "TRUCK"};if {$flag=="GSP"} {'+
-        'set timeout 600;send "exit\r"; expect ">" {set timeout 600;send "rmdir pfs\r";expect ">" {send "net/Hub/All\r"; expect ">" {send "net/Goic/All\r";'+
-        'expect ">" {send "reset\r"}}}}};if {$flag=="TRUCK"} {set timeout 600;send "rmdir pfs\r";expect ">" {send "net/Hub/All\r"'+
-        '; expect ">" {send "net/Goic/All\r";expect ">" {send "reset\r"}}}};interact'''#13;
-      Ping1Click(sender);
-    end;
-    if (Sender as TMenuItem).Name = 'reset1' then begin
-      cmd1 := 'expect -c ''spawn OMStip '+Modemsname.AsString+';set flag "GSP";set timeout 3;set flag_bootmode "NO";'+
-     'expect "Boot, arm-ptxb" {set flag_bootmode "YES"}; expect ")>" {set flag "TRUCK"};if {$flag_bootmode=="YES"} '+
-     '{set flag "TRUCK"};if {$flag=="GSP"} {set timeout 600;send "exit\r"; expect ">" {send "reset\r";expect ">"}};if {$flag=="TRUCK"} {send "reset\r"; expect ")>" };interact'''#13;
-        Ping1Click(sender);
-    end;
-
-    //¬ременно - просто соннектимс€ по OMStip
-    cmd1 := 'OMStip '+Modemsname.AsString + #13;
-
-    for i:=1 to Length(Cmd1) do
-          SendMessage(wnd1,WM_CHAR,Ord(Cmd1[i]),0);
-  end
-  else ShowMessage('ѕревышен интервал ожидани€. ѕовторите попытку.');
 end;
 
 
 procedure TForm1.telnet2Click(Sender: TObject);
-var Cmd1,cmd2: string;
-  wnd1, i:integer;
+//var Cmd1,cmd2: string;
+//  wnd1, i:integer;
 begin
- if not FileExists('c:\Program files\putty\putty.exe') then begin
-   ShowMessage('c:\Program files\putty\Putty.exe not found');
-   exit;
- end;
- ShellExecute(0,nil,PChar('c:\program files\putty\putty.exe'),pchar('asugtk@10.70.121.3 -pw !gtkUSK2022'),nil,SW_restore);
- sleep(1000);
- wnd1:=FindWindow(nil,PChar('10.70.121.3 - PuTTY'));
-
- if wnd1>0 then begin
-    Cmd1 := 'expect -c ''spawn telnet '+Modemsip_pc.AsString+';expect "login:";send "\r";expect "Password:";';
-    Cmd1 := Cmd1 + 'send "\r";expect "login:";send "admin\r";expect "Password:";send "modular\r";';
-      cmd2:=(Sender as TMenuItem).Caption;
-      cmd2 := StringReplace(cmd2, '&', '', [rfReplaceAll]);
-      cmd2 := 'expect ">";send "' + cmd2 + '\r";interact''';
-    if (Sender as TMenuItem).Name = 'telnet2' then cmd2:='interact''';
-    if (Sender as TMenuItem).Name ='windowsptxAdministration1' then begin
-      cmd2:='\"\\windows\\ptx\\Administration\\GPS Information.exe\"';
-      cmd2 := 'expect ">";send "' + cmd2 + '\r";interact''';
-    end;
-
-    if (Sender as TMenuItem).Name ='logdevicemonitortxt1' then begin
-      cmd2:='type \\sdcard\\dispatchptxb\\log_devicemonitor.txt';
-      cmd2 := 'expect ">";send "' + cmd2 + '\r";interact''';
-    end;
-
-    if (Sender as TMenuItem).Name ='killprocdeliteexe2' then begin
-      cmd2:='killproc devicemonitor.exe';
-      cmd2 := 'expect ">";send "' + cmd2 + '\r";expect ">";send "killproc delite.exe\r";interact''';
-    end;
-
-    Cmd1 := Cmd1 + cmd2+ #13;
-    for i:=1 to Length(Cmd1) do
-          SendMessage(wnd1,WM_CHAR,Ord(Cmd1[i]),0);
- end
- else ShowMessage('ѕревышен интервал ожидани€. ѕовторите попытку.');
+// if not FileExists('c:\Program files\putty\putty.exe') then begin
+//   ShowMessage('c:\Program files\putty\Putty.exe not found');
+//   exit;
+// end;
+// ShellExecute(0,nil,PChar('c:\program files\putty\putty.exe'),pchar('asugtk@10.70.121.3 -pw !gtkUSK2022'),nil,SW_restore);
+// sleep(1000);
+// wnd1:=FindWindow(nil,PChar('10.70.121.3 - PuTTY'));
+//
+// if wnd1>0 then begin
+//    Cmd1 := 'expect -c ''spawn telnet '+Modemsip_pc.AsString+';expect "login:";send "\r";expect "Password:";';
+//    Cmd1 := Cmd1 + 'send "\r";expect "login:";send "admin\r";expect "Password:";send "modular\r";';
+//      cmd2:=(Sender as TMenuItem).Caption;
+//      cmd2 := StringReplace(cmd2, '&', '', [rfReplaceAll]);
+//      cmd2 := 'expect ">";send "' + cmd2 + '\r";interact''';
+//    if (Sender as TMenuItem).Name = 'telnet2' then cmd2:='interact''';
+//    if (Sender as TMenuItem).Name ='windowsptxAdministration1' then begin
+//      cmd2:='\"\\windows\\ptx\\Administration\\GPS Information.exe\"';
+//      cmd2 := 'expect ">";send "' + cmd2 + '\r";interact''';
+//    end;
+//
+//    if (Sender as TMenuItem).Name ='logdevicemonitortxt1' then begin
+//      cmd2:='type \\sdcard\\dispatchptxb\\log_devicemonitor.txt';
+//      cmd2 := 'expect ">";send "' + cmd2 + '\r";interact''';
+//    end;
+//
+//    if (Sender as TMenuItem).Name ='killprocdeliteexe2' then begin
+//      cmd2:='killproc devicemonitor.exe';
+//      cmd2 := 'expect ">";send "' + cmd2 + '\r";expect ">";send "killproc delite.exe\r";interact''';
+//    end;
+//
+//    Cmd1 := Cmd1 + cmd2+ #13;
+//    for i:=1 to Length(Cmd1) do
+//          SendMessage(wnd1,WM_CHAR,Ord(Cmd1[i]),0);
+// end
+// else ShowMessage('ѕревышен интервал ожидани€. ѕовторите попытку.');
 end;
 
 procedure TForm1.OMSsniffMenuClick(Sender: TObject);

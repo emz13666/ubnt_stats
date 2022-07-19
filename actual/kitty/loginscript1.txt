@@ -1,0 +1,10 @@
+\asugtk>
+OMStip A500
+500)>
+rmdir pfs
+500)>
+net/Hub/All
+500)>
+net/Goic/All
+500)>
+reset

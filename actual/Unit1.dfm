@@ -2,8 +2,8 @@ object Form1: TForm1
   Left = 278
   Top = 121
   Caption = 'Ubiquiti Statistics (C) EMZ ('#1045#1074#1075#1077#1085#1080#1081' '#1052#1080#1093#1072#1081#1083#1086#1074#1080#1095' '#1047#1080#1085#1086#1074#1100#1077#1074')'
-  ClientHeight = 734
-  ClientWidth = 1115
+  ClientHeight = 910
+  ClientWidth = 1119
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,8 +19,8 @@ object Form1: TForm1
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
-    Top = 541
-    Width = 1115
+    Top = 717
+    Width = 1119
     Height = 3
     Cursor = crVSplit
     Align = alBottom
@@ -29,15 +29,16 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Top = 544
-    Width = 1115
+    Top = 720
+    Width = 1119
     Height = 190
     Align = alBottom
     TabOrder = 0
+    ExplicitTop = 701
     object Chart1: TChart
       Left = 1
       Top = 33
-      Width = 1113
+      Width = 1117
       Height = 156
       BackWall.Brush.Color = clWhite
       BackWall.Brush.Style = bsClear
@@ -291,12 +292,12 @@ object Form1: TForm1
     object Panel2: TPanel
       Left = 1
       Top = 1
-      Width = 1113
+      Width = 1117
       Height = 32
       Align = alTop
       TabOrder = 1
       DesignSize = (
-        1113
+        1117
         32)
       object Label3: TLabel
         Left = 331
@@ -409,7 +410,7 @@ object Form1: TForm1
         ParentColor = False
       end
       object ProgressBar1: TProgressBar
-        Left = 831
+        Left = 835
         Top = 9
         Width = 279
         Height = 17
@@ -417,7 +418,7 @@ object Form1: TForm1
         TabOrder = 0
       end
       object CheckBox2: TCheckBox
-        Left = 808
+        Left = 812
         Top = 7
         Width = 17
         Height = 17
@@ -431,41 +432,45 @@ object Form1: TForm1
   object Panel3: TPanel
     Left = 0
     Top = 0
-    Width = 1115
-    Height = 541
+    Width = 1119
+    Height = 717
     Align = alClient
     TabOrder = 1
+    ExplicitHeight = 698
     object Splitter3: TSplitter
-      Left = 813
+      Left = 817
       Top = 1
-      Height = 539
+      Height = 715
       Align = alRight
       ExplicitLeft = 712
       ExplicitHeight = 487
     end
     object Panel4: TPanel
-      Left = 816
+      Left = 820
       Top = 1
       Width = 298
-      Height = 539
+      Height = 715
       Align = alRight
       TabOrder = 0
+      ExplicitHeight = 696
       object PageControl1: TPageControl
         Left = 1
         Top = 1
         Width = 296
-        Height = 537
+        Height = 713
         ActivePage = TabSheet4
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 694
         object TabSheet1: TTabSheet
           Caption = '1'
+          ExplicitHeight = 666
           object MonthCalendar1: TMonthCalendar
             Left = 0
             Top = 8
             Width = 169
             Height = 157
-            Date = 41178.261678298610000000
+            Date = 41178.641586701390000000
             TabOrder = 0
           end
           object CheckBox4: TCheckBox
@@ -732,6 +737,7 @@ object Form1: TForm1
         object TabSheet2: TTabSheet
           Caption = '2'
           ImageIndex = 1
+          ExplicitHeight = 666
           object RadioGroup1: TRadioGroup
             Left = 8
             Top = 49
@@ -1046,6 +1052,7 @@ object Form1: TForm1
         object TabSheet3: TTabSheet
           Caption = 'log and setup'
           ImageIndex = 2
+          ExplicitHeight = 666
           object ToolTipsDBGrid2: TDBGrid
             Left = 0
             Top = 0
@@ -1207,11 +1214,12 @@ object Form1: TForm1
           Caption = 'ReleaseNotes'
           ImageIndex = 3
           OnShow = TabSheet4Show
+          ExplicitHeight = 666
           object Memo1: TMemo
             Left = 0
             Top = 0
             Width = 288
-            Height = 509
+            Height = 685
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -1863,10 +1871,17 @@ object Form1: TForm1
               '06.07.2022'
               'Version 1.1.24.9'
               #1048#1089#1087#1088#1072#1074#1080#1083' '#1082#1086#1086#1088#1076#1080#1085#1072#1090#1099' '#1076#1083#1103' '#1087#1088#1072#1074#1080#1083#1100#1085#1086#1081' '#1086#1090#1088#1080#1089#1086#1074#1082#1080' '
-              #1082#1086#1086#1088#1076#1080#1085#1072#1090' '#1085#1072' '#1082#1072#1088#1090#1077'.')
+              #1082#1086#1086#1088#1076#1080#1085#1072#1090' '#1085#1072' '#1082#1072#1088#1090#1077'.'
+              ''
+              '19.07.2022'
+              'Version 1.1.25.0'
+              #1048#1085#1090#1077#1075#1088#1080#1088#1086#1074#1072#1083' '#1090#1077#1088#1084#1080#1085#1072#1083' KiTTY, '#1087#1077#1088#1077#1076#1077#1083#1072#1083' '#1074#1089#1077' '
+              #1074#1085#1077#1096#1085#1080#1077' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1103' '#1085#1072' '#1080#1089#1087#1086#1083#1100#1079#1086#1074#1072#1085#1080#1077' '
+              #1080#1085#1090#1077#1075#1088#1080#1088#1086#1074#1072#1085#1085#1086#1075#1086' KiTTY')
             ReadOnly = True
             ScrollBars = ssVertical
             TabOrder = 0
+            ExplicitHeight = 666
           end
         end
       end
@@ -1874,15 +1889,16 @@ object Form1: TForm1
     object Panel5: TPanel
       Left = 1
       Top = 1
-      Width = 812
-      Height = 539
+      Width = 816
+      Height = 715
       Align = alClient
       TabOrder = 1
+      ExplicitHeight = 696
       object pagesTables: TPageControl
         Left = 1
         Top = 1
-        Width = 810
-        Height = 537
+        Width = 814
+        Height = 713
         ActivePage = tabAvto
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -1894,14 +1910,16 @@ object Form1: TForm1
         ParentFont = False
         TabHeight = 35
         TabOrder = 0
+        ExplicitHeight = 694
         object tabAvto: TTabSheet
           Caption = #1040#1074#1090#1086#1089#1072#1084#1086#1089#1074#1072#1083#1099
           OnShow = tabAvtoShow
+          ExplicitHeight = 649
           object ToolTipsDBGrid1: TDBGrid
             Left = 0
             Top = 0
-            Width = 802
-            Height = 492
+            Width = 806
+            Height = 668
             Align = alClient
             DataSource = DataSource1
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
@@ -1949,12 +1967,7 @@ object Form1: TForm1
                 Expanded = False
                 FieldName = 'ip_pc'
                 Title.Caption = 'IP PTX'
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'ip_alias'
-                Title.Caption = 'IP Alias'
+                Width = 113
                 Visible = True
               end
               item
@@ -1996,7 +2009,13 @@ object Form1: TForm1
                 Expanded = False
                 FieldName = 'serial_lte'
                 Title.Caption = 'LTE s/n'
-                Width = 160
+                Width = 134
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'ip_alias'
+                Title.Caption = 'IP Alias'
                 Visible = True
               end>
           end
@@ -2005,16 +2024,19 @@ object Form1: TForm1
           Caption = #1069#1082#1089#1082#1072#1074#1072#1090#1086#1088#1099
           ImageIndex = 1
           OnShow = tabExShow
+          ExplicitHeight = 649
         end
         object tabBur: TTabSheet
           Caption = #1041#1091#1088#1089#1090#1072#1085#1082#1080' '#1080' '#1057#1047#1052
           ImageIndex = 2
           OnShow = tabBurShow
+          ExplicitHeight = 649
         end
         object tabBase: TTabSheet
           Caption = #1041#1072#1079#1086#1074#1099#1077' '#1089#1090#1072#1085#1094#1080#1080
           ImageIndex = 3
           OnShow = tabBaseShow
+          ExplicitHeight = 649
         end
       end
     end
@@ -2102,15 +2124,7 @@ object Form1: TForm1
       Caption = '-'
     end
     object Tranzact_n: TMenuItem
-      Caption = #1046#1091#1088#1085#1072#1083' '#1090#1088#1072#1085#1079#1072#1082#1094#1080#1081' ('#1085#1086#1095#1085#1072#1103' '#1089#1084#1077#1085#1072')'
-      OnClick = Tranzact_nClick
-    end
-    object Tranzact_d: TMenuItem
-      Caption = #1046#1091#1088#1085#1072#1083' '#1090#1088#1072#1085#1079#1072#1082#1094#1080#1081' ('#1076#1085#1077#1074#1085#1072#1103' '#1089#1084#1077#1085#1072')'
-      OnClick = Tranzact_nClick
-    end
-    object Tranzact_mon: TMenuItem
-      Caption = #1046#1091#1088#1085#1072#1083' '#1090#1088#1072#1085#1079#1072#1082#1094#1080#1081' ('#1090#1077#1082#1091#1097#1072#1103' '#1089#1084#1077#1085#1072') - '#1084#1086#1085#1080#1090#1086#1088#1080#1085#1075' '
+      Caption = #1046#1091#1088#1085#1072#1083#1099' '#1090#1088#1072#1085#1079#1072#1082#1094#1080#1081' '#1080' '#1080#1089#1082#1083#1102#1095#1077#1085#1080#1081
       OnClick = Tranzact_nClick
     end
     object N6: TMenuItem
@@ -2152,6 +2166,10 @@ object Form1: TForm1
       end
       object Gpsgps1: TMenuItem
         Caption = 'Gps gps'
+        OnClick = fullversion1Click
+      end
+      object DispPollers1_menu: TMenuItem
+        Caption = 'disp pollers'
         OnClick = fullversion1Click
       end
       object fullversion1: TMenuItem
@@ -2211,55 +2229,59 @@ object Form1: TForm1
       Caption = #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100#1089#1103' '#1095#1077#1088#1077#1079' telnet'
       object telnet2: TMenuItem
         Caption = 'telnet'
-        OnClick = telnet2Click
+        OnClick = telnet1Click
       end
       object logdevicemonitortxt1: TMenuItem
         Caption = #1055#1086#1082#1072#1079#1072#1090#1100' log_devicemonitor.txt'
-        OnClick = telnet2Click
+        Visible = False
+        OnClick = telnet1Click
       end
       object GetImageVersion1: TMenuItem
         Caption = 'GetImageVersion'
-        OnClick = telnet2Click
+        OnClick = telnet1Click
       end
       object CheckHardwarerev1: TMenuItem
         Caption = 'CheckHardwareRev'
-        OnClick = telnet2Click
+        OnClick = telnet1Click
       end
       object proclist1: TMenuItem
         Caption = 'proclist'
-        OnClick = telnet2Click
+        OnClick = telnet1Click
       end
       object killprocdevicemonitorexe1: TMenuItem
         Caption = 'killproc devicemonitor.exe'
-        OnClick = telnet2Click
+        Visible = False
+        OnClick = telnet1Click
       end
       object killprocdeliteexe1: TMenuItem
-        Caption = 'killproc delite.exe'
-        OnClick = telnet2Click
+        Caption = 'killproc DISPATCHLite.exe'
+        OnClick = telnet1Click
       end
       object killprocdeliteexe2: TMenuItem
         Caption = 'killproc delite.exe + devmon'
-        OnClick = telnet2Click
+        Visible = False
+        OnClick = telnet1Click
       end
       object servicesstartFTP01: TMenuItem
         Caption = 'services start FTP0:'
-        OnClick = telnet2Click
+        OnClick = telnet1Click
       end
       object startcerdispc1: TMenuItem
         Caption = 'start cerdisp -c'
-        OnClick = telnet2Click
+        OnClick = telnet1Click
       end
       object windowsptxAdministration1: TMenuItem
         Caption = 'GPS Information'
-        OnClick = telnet2Click
+        OnClick = telnet1Click
       end
       object explorer1: TMenuItem
         Caption = 'explorer'
-        OnClick = telnet2Click
+        OnClick = telnet1Click
       end
     end
     object OMSsniff1: TMenuItem
       Caption = #1055#1086#1082#1072#1079#1072#1090#1100' '#1089#1085#1080#1092#1099' (OMSsniff)'
+      Visible = False
       object OMSsniffMenu: TMenuItem
         Caption = #1042#1089#1077' '#1076#1072#1085#1085#1099#1077'  '#1087#1086' '#1090#1077#1082#1091#1097#1077#1084#1091' '
         OnClick = OMSsniffMenuClick

@@ -1,3 +1,7 @@
 TEMPLATE_VNC RCDATA "Template.vnc"
 VNC_EXE RCDATA "VNC-Viewer.exe"
 MMS_SHELL_EXE RCDATA "mmsShell.exe"
+KITTY_EXE RCDATA "kitty.exe"
+KLINK_EXE RCDATA "klink.exe"
+KSCP_EXE RCDATA "kscp.exe"
+KITTY_INI RCDATA "kitty.ini"
