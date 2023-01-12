@@ -9,7 +9,7 @@ uses
   FMTBcd, Series, BubbleCh, ComCtrls, Clipbrd, ComObj, ActiveX, Menus, snmpsend, asn1util,
   ADODB, jpeg, shellapi, DelphiCryptlib, cryptlib,  updater, ReloadDriver, UnitMemo, MyUtils, UnitChangePTX,
   SSH_wifi, MapWiFiSettings, WiFiAnalizeByMap, rxPlacemnt, ImgList, Spin,
-  acAlphaImageList;
+  acAlphaImageList, Buttons, sSpeedButton, ActnList;
 
 type
   TForm1 = class(TForm)
@@ -307,6 +307,19 @@ type
     Modemsmodel_modem: TStringField;
     Modemsprim_2: TStringField;
     DispPollers1_menu: TMenuItem;
+    TabSheetManagement: TTabSheet;
+    GBLTE: TGroupBox;
+    ManagementActions: TActionList;
+    AInstallLTE: TAction;
+    ImageListManagementActions: TsAlphaImageList;
+    ssbInstallLTE: TsSpeedButton;
+    AReplaceLTE: TAction;
+    AUninstallLTE: TAction;
+    ssbReplaceLTE: TsSpeedButton;
+    ssbUninstallLTE: TsSpeedButton;
+    Modemsid_lte: TLargeintField;
+    GBManageBullet: TGroupBox;
+    GBManagePTX: TGroupBox;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -402,6 +415,9 @@ type
     procedure menuChartPingClick(Sender: TObject);
     procedure chkAPClick(Sender: TObject);
     procedure btnChangeBulletClick(Sender: TObject);
+    procedure AInstallLTEExecute(Sender: TObject);
+    procedure AUninstallLTEExecute(Sender: TObject);
+    procedure AReplaceLTEExecute(Sender: TObject);
 
   private
     { Private declarations }
@@ -1473,6 +1489,42 @@ end;
 ProgressBar1.Position := 0;
 temp_memo.Free;
 ShowMessage('Отчёт сохранен в файле '+ExtractFilePath(Application.ExeName)+ 'temp_report_bur.txt');
+end;
+
+procedure TForm1.AInstallLTEExecute(Sender: TObject);
+begin
+      if Modemsid_LTE.AsInteger<>0 then begin
+         ShowMessage('На '+Modemsname.Value+' уже установлен LTE модем. Нажмите кнопку Заменить LTE для замены');
+         exit;
+      end;
+      faction:=2;
+      fTypeEquipment:=3;
+      frmChangePTX:=TfrmChangePTX.Create(Application);
+      frmChangePTX.ShowModal;
+end;
+
+procedure TForm1.AReplaceLTEExecute(Sender: TObject);
+begin
+     if Modemsid_LTE.AsInteger=0 then begin
+        ShowMessage('На '+Modemsname.Value+' нет LTE модема. Воспользуйтесь кнопкой Установка LTE');
+        exit;
+     end;
+     faction:=1;
+     fTypeEquipment:=3;
+     frmChangePTX := TfrmChangePTX.Create(Application);
+     frmChangePTX.ShowModal;
+end;
+
+procedure TForm1.AUninstallLTEExecute(Sender: TObject);
+begin
+     if Modemsid_LTE.AsInteger=0 then begin
+        ShowMessage('На '+Modemsname.Value+' нет LTE модема.');
+        exit;
+     end;
+     faction:=3;
+     fTypeEquipment:=3;
+     frmChangePTX := TfrmChangePTX.Create(Application);
+     frmChangePTX.ShowModal;
 end;
 
 procedure TForm1.btnChangeBulletClick(Sender: TObject);

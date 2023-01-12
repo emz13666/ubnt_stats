@@ -36,13 +36,14 @@ var
   mass_id_ptx: TStrings;
   faction: byte;//1 - change, 2-install, 3-deinstall
   fTypeEquipment: byte; //1-PTX, 2-Bullet, 3 - LTE-modem
-  NameEquipment, NameTable, NameFieldId, NameHistTable, NameFieldHistId, NameFieldSerial, IP_A500, IP_Current: AnsiString;
-
+  NameEquipment, NameTable, NameFieldId, NameHistTable, NameFieldHistId, NameFieldSerial, NameFieldOrder, NameFieldIp, IP_A500, IP_Current: AnsiString;
 implementation
 uses Unit1;
 {$R *.dfm}
 
 procedure TfrmChangePTX.FormCreate(Sender: TObject);
+var
+  fieldsstr: string;
 begin
   case fTypeEquipment of
     1: begin
@@ -52,6 +53,7 @@ begin
         NameHistTable := 'ptx_history';
         NameFieldHistId := 'id_ptx';
         NameFieldSerial := 'serial';
+        NameFieldOrder:=NameFieldSerial;
         IP_A500 := '10.70.122.82';
         IP_Current := Form1.Modemsip_pc.AsString;
     end;
@@ -62,6 +64,7 @@ begin
         NameHistTable := 'bullet_history';
         NameFieldHistId := 'id_bullet';
         NameFieldSerial := 'mac_address';
+        NameFieldOrder:=NameFieldSerial;
         IP_A500 := '10.70.123.140';
         IP_Current := Form1.Modemsip_address.AsString;
     end;
@@ -71,7 +74,9 @@ begin
         NameFieldId := 'id_lte';
         NameHistTable := 'lte_history';
         NameFieldHistId := 'id_lte';
-        NameFieldSerial := 'lte_serial';
+        NameFieldSerial := 'serial_lte';
+        NameFieldIP:='ip_lte';
+        NameFieldOrder:=NameFieldIP;
     end;
   end;
 
@@ -96,14 +101,15 @@ begin
 
   DateChange1.Date := date;
   TimeChange1.Time := time;
-  NullPTX.SQL.Text := 'Select * from '+ NameTable +' where id_equipment is null';
+  NullPTX.SQL.Text := 'Select * from '+ NameTable +' where id_equipment is null order by '+NameFieldOrder;
   NullPTX.Open;
   ComboBox1.Items.Clear;
   mass_id_ptx := TStringList.Create;
   mass_id_ptx.Clear;
   while not NullPTX.Eof do
   begin
-    ComboBox1.Items.Add(NullPTX.fieldByName(NameFieldSerial).AsString);
+    if fTypeEquipment<>3 then ComboBox1.Items.Add(NullPTX.fieldByName(NameFieldSerial).AsString) else
+        ComboBox1.Items.Add(NullPTX.fieldByName(NameFieldIp).AsString+' ( '+NullPTX.fieldByName(NameFieldSerial).AsString+' )');
     mass_id_ptx.Add(NullPTX.fieldByName(NameFieldId).AsString);
     NullPTX.Next;
   end;
@@ -125,30 +131,45 @@ end;
 procedure TfrmChangePTX.Button1Click(Sender: TObject);
 var id_ptx_old,id_equipment,id_ptx_new: string;
     ip_ptx: string;
+    eqname:string;
+    f: boolean;
 begin
   id_equipment := Form1.Modemsid.AsString;
   id_ptx_old := Form1.Modems.FieldByName(NameFieldId).AsString;
   id_ptx_new := mass_id_ptx[ComboBox1.ItemIndex];
   ip_ptx := IP_Current;
+  eqname:=Form1.Modemsname.AsString;
   with NullPTX do
   begin
+    f:=false;
     if faction<>2 then begin
       Close;
       //для LTE-модемов ip-адрес не трогаем
       if  fTypeEquipment=3 then
-        SQL.Text := 'Update ' + NameTable + ' set id_equipment=NULL where ' + NameFieldId + '=' + id_ptx_old
+        SQL.Text := 'Update ' + NameTable + ' set id_equipment=NULL, name="Test_LTE" where ' + NameFieldId + '=' + id_ptx_old
       else
         SQL.Text := 'Update ' + NameTable + ' set id_equipment=NULL, ip_address='+QuotedStr(IP_A500)+ ' where ' + NameFieldId + '=' + id_ptx_old;
-      ExecSQL;
+      try
+        ExecSQL;
+        f:=true;
+      except
+        f:=false;
+      end;
     end;
     if faction<>3 then begin
       Close;
       //для LTE-модемов ip-адрес не трогаем
+      // [2023-01-12] Вместо ip-адреса меняем имя модема
       if  fTypeEquipment=3 then
-        SQL.Text := 'Update ' + NameTable + ' set id_equipment=' + id_equipment + ' where ' + NameFieldId + '='+id_ptx_new
+        SQL.Text := 'Update ' + NameTable + ' set id_equipment=' + id_equipment + ', name="'+eqname+'_LTE" where ' + NameFieldId + '='+id_ptx_new
       else
         SQL.Text := 'Update ' + NameTable + ' set id_equipment='+id_equipment+', ip_address='+QuotedStr(ip_ptx)+' where ' + NameFieldId + '=' + id_ptx_new;
-      ExecSQL;
+      try
+        ExecSQL;
+        f:=true;
+      except
+        f:=false;
+      end;
     end;
     if faction<>2 then begin
       Close;
@@ -158,7 +179,11 @@ begin
         QuotedStr(Edit1.Text)+','+
         QuotedStr(Form1.Modemsname.AsString)+ ','+
         QuotedStr('Участок УСК')+')';
-      ExecSQL;
+      try
+        ExecSQL;
+      except
+        ShowMessage('Ошибка сохранения истории');
+      end;
     end;
     if faction<>3 then begin
         Close;
@@ -168,9 +193,19 @@ begin
       QuotedStr(Edit2.Text)+', '+
       QuotedStr('Участок УСК')+ ', '+
       QuotedStr(Form1.Modemsname.AsString)+')';
-      ExecSQL;
+      try
+        ExecSQL;
+      except
+        ShowMessage('Ошибка сохранения истории');
+      end;
     end;
     Close;
+    // Передаем в БД информацию о том, что нужно перезапустить сбор статистики
+    if f then begin
+       SQL.Text:='Update variables set value="1" where object="sbor_stats" and name="restart_sbor"';
+       ExecSQL;
+       Close;
+    end;
   end;
   Close;
 end;

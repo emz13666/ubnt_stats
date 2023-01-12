@@ -1,10 +1,9 @@
 object frmChangePTX: TfrmChangePTX
   Left = 792
   Top = 253
-  AutoSize = True
   Caption = #1047#1072#1084#1077#1085#1072' '#1056#1058#1061' '#1085#1072' A101'
   ClientHeight = 153
-  ClientWidth = 311
+  ClientWidth = 409
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,6 +15,9 @@ object frmChangePTX: TfrmChangePTX
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  DesignSize = (
+    409
+    153)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -47,64 +49,78 @@ object frmChangePTX: TfrmChangePTX
     Caption = #1055#1088#1080#1095#1080#1085#1072' '#1091#1089#1090#1072#1085#1086#1074#1082#1080':'
   end
   object Button1: TButton
-    Left = 23
-    Top = 128
+    Left = 71
+    Top = 121
     Width = 75
     Height = 25
+    Anchors = [akTop]
     Caption = 'OK'
     TabOrder = 0
     OnClick = Button1Click
   end
   object Button2: TButton
-    Left = 215
-    Top = 127
+    Left = 263
+    Top = 120
     Width = 75
     Height = 25
+    Anchors = [akTop]
     Caption = #1054#1090#1084#1077#1085#1080#1090#1100
     TabOrder = 1
     OnClick = Button2Click
   end
   object DateChange1: TDateTimePicker
-    Left = 118
+    Left = 190
     Top = 0
     Width = 92
     Height = 21
+    Anchors = [akTop, akRight]
     Date = 42098.378566400500000000
     Time = 42098.378566400500000000
     TabOrder = 2
+    ExplicitLeft = 192
   end
   object TimeChange1: TDateTimePicker
-    Left = 220
+    Left = 292
     Top = 0
     Width = 80
     Height = 21
+    Anchors = [akTop, akRight]
     Date = 42098.378566400500000000
     Time = 42098.378566400500000000
     Kind = dtkTime
     TabOrder = 3
+    ExplicitLeft = 294
   end
   object Edit1: TEdit
     Left = 97
     Top = 62
-    Width = 214
+    Width = 310
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 4
+    ExplicitWidth = 312
   end
   object Edit2: TEdit
     Left = 114
     Top = 90
-    Width = 196
+    Width = 293
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 5
     Text = #1047#1072#1084#1077#1085#1072' '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1075#1086
+    ExplicitWidth = 295
   end
   object ComboBox1: TComboBox
     Left = 192
     Top = 30
-    Width = 118
+    Width = 215
     Height = 21
     Style = csDropDownList
+    Anchors = [akLeft, akTop, akRight]
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 6
+    ExplicitWidth = 217
   end
   object NullPTX: TADOQuery
     Connection = Form1.DBConnection
