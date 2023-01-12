@@ -1,11 +1,11 @@
 select s.signal_level, s.mac_ap, e.name, e.id as EQid from statss s
 inner join equipment e on (e.id=s.id_equipment)
 inner join stats_status ss on ((ss.id_equipment=s.id_equipment) and (s.datetime >= ss.datetimestart) and (s.datetime < ss.datetimeend))
-where (s.date="2022-05-03")
-and (s.x between 15650 and 15700)
-and (s.y between 4500 and 4550)
-and (ss.datetimeend > "2022-05-03 00:00:00" )
-and (ss.datetimestart <= "2022-05-03 23:59:59")
+where (s.date="2022-10-12")
+and (s.x between 13800 and 13850)
+and (s.y between 3700 and 3750)
+and (ss.datetimeend > "2022-10-12 00:00:00" )
+and (ss.datetimestart <= "2022-10-12 23:59:59")
 and (ss.status=2)
 and (e.useInMonitoring=1)
 order by e.name

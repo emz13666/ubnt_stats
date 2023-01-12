@@ -407,7 +407,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    procedure ShowPointPosition(pointindex:integer);
+    procedure ShowPointPosition(dttm:TDateTime);
     procedure Create_Process(FName,FTitle: string);
   end;
 
@@ -1635,17 +1635,19 @@ procedure TForm1.Chart1ClickSeries(Sender: TCustomChart;
   Shift: TShiftState; X, Y: Integer);
 var
   pt:TPoint;
+  dttm: TDatetime;
 begin
- if (Series.Name<>Series1.Name)and(Series.Name<>Chart1.Series[3].Name) then begin
+ {if (Series.Name<>Series1.Name)and(Series.Name<>Chart1.Series[3].Name) then begin
       Chart1.Hint:='Здесь нельзя щелкать. Ха ха ха';
       if button<>mbLeft then Chart1ClickSeries(sender,series,valueindex,mbLeft,shift,x,y);
       exit;
-  end;
+  end;}
+  dttm:=Series.XValue[Valueindex];
 
  // Если щелкнули правой кнопкой, то отрисовать местоположение для точки
  if (Button=mbRight)and (not flagWLANConnections) then begin
     if Series.Name<>Chart1.Series[3].Name then
-      ShowPointPosition(valueindex-2);//здесь нужно valueindex-2, потому что первые 2 точки рисуются для масштабирования графика по оси х
+      ShowPointPosition(dttm);//здесь нужно valueindex-2, потому что первые 2 точки рисуются для масштабирования графика по оси х
     exit;
  end;
  if not flagWLANConnections then   //если график - не WLANConnections для БС
@@ -4096,10 +4098,12 @@ begin
   Chart1.Series[0].AddXY(MonthCalendar1.Date,currentNumAutoOrExcav+1);
      }
   Query.Close;
-  Query.sql.Text := 'select date, time, signal_level, status, x from statss where ';
+  Query.SQL.Clear;
+  Query.sql.add('select datetime, x from stats_gps sg where ');
+  Query.SQL.Add('(id_equipment='+Modems.FieldByName('id_equipment').AsString+')');
       if CheckBox3.Checked then
       begin
-        if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
+        {if FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date) <> FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date) then
           Query.sql.Text := Query.sql.Text +
             ' (((statss.date > '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+') ' +
             ' and (statss.date < '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker2.Date))+')) ' +
@@ -4111,16 +4115,16 @@ begin
            Query.sql.Text := Query.sql.Text +
             ' (statss.date = '+ QuotedStr(FormatDateTime('yyyy-mm-dd',DateTimePicker1.Date))+' and ' +
             'statss.time >= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker3.Time))+' and ' +
-            'statss.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') '
-
+            'statss.time <= '+ QuotedStr(FormatDateTime('hh:nn:00',DateTimePicker4.Time))+') '}
+         //[2022-10-12] Scorpio
+         Query.SQL.Add('and (sg.datetime between "'+MySQLDateTime(DateTimePicker1.Date+DateTimePicker3.Time)+'" and "'+MySQLDateTime(DateTimePicker2.Date+DateTimePicker4.Time)+'")');
       end
       else
       begin
-        Query.sql.Text := Query.sql.Text +
-          ' statss.date='+QuotedStr(FormatDateTime('yyyy-mm-dd',MonthCalendar1.Date));
+        Query.sql.add('and (sg.datetime between "'+MySQLDateTime(trunc(MonthCalendar1.Date))+'" and "'+MySQLDateTime(trunc(MonthCalendar1.Date)+1-(1/24/3600))+'")');
       end;
-      Query.sql.Text := Query.sql.Text + ' and statss.id_equipment='+
-          Modems.FieldByName('id_equipment').AsString+' and statss.x > 0 order by date, time';
+      {Query.sql.Text := Query.sql.Text + ' and statss.id_equipment='+
+          Modems.FieldByName('id_equipment').AsString+' and statss.x > 0 order by date, time';}
   try
     Query.Open;
   except
@@ -4142,7 +4146,7 @@ begin
       ProgressBar1.Position := ProgressBar1.Position +1;
       Application.ProcessMessages;
     end;
-    tmpDateTime := StrToDateTime(Query.Fields[0].AsString+' '+Query.Fields[1].AsString);
+    tmpDateTime := StrToDateTime(Query.FieldByName('datetime').AsString);
     Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName('x').AsInteger{currentNumAutoOrExcav},'',clBlack);
     Query.Next;
   end;
@@ -4494,9 +4498,9 @@ var
 begin
   cmd2 := ExtractFilePath(Application.ExeName);
   tmpscript := TStringList.Create;
-  tmpscript.Add('\asugtk>');
+  tmpscript.Add('asugtk>');
   cmd := '\pOMStip '+Modemsname.AsString+'\n\p';
-  Cmd1 := {Modemsname.AsString + }')>';
+  Cmd1 := '>';
   tmpscript.Add('OMStip '+Modemsname.AsString);
   Cmd0 := ' ';
   if (Sender as TMenuItem).Name = 'OMStip2' then begin
@@ -4633,23 +4637,23 @@ begin
  else ShowMessage('Превышен интервал ожидания. Повторите попытку.');
 end;
 
-procedure TForm1.ShowPointPosition(pointindex:integer);
+procedure TForm1.ShowPointPosition(dttm:TDatetime);
 var
-    dttm:TDateTime;
     sig_lev:integer;
-    x:integer;
-    y:integer;
+    x:real;
+    y:real;
     i,di:integer;
     coordFinded:boolean;
     tmpimg:TImage;
     filePNG:string;
     kx,ky:real;
     paintx,painty:integer;
+  diff: TDateTime;
+  dttm1: TDatetime;
 begin
-    i:=pointindex;
-    x:=CoordsModems[i].x;
-    y:=CoordsModems[i].y;
-    coordFinded:=((x>0)and(y>0));
+    //x:=CoordsModems[i].x;
+    //y:=CoordsModems[i].y;
+    {coordFinded:=((x>0)and(y>0));
     di:=0;
     // Пока не найдена точка с координатой и проверены 4 соседние точки
     while (not coordFinded) and (di<5) do begin
@@ -4661,13 +4665,37 @@ begin
                 y:=CoordsModems[i].y;
                 coordFinded:=((x>0)and(y>0));
         end;
+    end;}
+    if Query.Active then Query.Close;
+    Query.SQL.Clear;
+    Query.SQL.Add('select datetime, x,y from stats_gps where');
+    Query.SQL.Add('(id_equipment='+inttostr(ChartEQInfo.id)+')');
+    Query.SQL.Add('and (datetime between "'+MySQLDateTime(dttm-15/24/3600)+'" and "'+MySQLDateTime(dttm+15/24/3600)+'")');
+    try
+       Query.Open;
+    except
+       Application.MessageBox('Ошибка при выполнении запроса координат из БД ubiquiti','Ошибка');
+       exit;
     end;
-    if not CoordFinded then begin
+    Query.Last;
+    Query.First;
+    coordFinded:=(Query.RecordCount>0);
+    if CoordFinded then begin
+       diff:=1;
+       while not Query.Eof do begin
+          dttm1:=Query.FieldByName('datetime').AsDateTime;
+          if abs(dttm-dttm1)<diff then begin
+            x:=Query.FieldByName('x').AsFloat;
+            y:=Query.FieldByName('y').AsFloat;
+            diff:=abs(dttm-dttm1);
+          end;
+          Query.Next;
+       end;
+    end else begin
        Application.MessageBox('Не найдены точки с координатами','Ошибка');
        exit;
     end;
-    dttm:=Chart1.Series[0].XValue[i];
-    sig_lev:=Trunc(Chart1.Series[0].YValue[i]);
+    if Chart1.Series[0].Visible then sig_lev:=Trunc(Chart1.Series[0].YValue[i]) else sig_lev:=0;
     // Рисуем карту и отображаем на ней точку
     if not Assigned(frmShowMap) then frmShowMap := TfrmShowMap.Create(Application);
     frmShowMap.Caption:='Местоположение '+ChartEQInfo.name+' '+FormatDateTime('dd.mm.yyyy hh:nn:ss',dttm);
@@ -4680,8 +4708,8 @@ begin
     //frmWiFiAnalize.ModemIndex:=Modemsid_modem.AsInteger;
     frmWiFiAnalize.signal:=sig_lev;
     frmWiFiAnalize.StationName:=NamesModems[i];
-    frmWiFiAnalize.x:=x;
-    frmWiFiAnalize.y:=y;
+    frmWiFiAnalize.x:=round(x);
+    frmWiFiAnalize.y:=round(y);
     // Закончили задавать параметры
     frmShowMap.TBSettings.Enabled:=false;
     frmShowMap.TBStations.Enabled:=false;
@@ -4759,9 +4787,10 @@ begin
 //  (Chart1.Series[0] as TPointSeries).Pointer.HorizSize := 2;  (Chart1.Series[0] as TPointSeries).Pointer.VertSize :=2;
 
   Query.Close;
-  Query.sql.Text := 'select max(x) as max_x, min(x) as min_x from statss st where ' + GetSQLWhereDateTime('st.datetime') +
-                    ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString+
-                    ' and st.x > 0 order by st.datetime';
+  Query.sql.Text := 'select max(x) as max_x, min(x) as min_x from stats_gps sg where'+
+                    ' sg.id_equipment='+ Modems.FieldByName('id_equipment').AsString+
+                    ' and ('+GetSQLWhereDateTime('sg.datetime') +')'+
+                    ' and sg.x > 0 order by sg.datetime';
   try
     Query.Open;
   except
@@ -4782,9 +4811,10 @@ begin
   end;
 
   Query.Close;
-  Query.sql.Text := 'select datetime, signal_level, status, x from statss st where ' + GetSQLWhereDateTime('st.datetime') +
-                    ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString +
-                    ' and st.x > 0 order by datetime';
+  Query.sql.Text := 'select datetime, x from stats_gps sg where ' +
+                    ' sg.id_equipment='+ Modems.FieldByName('id_equipment').AsString +
+                    ' and ('+GetSQLWhereDateTime('sg.datetime') +')'+
+                    ' and sg.x > 0 order by datetime';
   try
     Query.Open;
   except
