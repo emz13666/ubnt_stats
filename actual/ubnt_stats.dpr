@@ -11,7 +11,9 @@ uses
   UnitMemo in 'UnitMemo.pas' {frmMEMO},
   UnitChangePTX in 'UnitChangePTX.pas' {frmChangePTX},
   MapWiFiSettings in 'MapWiFiSettings.pas' {frmMapWiFiSettings},
-  WiFiAnalizeByMap in 'WiFiAnalizeByMap.pas' {frmWiFiAnalize};
+  WiFiAnalizeByMap in 'WiFiAnalizeByMap.pas' {frmWiFiAnalize},
+  LTEAdd in 'LTEAdd.pas' {frmLTEAdd},
+  ScorpioClasses in '..\..\..\!DelphiLibs\our\ScorpioClasses.pas';
 
 {$R *.res}
 

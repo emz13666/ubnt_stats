@@ -9,7 +9,7 @@ uses
   FMTBcd, Series, BubbleCh, ComCtrls, Clipbrd, ComObj, ActiveX, Menus, snmpsend, asn1util,
   ADODB, jpeg, shellapi, DelphiCryptlib, cryptlib,  updater, ReloadDriver, UnitMemo, MyUtils, UnitChangePTX,
   SSH_wifi, MapWiFiSettings, WiFiAnalizeByMap, rxPlacemnt, ImgList, Spin,
-  acAlphaImageList, Buttons, sSpeedButton, ActnList;
+  acAlphaImageList, Buttons, sSpeedButton, ActnList, LTEAdd;
 
 type
   TForm1 = class(TForm)
@@ -320,6 +320,15 @@ type
     Modemsid_lte: TLargeintField;
     GBManageBullet: TGroupBox;
     GBManagePTX: TGroupBox;
+    sLTEList: TsSpeedButton;
+    ANewLTE: TAction;
+    timerHidePanel: TTimer;
+    PanelInfo: TPanel;
+    PopupActions: TActionList;
+    AConnectLTE: TAction;
+    ConnectLTE: TMenuItem;
+    ILPopupActions: TsAlphaImageList;
+    TabOther: TTabSheet;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -418,6 +427,10 @@ type
     procedure AInstallLTEExecute(Sender: TObject);
     procedure AUninstallLTEExecute(Sender: TObject);
     procedure AReplaceLTEExecute(Sender: TObject);
+    procedure ANewLTEExecute(Sender: TObject);
+    procedure timerHidePanelTimer(Sender: TObject);
+    procedure AConnectLTEExecute(Sender: TObject);
+    procedure TabOtherShow(Sender: TObject);
 
   private
     { Private declarations }
@@ -425,6 +438,7 @@ type
     { Public declarations }
     procedure ShowPointPosition(dttm:TDateTime);
     procedure Create_Process(FName,FTitle: string);
+    procedure ShowPanelInfo(text:string;duration:integer);
   end;
 
 type TCoord = record
@@ -902,6 +916,55 @@ end;
 procedure TForm1.TabSheet4Show(Sender: TObject);
 begin
   Memo1.Perform(EM_LINESCROLL,0,Memo1.Lines.Count-1);
+end;
+
+procedure TForm1.TabOtherShow(Sender: TObject);
+begin
+  GroupBox4.Caption :='По всему прочему оборудованию в статусе ГОТОВ';
+  G1.Visible := false;
+  menuChartPing.Visible := true;
+  BulletSSH1.Visible := false;
+  C1.Visible := true;
+  GPS1.Visible  := true;
+  Gpswifi1.Visible := true;
+  N12.Visible  := true;
+  ReloadDrivers2.Visible  := false;
+  ReloadDrivers1.Visible := false;
+  GPSARRIVE1.Visible := false;
+  N11.Visible := true;
+  Tranzact_n.Visible := true;
+  N6.Visible := true;
+  Ping1.Visible := true;
+  Ping1.Caption := 'Пинговать';
+  Bullet1.Visible := true;
+  BulletAP1.Visible := false;
+  Switch1.Visible := false;
+  OMStip1.Visible := true;
+  VNC1.Visible := false;
+  VNC1.Caption :=  'Подключиться по VNC к PTX';
+  FTPFileZilla1.Visible := false;
+  FTPFileZilla1.Caption := 'Подключиться через FTP (FileZilla)';
+  FTPFileZilla1.Tag := 1;
+  telnetcheckhardwarerev1.Visible := false;
+  OMSsniff1.Visible := false;
+  xrebootPTX1.Visible := false;
+  xrebootPTX1.Caption := 'Перезагрузить PTX (xreboot)';
+  N7.Visible := true;
+  N1.Visible := true;
+  Updatemac1.Visible := false;
+
+  ToolTipsDBGrid1.Parent := TabOther;
+  ToolTipsDBGrid1.Tag := 1;
+  Modems.Close;
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx p ON e.id=p.id_equipment LEFT JOIN lte ON e.id=lte.id_equipment where e.equipment_type = 7 and e.useInMonitoring=1 order by e.name';
+//  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by eq.name';
+
+  try
+    Modems.Open;
+  except
+    DBConnection.Close;
+  end;
+  ToolTipsDBGrid1.tag :=0;
 end;
 
 function convert_s(s: string):string;
@@ -1491,6 +1554,21 @@ temp_memo.Free;
 ShowMessage('Отчёт сохранен в файле '+ExtractFilePath(Application.ExeName)+ 'temp_report_bur.txt');
 end;
 
+procedure TForm1.AConnectLTEExecute(Sender: TObject);
+var
+  lteip: string;
+  winboxpath: string;
+begin
+     lteip:=Modemsip_lte.AsString;
+     winboxpath:=ExtractFilePath(Application.ExeName)+'winbox64.exe';
+     if lteip<>'' then begin
+        // Проверяем, есть ли winbox в папке с программой
+        if FileExists(winboxpath) then begin
+           ShellExecute(0,nil,PChar(winboxpath),pchar(lteip+' admin "gtkasu2012"'),nil,SW_restore);
+        end else ShowMessage('В папке с программой отсутствует файл winbox64.exe');
+     end;
+end;
+
 procedure TForm1.AInstallLTEExecute(Sender: TObject);
 begin
       if Modemsid_LTE.AsInteger<>0 then begin
@@ -1501,6 +1579,15 @@ begin
       fTypeEquipment:=3;
       frmChangePTX:=TfrmChangePTX.Create(Application);
       frmChangePTX.ShowModal;
+end;
+
+procedure TForm1.ANewLTEExecute(Sender: TObject);
+begin
+     if not Assigned(frmLTEAdd) then frmLTEAdd:=TfrmLTEAdd.Create(Form1);
+     frmLTEAdd.ShowModal();
+     if frmLTEAdd.ModalResult=mrOk then begin
+        ShowPanelinfo('LTE-модем успешно добавлен.',2000);
+     end;
 end;
 
 procedure TForm1.AReplaceLTEExecute(Sender: TObject);
@@ -1893,15 +1980,17 @@ begin
   flagWLANConnections := false;
   Chart1.ShowHint := true;
   Query.Close;
-  sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name  from stats_lte st, modems m, lte lt where ';
-  sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id_equipment ' +
-                   'and st.id_equipment=lt.id_equipment order by st.datetime';
+
+  sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name' +
+                  ' from lte lt left join stats_lte st on lt.id_equipment=st.id_equipment where ';
+  sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment_2.AsString+
+                   ' order by st.datetime';
 
   Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime('st.datetime') + sql_query3ap;
 
   //выбрать все статусы по оборудованию из таблицы ststs_status:
   Query_2.Close;
-  Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
+  Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modemsid_equipment_2.AsString +
     ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
 
   try
@@ -2133,6 +2222,12 @@ begin
   if ToolTipsDBGrid1.Tag = 0 then
     N1Click(Sender);
 
+end;
+
+procedure TForm1.timerHidePanelTimer(Sender: TObject);
+begin
+     PanelInfo.Visible:=false;
+     timerHidePanel.Enabled:=false;
 end;
 
 procedure TForm1.DateTimePicker1Change(Sender: TObject);
@@ -3700,6 +3795,7 @@ begin
       G1.Visible := true;
       BulletSSH1.Visible := true;
     end;
+    if Modemsip_lte.AsString<>'' then ConnectLTE.Visible:=true else ConnectLTE.Visible:=false;
 end;
 
 function getdatetime(s:string):TDateTime;
@@ -4687,6 +4783,17 @@ begin
           SendMessage(wnd1,WM_CHAR,Ord(Cmd1[i]),0);
  end
  else ShowMessage('Превышен интервал ожидания. Повторите попытку.');
+end;
+
+procedure TForm1.ShowPanelInfo(text: string; duration: integer);
+begin
+     PanelInfo.Caption:=text;
+     PanelInfo.Left:=round(self.Width/2-PanelInfo.Width/2);
+     PanelInfo.Top:=Round(self.Height/2-PanelInfo.Height/2);
+     PanelInfo.Visible:=true;
+     PanelInfo.BringToFront;
+     timerHidePanel.Interval:=duration;
+     timerHidePanel.Enabled:=true;
 end;
 
 procedure TForm1.ShowPointPosition(dttm:TDatetime);

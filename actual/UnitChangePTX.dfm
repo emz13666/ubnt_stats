@@ -77,7 +77,6 @@ object frmChangePTX: TfrmChangePTX
     Date = 42098.378566400500000000
     Time = 42098.378566400500000000
     TabOrder = 2
-    ExplicitLeft = 192
   end
   object TimeChange1: TDateTimePicker
     Left = 292
@@ -89,7 +88,6 @@ object frmChangePTX: TfrmChangePTX
     Time = 42098.378566400500000000
     Kind = dtkTime
     TabOrder = 3
-    ExplicitLeft = 294
   end
   object Edit1: TEdit
     Left = 97
@@ -98,7 +96,6 @@ object frmChangePTX: TfrmChangePTX
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 4
-    ExplicitWidth = 312
   end
   object Edit2: TEdit
     Left = 114
@@ -108,7 +105,6 @@ object frmChangePTX: TfrmChangePTX
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 5
     Text = #1047#1072#1084#1077#1085#1072' '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1075#1086
-    ExplicitWidth = 295
   end
   object ComboBox1: TComboBox
     Left = 192
@@ -120,7 +116,6 @@ object frmChangePTX: TfrmChangePTX
     ParentShowHint = False
     ShowHint = True
     TabOrder = 6
-    ExplicitWidth = 217
   end
   object NullPTX: TADOQuery
     Connection = Form1.DBConnection

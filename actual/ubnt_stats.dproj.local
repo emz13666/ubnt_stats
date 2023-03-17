@@ -3,5 +3,8 @@
 	<Transactions>
     <Transaction>2015.10.28 12:34:11.025.pas,W:\УКиСС\Участок АСУ ГТК\programs\ubiquiti_stats\ubnt_stats\actual\Unit4.pas=W:\УКиСС\Участок АСУ ГТК\programs\ubiquiti_stats\ubnt_stats\actual\WiFiAnalizeByMap.pas</Transaction>
     <Transaction>2015.10.28 12:34:11.025.dfm,W:\УКиСС\Участок АСУ ГТК\programs\ubiquiti_stats\ubnt_stats\actual\Unit4.dfm=W:\УКиСС\Участок АСУ ГТК\programs\ubiquiti_stats\ubnt_stats\actual\WiFiAnalizeByMap.dfm</Transaction>
+    <Transaction>2023.01.16 11:02:31.230.pas,D:\programs\ubiquiti_stats\ubnt_stats\actual\Unit4.pas=D:\programs\ubiquiti_stats\ubnt_stats\actual\LTEAdd.pas</Transaction>
+    <Transaction>2023.01.16 11:02:31.230.dfm,D:\programs\ubiquiti_stats\ubnt_stats\actual\Unit4.dfm=D:\programs\ubiquiti_stats\ubnt_stats\actual\LTEAdd.dfm</Transaction>
+    <Transaction>2023.01.26 11:10:21.574.pas,D:\programs\ubiquiti_stats\ubnt_stats\actual\Unit4.pas=D:\programs\!DelphiLibs\our\ScorpioClasses.pas</Transaction>
   </Transactions>
 </BorlandProject>
