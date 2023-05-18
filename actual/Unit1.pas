@@ -1162,9 +1162,9 @@ begin
   Chart1.ShowHint := true;
   Chart1.LeftAxis.Automatic := true;
   Query.Close;
-  sql_query1ap := 'select datetime, signal_level, color, e.name, 0 as x, 0 as y from stats_ap st' +
+  sql_query1ap := 'select datetime, signal_level, color, e.name from stats_ap st' +
    ' left join modems m on m.id_equipment=st.id_equipment left join equipment e on e.id=st.id_equipment where ';
-  sql_query1 := 'select datetime, signal_level, color, e.name, x,y from statss st'+
+  sql_query1 := 'select datetime, signal_level, color, e.name from statss st'+
    ' left join modems m on m.mac_address=st.mac_ap left join equipment e on e.id=m.id_equipment where ';
   sql_query3ap := ' and st.id_equipment='+ Modems.FieldByName('id_equipment').AsString + ' order by datetime';
   ChartEQInfo.id:=Modems.FieldByName('id_equipment').AsLargeInt;
@@ -1280,9 +1280,6 @@ begin
         Chart1.Series[0].AddXY(tmpDateTime,Query.FieldByName('signal_level').AsInteger-256,'',clr);
         NamesModems[High(NamesModems)] := Query.FieldByName('name').AsString + ' ';
        end;
-      // Присваиваем конкретной точке графика координаты
-        CoordsModems[High(CoordsModems)].x := Query.FieldByName('x').asinteger;
-        CoordsModems[High(CoordsModems)].y := Query.FieldByName('y').asinteger;
     Query.Next;
   end;
   if (not CheckBox3.Checked)or(Query.RecordCount = 0) then begin
