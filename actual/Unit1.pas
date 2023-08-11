@@ -4040,7 +4040,6 @@ begin
            Query.Close;
            Application.ProcessMessages;
            sleep(5000);
-           Ping1Click(Sender);
   end else begin
         IP := Modemsip_pc.AsString;
 
