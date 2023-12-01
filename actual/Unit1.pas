@@ -329,6 +329,7 @@ type
     ConnectLTE: TMenuItem;
     ILPopupActions: TsAlphaImageList;
     TabOther: TTabSheet;
+    PopupGpgListener: TMenuItem;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -431,6 +432,7 @@ type
     procedure timerHidePanelTimer(Sender: TObject);
     procedure AConnectLTEExecute(Sender: TObject);
     procedure TabOtherShow(Sender: TObject);
+    procedure PopupGpgListenerClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -757,6 +759,7 @@ begin
   N7.Visible := true;
   N1.Visible := true;
   Updatemac1.Visible := true;
+  PopupGpgListener.Visible := false;
 
 
   ToolTipsDBGrid1.Parent := tabAvto;
@@ -802,6 +805,7 @@ begin
   N7.Visible := false;
   N1.Visible := true;
   Updatemac1.Visible := true;
+  PopupGpgListener.Visible := false;
 
   ToolTipsDBGrid1.Parent := tabBase;
   ToolTipsDBGrid1.Tag := 1;
@@ -850,6 +854,7 @@ begin
   N1.Visible := false;
   Updatemac1.Visible := true;
   menuChartPing.Visible := true;
+  PopupGpgListener.Visible := true;
 
   ToolTipsDBGrid1.Parent := tabBur;
   ToolTipsDBGrid1.Tag := 1;
@@ -898,6 +903,7 @@ begin
   N7.Visible := true;
   N1.Visible := true;
   Updatemac1.Visible := true;
+  PopupGpgListener.Visible := false;
 
   ToolTipsDBGrid1.Parent := tabEx;
   ToolTipsDBGrid1.Tag := 1;
@@ -952,6 +958,7 @@ begin
   N7.Visible := true;
   N1.Visible := true;
   Updatemac1.Visible := false;
+  PopupGpgListener.Visible := false;
 
   ToolTipsDBGrid1.Parent := TabOther;
   ToolTipsDBGrid1.Tag := 1;
@@ -3778,6 +3785,15 @@ begin
    else
      ShowMessage('No ip');
  end;
+end;
+
+procedure TForm1.PopupGpgListenerClick(Sender: TObject);
+begin
+//вывести 2 окна kitty подключившись к кобусу по портам 10201 и 10202
+  //ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-telnet -P 10201 -initdelay 0 '+AddIPaddress(Modemsip_address.AsString,2)),nil,SW_restore);
+  //ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-telnet -P 10202 -initdelay 0 '+AddIPaddress(Modemsip_address.AsString,2)),nil,SW_restore);
+  Create_Process('kitty\kitty.exe -title "'+Modemsname.AsString+' - (1)" '+'-telnet -P 10201 -initdelay 0 '+AddIPaddress(Modemsip_address.AsString,2),Modemsname.AsString+' - (1)');
+  Create_Process('kitty\kitty.exe -title "'+Modemsname.AsString+' - (2)" '+'-telnet -P 10202 -initdelay 0 '+AddIPaddress(Modemsip_address.AsString,2),Modemsname.AsString+' - (2)');
 end;
 
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
