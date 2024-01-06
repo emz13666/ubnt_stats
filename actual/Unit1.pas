@@ -330,6 +330,8 @@ type
     ILPopupActions: TsAlphaImageList;
     TabOther: TTabSheet;
     PopupGpgListener: TMenuItem;
+    menuChartPingBulletAP: TMenuItem;
+    menuChartPingSwitch: TMenuItem;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -499,7 +501,7 @@ var
   hwnd_window: HWND;
   ChartEQInfo:TEQInfo; // Здесь хранится информация об оборудовании с графика
 
-function AddIPaddress(ip_addr: WideString; val:integer):WideString;
+function AddIPaddress(ip_addr: String; val:integer):String;
 function IsOLEObjectInstalled(Name: String): boolean;
 procedure AddToListFromDB(Query: TADOQuery; List: TStrings; Pole, Table, Where: Widestring);
 function GetSQLWhereDateTime(FieldDate1: AnsiString; FieldDate2: AnsiString=''): AnsiString;
@@ -760,7 +762,8 @@ begin
   N1.Visible := true;
   Updatemac1.Visible := true;
   PopupGpgListener.Visible := false;
-
+  menuChartPingBulletAP.Visible := false;
+  menuChartPingSwitch.Visible := false;
 
   ToolTipsDBGrid1.Parent := tabAvto;
   ToolTipsDBGrid1.Tag := 1;
@@ -806,6 +809,8 @@ begin
   N1.Visible := true;
   Updatemac1.Visible := true;
   PopupGpgListener.Visible := false;
+  menuChartPingBulletAP.Visible := false;
+  menuChartPingSwitch.Visible := false;
 
   ToolTipsDBGrid1.Parent := tabBase;
   ToolTipsDBGrid1.Tag := 1;
@@ -855,6 +860,8 @@ begin
   Updatemac1.Visible := true;
   menuChartPing.Visible := true;
   PopupGpgListener.Visible := true;
+  menuChartPingBulletAP.Visible := true;
+  menuChartPingSwitch.Visible := true;
 
   ToolTipsDBGrid1.Parent := tabBur;
   ToolTipsDBGrid1.Tag := 1;
@@ -904,6 +911,8 @@ begin
   N1.Visible := true;
   Updatemac1.Visible := true;
   PopupGpgListener.Visible := false;
+  menuChartPingBulletAP.Visible := false;
+  menuChartPingSwitch.Visible := false;
 
   ToolTipsDBGrid1.Parent := tabEx;
   ToolTipsDBGrid1.Tag := 1;
@@ -959,6 +968,8 @@ begin
   N1.Visible := true;
   Updatemac1.Visible := false;
   PopupGpgListener.Visible := false;
+  menuChartPingBulletAP.Visible := false;
+  menuChartPingSwitch.Visible := false;
 
   ToolTipsDBGrid1.Parent := TabOther;
   ToolTipsDBGrid1.Tag := 1;
@@ -2016,7 +2027,7 @@ begin
   Chart1.Title.Text.Clear;
   Chart1.Series[3].Clear;
   Chart1.LeftAxis.Automatic:= true;
-  Chart1.Title.Text.Add('График уровня сигнала LTE -> '+ StringReplace((Sender as TMenuItem).Caption,'&','',[rfReplaceAll]));
+  Chart1.Title.Text.Add('График уровня сигнала LTE ' + Modemsname.AsString + ' -> '+ StringReplace((Sender as TMenuItem).Caption,'&','',[rfReplaceAll]));
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
@@ -3425,7 +3436,8 @@ var tmpDateTime: TDateTime;
     sumAvg: real;
     color_chart, color_fail, color1: TColor;
     a_status, fail_value:integer;
-    sql_query1, sql_query1ap, sql_query3ap: string;
+    equip_name: AnsiString;
+    sql_query1, sql_query1ap, sql_query3ap: AnsiString;
     field_name: string;
 begin
   color_chart := clGreen;
@@ -3436,12 +3448,37 @@ begin
   flagWLANConnections := false;
   Chart1.ShowHint := true;
   Query.Close;
-  sql_query1ap := 'select st.datetime, st.time_ping, st.id_equipment, m.name  from stats_ping st, equipment m where ';
+  equip_name := Modemsname.AsString;
+  if (Sender as TMenuItem).Name = 'menuChartPing' then
+  begin
+    case Modemsequipment_type.AsInteger of
+      1,2: equip_name := equip_name + ' PTX'; //avto, excav
+      5,6: equip_name := equip_name + ' KOБУС'; //Drill, SZM
+    end;
+    sql_query1ap := 'select st.datetime, st.time_ping, st.id_equipment, m.name  from stats_ping st, equipment m where ';
     sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id '+
                     ' order by datetime';
+  end;
+
+  if (Sender as TMenuItem).Name = 'menuChartPingBulletAP' then
+  begin
+    equip_name := equip_name + ' Bullet_AP';
+    sql_query1ap := 'select st.ip, st.datetime, st.time_ping, st.id_equipment, m.name  from stats_ping_ip st, equipment m where ';
+    sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id '+
+                    ' and st.ip='+QuotedStr(AddIPaddress(Modemsip_pc.AsString,-1))+'order by datetime';
+  end;
+
+  if (Sender as TMenuItem).Name = 'menuChartPingSwitch' then
+  begin
+    equip_name := equip_name + ' Switch';
+    sql_query1ap := 'select st.ip, st.datetime, st.time_ping, st.id_equipment, m.name  from stats_ping_ip st, equipment m where ';
+    sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id '+
+                    ' and st.ip='+QuotedStr(AddIPaddress(Modemsip_pc.AsString,-3))+'order by datetime';
+  end;
+
     Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime('st.datetime') + sql_query3ap;
 
-   //выбрать все статусы по оборудованию из таблицы ststs_status:
+   //выбрать все статусы по оборудованию из таблицы stats_status:
   Query_2.Close;
   Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
     ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
@@ -3464,7 +3501,7 @@ begin
   Chart1.Series[2].Clear;
   Chart1.Series[3].Clear;
   Chart1.Title.Text.Clear;
-  Chart1.Title.Text.Add('График ping (по оси у - задежка в ms) - '+ Modemsname.AsString);
+  Chart1.Title.Text.Add('График ping (по оси у - задежка в ms) - '+ equip_name);
   Chart1.Series[0].Active:= false;
   Chart1.Series[1].Active:= false;
   Chart1.Series[2].Active:= false;
@@ -3691,8 +3728,8 @@ begin
   Result := '10.70.122.'+tmp;
 end;
 
-function AddIPaddress(ip_addr: WideString; val:integer):WideString;
-var lastByte:WideString; lastpos_point,lastByteInt: integer;
+function AddIPaddress(ip_addr: String; val:integer):String;
+var lastByte:String; lastpos_point,lastByteInt: integer;
 begin
    if ip_addr = '' then
    begin
