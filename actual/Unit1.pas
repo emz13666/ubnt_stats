@@ -9,7 +9,7 @@ uses
   FMTBcd, Series, BubbleCh, ComCtrls, Clipbrd, ComObj, ActiveX, Menus, snmpsend, asn1util,
   ADODB, jpeg, shellapi, DelphiCryptlib, cryptlib,  updater, ReloadDriver, UnitMemo, MyUtils, UnitChangePTX,
   SSH_wifi, MapWiFiSettings, WiFiAnalizeByMap, rxPlacemnt, ImgList, Spin,
-  acAlphaImageList, Buttons, sSpeedButton, ActnList, LTEAdd;
+  acAlphaImageList, Buttons, sSpeedButton, ActnList, LTEAdd, UnitPingPort;
 
 type
   TForm1 = class(TForm)
@@ -258,6 +258,32 @@ type
     btnApplyMacAclEx: TButton;
     btnDelMacAclEx: TButton;
     chkAP: TCheckBox;
+    DispPollers1_menu: TMenuItem;
+    TabSheetManagement: TTabSheet;
+    GBLTE: TGroupBox;
+    ManagementActions: TActionList;
+    AInstallLTE: TAction;
+    ImageListManagementActions: TsAlphaImageList;
+    ssbInstallLTE: TsSpeedButton;
+    AReplaceLTE: TAction;
+    AUninstallLTE: TAction;
+    ssbReplaceLTE: TsSpeedButton;
+    ssbUninstallLTE: TsSpeedButton;
+    GBManageBullet: TGroupBox;
+    GBManagePTX: TGroupBox;
+    sLTEList: TsSpeedButton;
+    ANewLTE: TAction;
+    timerHidePanel: TTimer;
+    PanelInfo: TPanel;
+    PopupActions: TActionList;
+    AConnectLTE: TAction;
+    ConnectLTE: TMenuItem;
+    ILPopupActions: TsAlphaImageList;
+    TabOther: TTabSheet;
+    PopupGpgListener: TMenuItem;
+    menuChartPingBulletAP: TMenuItem;
+    menuChartPingSwitch: TMenuItem;
+    tabVideo: TTabSheet;
     Modemsid: TLargeintField;
     Modemsname: TStringField;
     Modemsequipment_type: TIntegerField;
@@ -267,6 +293,8 @@ type
     Modemscomment: TMemoField;
     ModemsuseInMonitoring: TSmallintField;
     ModemsLastGPSDateTime: TDateTimeField;
+    Modemsid__lte: TLargeintField;
+    Modemson_line: TWordField;
     Modemsid_modem: TLargeintField;
     Modemsis_access_point: TSmallintField;
     Modemsname_1: TStringField;
@@ -291,6 +319,8 @@ type
     Modemsprim_1: TStringField;
     Modemsmac_address_1: TStringField;
     Modemsid_equipment_1: TLargeintField;
+    Modemsoffs_date: TDateField;
+    Modemsid_lte: TLargeintField;
     Modemsname_2: TStringField;
     Modemsip_lte: TStringField;
     Modemsip_vpn: TStringField;
@@ -306,32 +336,11 @@ type
     Modemsimei_modem: TStringField;
     Modemsmodel_modem: TStringField;
     Modemsprim_2: TStringField;
-    DispPollers1_menu: TMenuItem;
-    TabSheetManagement: TTabSheet;
-    GBLTE: TGroupBox;
-    ManagementActions: TActionList;
-    AInstallLTE: TAction;
-    ImageListManagementActions: TsAlphaImageList;
-    ssbInstallLTE: TsSpeedButton;
-    AReplaceLTE: TAction;
-    AUninstallLTE: TAction;
-    ssbReplaceLTE: TsSpeedButton;
-    ssbUninstallLTE: TsSpeedButton;
-    Modemsid_lte: TLargeintField;
-    GBManageBullet: TGroupBox;
-    GBManagePTX: TGroupBox;
-    sLTEList: TsSpeedButton;
-    ANewLTE: TAction;
-    timerHidePanel: TTimer;
-    PanelInfo: TPanel;
-    PopupActions: TActionList;
-    AConnectLTE: TAction;
-    ConnectLTE: TMenuItem;
-    ILPopupActions: TsAlphaImageList;
-    TabOther: TTabSheet;
-    PopupGpgListener: TMenuItem;
-    menuChartPingBulletAP: TMenuItem;
-    menuChartPingSwitch: TMenuItem;
+    btnPingPort: TButton;
+    Camera1: TMenuItem;
+    Camera2: TMenuItem;
+    PCVideoSSH: TMenuItem;
+    PingPC_NAT: TMenuItem;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -435,6 +444,12 @@ type
     procedure AConnectLTEExecute(Sender: TObject);
     procedure TabOtherShow(Sender: TObject);
     procedure PopupGpgListenerClick(Sender: TObject);
+    procedure tabVideoShow(Sender: TObject);
+    procedure btnPingPortClick(Sender: TObject);
+    procedure tabVideoHide(Sender: TObject);
+    procedure Camera1Click(Sender: TObject);
+    procedure PCVideoSSHClick(Sender: TObject);
+    procedure PingPC_NATClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -931,6 +946,73 @@ end;
 procedure TForm1.TabSheet4Show(Sender: TObject);
 begin
   Memo1.Perform(EM_LINESCROLL,0,Memo1.Lines.Count-1);
+end;
+
+procedure TForm1.tabVideoHide(Sender: TObject);
+begin
+  Camera1.Visible := False;
+  Camera2.Visible := False;
+  PCVideoSSH.Visible := false;
+  PingPC_NAT.Visible := false;
+end;
+
+procedure TForm1.tabVideoShow(Sender: TObject);
+begin
+//ЛТЕ-Модем и оборудование связаны полем в id__lte в таблице equipment!
+  Camera1.Visible := true;
+  Camera2.Visible := true;
+  PCVideoSSH.Visible := true;
+  PingPC_NAT.Visible := true;
+  BulletSSH.Visible := false;
+  GroupBox4.Caption :='По всему прочему оборудованию в статусе ГОТОВ';
+  G1.Visible := false;
+  menuChartPing.Visible := true;
+  BulletSSH1.Visible := false;
+  C1.Visible := false;
+  GPS1.Visible  := false;
+  Gpswifi1.Visible := false;
+  N12.Visible  := false;
+  ReloadDrivers2.Visible  := false;
+  ReloadDrivers1.Visible := false;
+  GPSARRIVE1.Visible := false;
+  N11.Visible := false;
+  Tranzact_n.Visible := false;
+  N6.Visible := true;
+  Ping1.Visible := true;
+  Ping1.Caption := 'Пинговать LTE';
+  Bullet1.Visible := false;
+  BulletAP1.Visible := false;
+  Switch1.Visible := false;
+  OMStip1.Visible := true;
+  VNC1.Visible := false;
+  VNC1.Caption :=  'Подключиться по VNC к PTX';
+  FTPFileZilla1.Visible := false;
+  FTPFileZilla1.Caption := 'Подключиться через FTP (FileZilla)';
+  FTPFileZilla1.Tag := 1;
+  telnetcheckhardwarerev1.Visible := false;
+  OMSsniff1.Visible := false;
+  xrebootPTX1.Visible := false;
+  xrebootPTX1.Caption := 'Перезагрузить PTX (xreboot)';
+  N7.Visible := true;
+  N1.Visible := true;
+  Updatemac1.Visible := false;
+  PopupGpgListener.Visible := false;
+  menuChartPingBulletAP.Visible := false;
+  menuChartPingSwitch.Visible := false;
+
+  ToolTipsDBGrid1.Parent := tabVideo;
+  ToolTipsDBGrid1.Tag := 1;
+  Modems.Close;
+  Modems.SQL.Text := 'select * from equipment e LEFT JOIN lte l ON e.id__lte=l.id_lte LEFT JOIN modems m ON e.id=m.id_equipment LEFT JOIN ptx ON e.id=ptx.id_equipment where e.equipment_type = 8 and e.useInMonitoring=1 order by e.name';
+//  Modems.SQL.Text := 'select * from modems as m LEFT JOIN ptx as p ON m.id_modem=p.id_modem LEFT JOIN lte ON m.id_equipment=lte.id_equipment LEFT join equipment eq on m.id_equipment = eq.id  where eq.equipment_type = 2 order by eq.name';
+
+  try
+    Modems.Open;
+  except
+    DBConnection.Close;
+  end;
+  ToolTipsDBGrid1.tag :=0;
+
 end;
 
 procedure TForm1.TabOtherShow(Sender: TObject);
@@ -1586,10 +1668,14 @@ end;
 
 procedure TForm1.AInstallLTEExecute(Sender: TObject);
 begin
-      if Modemsid_LTE.AsInteger<>0 then begin
+      if tabVideo.Visible and (Modems.FieldByName('id__lte').AsInteger<>0) then begin
          ShowMessage('На '+Modemsname.Value+' уже установлен LTE модем. Нажмите кнопку Заменить LTE для замены');
          exit;
-      end;
+      end else
+          if (Modemsid_LTE.AsInteger<>0) then begin
+             ShowMessage('На '+Modemsname.Value+' уже установлен LTE модем. Нажмите кнопку Заменить LTE для замены');
+             exit;
+          end;
       faction:=2;
       fTypeEquipment:=3;
       frmChangePTX:=TfrmChangePTX.Create(Application);
@@ -1607,7 +1693,7 @@ end;
 
 procedure TForm1.AReplaceLTEExecute(Sender: TObject);
 begin
-     if Modemsid_LTE.AsInteger=0 then begin
+     if (Modemsid_LTE.AsInteger=0) then begin
         ShowMessage('На '+Modemsname.Value+' нет LTE модема. Воспользуйтесь кнопкой Установка LTE');
         exit;
      end;
@@ -1752,6 +1838,8 @@ begin
       end
       else
 *)
+  if not tabVideo.Visible then begin
+
            if Modemsonline.AsInteger=1 then begin
                 if (gdSelected in State) then begin
                   ToolTipsDBGrid1.Canvas.Brush.Color := RGB(0,220,0);
@@ -1773,6 +1861,30 @@ begin
                 end;
 
            end;
+  end
+  else begin
+           if Modemson_line.AsInteger=1 then begin
+                if (gdSelected in State) then begin
+                  ToolTipsDBGrid1.Canvas.Brush.Color := RGB(0,220,0);
+                  ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
+                end
+                else begin
+                  ToolTipsDBGrid1.Canvas.Brush.Color := clLime;
+                  ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
+                end;
+           end
+           else begin
+                if (gdSelected in State) then begin
+                  ToolTipsDBGrid1.Canvas.Brush.Color := RGB(220,0,0);
+                  ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
+                end
+                else begin
+                  ToolTipsDBGrid1.Canvas.Brush.Color := clRed;
+                  ToolTipsDBGrid1.Canvas.Font.Color := clBlack;
+                end;
+
+           end;
+  end;
 
   ToolTipsDBGrid1.DefaultDrawColumnCell(Rect,DataCol,Column,State);
 end;
@@ -1800,7 +1912,7 @@ begin
 
  // Если щелкнули правой кнопкой, то отрисовать местоположение для точки
  if (Button=mbRight)and (not flagWLANConnections) then begin
-    if Series.Name<>Chart1.Series[3].Name then
+    //if Series.Name<>Chart1.Series[3].Name then
       ShowPointPosition(dttm);//здесь нужно valueindex-2, потому что первые 2 точки рисуются для масштабирования графика по оси х
     exit;
  end;
@@ -1845,12 +1957,34 @@ end;
 
 procedure TForm1.ToolTipsDBGrid1DblClick(Sender: TObject);
 begin
-  Button1.Click;
+  if tabVideo.Visible then
+    chartRSRPClick(chartRSRP)
+  else
+    Button1.Click;
 end;
 
 procedure TForm1.C1Click(Sender: TObject);
 begin
 Button1.Click;
+end;
+
+procedure TForm1.Camera1Click(Sender: TObject);
+var
+  pathFZ,   port_rtsp: WideString;
+begin
+   pathFZ := 'C:\Program Files\VideoLAN\VLC\';
+   if not FileExists(pathFZ + 'vlc.exe') then begin
+     pathFZ := 'C:\Program Files (x86)\VideoLAN\VLC\';
+     if not FileExists(pathFZ + 'vlc.exe') then begin
+       ShowMessage('vlc not found');
+       exit;
+     end;
+   end;
+   if (Sender as TMenuItem).Name = 'Camera1' then port_rtsp := '5154' else port_rtsp := '5254';
+   if IsIPAddress(Modemsip_lte.AsString) then
+     ShellExecute(0,nil,PChar(pathFZ+'vlc.exe'),pchar('rtsp://admin:ktnj-2022@'+Modemsip_lte.AsString+':'+port_rtsp+'/ISAPI/Streaming/Channels/102/'),nil,SW_restore)
+   else
+     ShowMessage('LTE-modem не найден. Установите LTE-модем на оборудование.');
 end;
 
 procedure TForm1.cbAP_RepeaterChange(Sender: TObject);
@@ -1926,6 +2060,14 @@ begin
   ToolTipsDBGrid1.Tag := 0;
 end;
 
+procedure TForm1.btnPingPortClick(Sender: TObject);
+begin
+  frmPingPort := TfrmPingPort.Create(Application);
+  frmPingPort.edtIPaddr.Text := Modemsip_lte.AsString;
+  frmPingPort.edtPort.Text := '3569'; //ssh pc video
+  frmPingPort.Show;
+end;
+
 procedure TForm1.btnSetPingClick(Sender: TObject);
 begin
   SetLength(PingsProcessArray,0);
@@ -1977,6 +2119,21 @@ begin
   end;
 end;
 
+function LTE_on_2_systems(a_id_lte: string): boolean;
+begin
+  if a_id_lte='' then
+    Result := false
+  else
+    with form1.Query do
+    begin
+      Close;
+      Sql.Text := 'SELECT count(*) FROM equipment WHERE id__lte=' + a_id_lte +' or id=(select id_equipment from lte where id_lte='+ a_id_lte + ')';
+      Open;
+      Result := Fields[0].AsInteger > 1;
+      Close;
+    end;
+end;
+
 procedure TForm1.chartRSRPClick(Sender: TObject);
 var tmpDateTime: TDateTime;
     successPing, failPing, a_status:integer;
@@ -1985,28 +2142,58 @@ var tmpDateTime: TDateTime;
     fail_value,mediana:integer;
     sql_query1, sql_query1ap, sql_query3ap: AnsiString;
     field_name: string;
+    flag_2_systems: boolean;
 begin
   color_chart := clYellow;
   color_fail := clRed;
   color_mediana := clFuchsia;
-
+  flag_2_systems := LTE_on_2_systems(Modemsid_lte.AsString);
   ToolTipsDBGrid1.Tag := 1;
   Label8.Caption := 'Средний уровень сигнала';
   flagWLANConnections := false;
   Chart1.ShowHint := true;
   Query.Close;
-
-  sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name' +
-                  ' from lte lt left join stats_lte st on lt.id_equipment=st.id_equipment where ';
-  sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment_2.AsString+
+  ChartEQInfo.id:=Modems.FieldByName('id_equipment').AsLargeInt;
+  ChartEQInfo.name:=Modems.FieldByName('name').AsString;
+  if tabVideo.Visible then begin
+    //если модем один на 2 системы то
+    if  flag_2_systems then begin
+      sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name' +
+                  ' from equipment e left join lte lt on e.id__lte=lt.id_lte left join stats_lte st on lt.id_equipment=st.id_equipment where ';
+      sql_query3ap := ' and lt.id_equipment='+ Modemsid_equipment.AsString+
                    ' order by st.datetime';
+    end
+    else begin
+    sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name' +
+                  ' from lte lt left join stats_lte st on lt.id_equipment=st.id_equipment where ';
+    sql_query3ap := ' and st.id_equipment='+ Modemsid.AsString+
+                   ' order by st.datetime';
+    end;
+  end else begin
+    sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name' +
+                  ' from lte lt left join stats_lte st on lt.id_equipment=st.id_equipment where ';
+    sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment_2.AsString+
+                   ' order by st.datetime';
+  end;
 
   Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime('st.datetime') + sql_query3ap;
 
   //выбрать все статусы по оборудованию из таблицы ststs_status:
   Query_2.Close;
-  Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modemsid_equipment_2.AsString +
-    ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
+  if tabVideo.Visible then begin
+    //если модем один на 2 системы то
+   if flag_2_systems then
+      Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modemsid_equipment.AsString +
+        ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend'
+   else
+      Query_2.SQL.Text := 'select 5-5'
+  end else
+    Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modemsid_equipment_2.AsString +
+      ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
+
+  if Query.SQL.Text ='' then begin
+   ToolTipsDBGrid1.Tag := 0; exit;
+  end;
 
   try
     Query.Open;
@@ -3448,6 +3635,8 @@ begin
   flagWLANConnections := false;
   Chart1.ShowHint := true;
   Query.Close;
+  ChartEQInfo.id:=Modems.FieldByName('id_equipment').AsLargeInt;
+  ChartEQInfo.name:=Modems.FieldByName('name').AsString;
   equip_name := Modemsname.AsString;
   if (Sender as TMenuItem).Name = 'menuChartPing' then
   begin
@@ -3744,6 +3933,11 @@ end;
 
 
 
+procedure TForm1.PCVideoSSHClick(Sender: TObject);
+begin
+  ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-ssh -initdelay 0 -auto-store-sshkey -l nvidia -pw nvidia -P 3569 '+AddIPaddress(Modemsip_address.AsString,0)),nil,SW_restore)
+end;
+
 procedure TForm1.Ping1Click(Sender: TObject);
 var ip_addresss: WideString;
 begin
@@ -3822,6 +4016,24 @@ begin
    else
      ShowMessage('No ip');
  end;
+ if (pagesTables.ActivePage = tabVideo) then
+ begin
+   frmPingPort := TfrmPingPort.Create(Application);
+   frmPingPort.edtIPaddr.Text := Modemsip_lte.AsString;
+   frmPingPort.edtPort.Text := '80';
+   frmPingPort.Button1.Click;
+   frmPingPort.ShowModal;
+ end;
+end;
+
+
+procedure TForm1.PingPC_NATClick(Sender: TObject);
+begin
+frmPingPort := TfrmPingPort.Create(Application);
+   frmPingPort.edtIPaddr.Text := Modemsip_lte.AsString;
+   frmPingPort.edtPort.Text := '3569';
+   frmPingPort.Button1.Click;
+   frmPingPort.ShowModal;
 end;
 
 procedure TForm1.PopupGpgListenerClick(Sender: TObject);
@@ -4265,6 +4477,8 @@ begin
 
     flagWLANConnections := true;
     Chart1.ShowHint := false;
+  ChartEQInfo.id:=Modems.FieldByName('id_equipment').AsLargeInt;
+  ChartEQInfo.name:=Modems.FieldByName('name').AsString;
 
   ToolTipsDBGrid1.Tag := 1;
   Chart1.Series[0].Clear;

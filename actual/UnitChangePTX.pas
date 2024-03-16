@@ -33,7 +33,7 @@ type
 
 var
   frmChangePTX: TfrmChangePTX;
-  mass_id_ptx: TStrings;
+  mass_id_ptx, mass_ip: TStrings;
   faction: byte;//1 - change, 2-install, 3-deinstall
   fTypeEquipment: byte; //1-PTX, 2-Bullet, 3 - LTE-modem
   NameEquipment, NameTable, NameFieldId, NameHistTable, NameFieldHistId, NameFieldSerial, NameFieldOrder, NameFieldIp, IP_A500, IP_Current: AnsiString;
@@ -77,6 +77,7 @@ begin
         NameFieldSerial := 'serial_lte';
         NameFieldIP:='ip_lte';
         NameFieldOrder:=NameFieldIP;
+        IP_Current := Form1.Modems.FieldByName('ip_lte').AsString;
     end;
   end;
 
@@ -101,16 +102,22 @@ begin
 
   DateChange1.Date := date;
   TimeChange1.Time := time;
-  NullPTX.SQL.Text := 'Select * from '+ NameTable +' where id_equipment is null order by '+NameFieldOrder;
+  if Form1.tabVideo.Visible then
+    NullPTX.SQL.Text := 'Select * from lte order by '+NameFieldOrder
+  else
+    NullPTX.SQL.Text := 'Select * from '+ NameTable +' where id_equipment is null order by '+NameFieldOrder;
   NullPTX.Open;
   ComboBox1.Items.Clear;
   mass_id_ptx := TStringList.Create;
   mass_id_ptx.Clear;
+  mass_ip := TStringList.Create;
+  mass_ip.Clear;
   while not NullPTX.Eof do
   begin
     if fTypeEquipment<>3 then ComboBox1.Items.Add(NullPTX.fieldByName(NameFieldSerial).AsString) else
         ComboBox1.Items.Add(NullPTX.fieldByName(NameFieldIp).AsString+' ( '+NullPTX.fieldByName(NameFieldSerial).AsString+' )');
     mass_id_ptx.Add(NullPTX.fieldByName(NameFieldId).AsString);
+    if fTypeEquipment=3 then  mass_ip.Add(NullPTX.FieldByName('ip_lte').AsString);
     NullPTX.Next;
   end;
   ComboBox1.ItemIndex := 0;
@@ -130,14 +137,16 @@ end;
 
 procedure TfrmChangePTX.Button1Click(Sender: TObject);
 var id_ptx_old,id_equipment,id_ptx_new: string;
-    ip_ptx: string;
+    ip_ptx, id__lte, ip__lte: string;
     eqname:string;
     f: boolean;
 begin
   id_equipment := Form1.Modemsid.AsString;
   id_ptx_old := Form1.Modems.FieldByName(NameFieldId).AsString;
   id_ptx_new := mass_id_ptx[ComboBox1.ItemIndex];
+  if fTypeEquipment=3 then ip__lte := mass_ip[ComboBox1.ItemIndex];
   ip_ptx := IP_Current;
+  id__lte := form1.Modems.FieldByName('id__lte').asstring;
   eqname:=Form1.Modemsname.AsString;
   with NullPTX do
   begin
@@ -146,7 +155,10 @@ begin
       Close;
       //для LTE-модемов ip-адрес не трогаем
       if  fTypeEquipment=3 then
-        SQL.Text := 'Update ' + NameTable + ' set id_equipment=NULL, name="Test_LTE" where ' + NameFieldId + '=' + id_ptx_old
+        if form1.tabVideo.Visible then
+          SQL.Text := 'Update equipment set id__lte=NULL where id=' + id_equipment
+        else
+          SQL.Text := 'Update ' + NameTable + ' set id_equipment=NULL, name="Test_LTE" where ' + NameFieldId + '=' + id_ptx_old
       else
         SQL.Text := 'Update ' + NameTable + ' set id_equipment=NULL, ip_address='+QuotedStr(IP_A500)+ ' where ' + NameFieldId + '=' + id_ptx_old;
       try
@@ -160,8 +172,12 @@ begin
       Close;
       //для LTE-модемов ip-адрес не трогаем
       // [2023-01-12] Вместо ip-адреса меняем имя модема
-      if  fTypeEquipment=3 then
-        SQL.Text := 'Update ' + NameTable + ' set id_equipment=' + id_equipment + ', name="'+eqname+'_LTE" where ' + NameFieldId + '='+id_ptx_new
+      if  fTypeEquipment=3 then begin
+        if form1.tabVideo.Visible then
+          SQL.Text := 'Update equipment set id__lte='+ id_ptx_new + ', ip_address="'+ ip__lte +'" where id=' + id_equipment
+        else
+          SQL.Text := 'Update ' + NameTable + ' set id_equipment=' + id_equipment + ', name="'+eqname+'_LTE" where ' + NameFieldId + '='+id_ptx_new
+      end
       else
         SQL.Text := 'Update ' + NameTable + ' set id_equipment='+id_equipment+', ip_address='+QuotedStr(ip_ptx)+' where ' + NameFieldId + '=' + id_ptx_new;
       try

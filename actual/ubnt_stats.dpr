@@ -13,7 +13,8 @@ uses
   MapWiFiSettings in 'MapWiFiSettings.pas' {frmMapWiFiSettings},
   WiFiAnalizeByMap in 'WiFiAnalizeByMap.pas' {frmWiFiAnalize},
   LTEAdd in 'LTEAdd.pas' {frmLTEAdd},
-  ScorpioClasses in '..\..\..\!DelphiLibs\our\ScorpioClasses.pas';
+  ScorpioClasses in '..\..\..\!DelphiLibs\our\ScorpioClasses.pas',
+  UnitPingPort in 'UnitPingPort.pas' {frmPingPort};
 
 {$R *.res}
 
@@ -22,5 +23,6 @@ begin
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TfrmMapWiFiSettings, frmMapWiFiSettings);
   Application.CreateForm(TfrmWiFiAnalize, frmWiFiAnalize);
+  Application.CreateForm(TfrmPingPort, frmPingPort);
   Application.Run;
 end.
