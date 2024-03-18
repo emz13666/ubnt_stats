@@ -151,12 +151,12 @@ begin
   with NullPTX do
   begin
     f:=false;
-    if faction<>2 then begin
+    if faction<>2 then begin     //Eсли не установка - сначала снимаем
       Close;
       //для LTE-модемов ip-адрес не трогаем
       if  fTypeEquipment=3 then
         if form1.tabVideo.Visible then
-          SQL.Text := 'Update equipment set id__lte=NULL where id=' + id_equipment
+          SQL.Text := 'Update equipment set id__lte=0 where id=' + id_equipment
         else
           SQL.Text := 'Update ' + NameTable + ' set id_equipment=NULL, name="Test_LTE" where ' + NameFieldId + '=' + id_ptx_old
       else
@@ -168,7 +168,7 @@ begin
         f:=false;
       end;
     end;
-    if faction<>3 then begin
+    if faction<>3 then begin     //если не снятие  - ставим
       Close;
       //для LTE-модемов ip-адрес не трогаем
       // [2023-01-12] Вместо ip-адреса меняем имя модема
@@ -187,7 +187,7 @@ begin
         f:=false;
       end;
     end;
-    if faction<>2 then begin
+    if faction<>2 then begin //Eсли не установка
       Close;
       SQL.Text := 'Insert into '+NameHistTable+'('+NameFieldHistId+', datetime, info, place_install, place_install_new) values ('+
         id_ptx_old+', '+

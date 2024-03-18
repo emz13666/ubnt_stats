@@ -341,6 +341,9 @@ type
     Camera2: TMenuItem;
     PCVideoSSH: TMenuItem;
     PingPC_NAT: TMenuItem;
+    Ping3569: TMenuItem;
+    Ping81: TMenuItem;
+    Ping82: TMenuItem;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -600,7 +603,7 @@ end;
 function FindStatus(fDateTime: TDateTime; fQueryStatus: TADOQuery): Integer;
 begin
   Result := 0;
-  if Form1.Modemsequipment_type.AsInteger=3 then Result:=2
+  if (Form1.Modemsequipment_type.AsInteger=3)or(Form1.Modemsequipment_type.AsInteger=8) then Result:=2
   else begin
    //Ищем, какой статус у оборудования в момент времени tmpDateTime
    while (fDateTime > fQueryStatus.FieldByName('datetimeend').AsDateTime) and (not fQueryStatus.Eof) do fQueryStatus.Next;
@@ -954,6 +957,9 @@ begin
   Camera2.Visible := False;
   PCVideoSSH.Visible := false;
   PingPC_NAT.Visible := false;
+  Ping3569.Visible := false;
+  Ping81.Visible := false;
+  Ping82.Visible := false;
 end;
 
 procedure TForm1.tabVideoShow(Sender: TObject);
@@ -963,10 +969,13 @@ begin
   Camera2.Visible := true;
   PCVideoSSH.Visible := true;
   PingPC_NAT.Visible := true;
+  Ping3569.Visible := true;
+  Ping81.Visible := true;
+  Ping82.Visible := true;
   BulletSSH.Visible := false;
   GroupBox4.Caption :='По всему прочему оборудованию в статусе ГОТОВ';
   G1.Visible := false;
-  menuChartPing.Visible := true;
+  menuChartPing.Visible := false;
   BulletSSH1.Visible := false;
   C1.Visible := false;
   GPS1.Visible  := false;
@@ -983,7 +992,7 @@ begin
   Bullet1.Visible := false;
   BulletAP1.Visible := false;
   Switch1.Visible := false;
-  OMStip1.Visible := true;
+  OMStip1.Visible := false;
   VNC1.Visible := false;
   VNC1.Caption :=  'Подключиться по VNC к PTX';
   FTPFileZilla1.Visible := false;
@@ -1256,6 +1265,10 @@ var tmpDateTime: TDateTime;
     a_status:integer;
     sql_query1, sql_query1ap, sql_query3ap: string;
 begin
+  if tabVideo.Visible then begin
+    chartRSRPClick(chartRSRP);
+    exit;
+  end;
   ToolTipsDBGrid1.Tag := 1;
   Label8.Caption := 'Средний уровень сигнала';
   flagWLANConnections := false;
@@ -2156,6 +2169,9 @@ begin
   ChartEQInfo.id:=Modems.FieldByName('id_equipment').AsLargeInt;
   ChartEQInfo.name:=Modems.FieldByName('name').AsString;
   if tabVideo.Visible then begin
+    ChartEQInfo.id:=Modems.FieldByName('id').AsLargeInt;
+    ChartEQInfo.name:=Modems.FieldByName('name').AsString;
+
     //если модем один на 2 системы то
     if  flag_2_systems then begin
       sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name' +
@@ -2165,7 +2181,7 @@ begin
     end
     else begin
     sql_query1ap := 'select st.datetime, st.signal_rsrp, st.signal_rsrq, st.signal_sinr, st.id_equipment, lt.name' +
-                  ' from lte lt left join stats_lte st on lt.id_equipment=st.id_equipment where ';
+                  ' from equipment lt left join stats_lte st on lt.id=st.id_equipment where ';
     sql_query3ap := ' and st.id_equipment='+ Modemsid.AsString+
                    ' order by st.datetime';
     end;
@@ -3636,6 +3652,8 @@ begin
   Chart1.ShowHint := true;
   Query.Close;
   ChartEQInfo.id:=Modems.FieldByName('id_equipment').AsLargeInt;
+  if tabVideo.Visible then
+    ChartEQInfo.id:=Modems.FieldByName('id').AsLargeInt;
   ChartEQInfo.name:=Modems.FieldByName('name').AsString;
   equip_name := Modemsname.AsString;
   if (Sender as TMenuItem).Name = 'menuChartPing' then
@@ -3664,13 +3682,38 @@ begin
     sql_query3ap := ' and st.id_equipment='+ Modemsid_equipment.AsString+' and st.id_equipment=m.id '+
                     ' and st.ip='+QuotedStr(AddIPaddress(Modemsip_pc.AsString,-3))+'order by datetime';
   end;
+  if (Sender as TMenuItem).Name = 'Ping3569' then
+  begin
+    equip_name := equip_name + ' ПК (порт 3569)';
+    sql_query1ap := 'select st.ip, st.datetime, st.time_ping, st.id_equipment, m.name  from stats_ping_ip st, equipment m where ';
+    sql_query3ap := ' and st.id_equipment='+ Modemsid.AsString+' and st.id_equipment=m.id '+
+                    ' and st.ip='+QuotedStr(Modemsip_lte.AsString+':3569')+'order by datetime';
+  end;
+  if (Sender as TMenuItem).Name = 'Ping81' then
+  begin
+    equip_name := equip_name + ' камера 1 (порт 81)';
+    sql_query1ap := 'select st.ip, st.datetime, st.time_ping, st.id_equipment, m.name  from stats_ping_ip st, equipment m where ';
+    sql_query3ap := ' and st.id_equipment='+ Modemsid.AsString+' and st.id_equipment=m.id '+
+                    ' and st.ip='+QuotedStr(Modemsip_lte.AsString+':81')+'order by datetime';
+  end;
+  if (Sender as TMenuItem).Name = 'Ping82' then
+  begin
+    equip_name := equip_name + ' камера 2 (порт 82)';
+    sql_query1ap := 'select st.ip, st.datetime, st.time_ping, st.id_equipment, m.name  from stats_ping_ip st, equipment m where ';
+    sql_query3ap := ' and st.id_equipment='+ Modemsid.AsString+' and st.id_equipment=m.id '+
+                    ' and st.ip='+QuotedStr(Modemsip_lte.AsString+':82')+'order by datetime';
+  end;
 
     Query.SQL.Text := sql_query1ap + GetSQLWhereDateTime('st.datetime') + sql_query3ap;
 
    //выбрать все статусы по оборудованию из таблицы stats_status:
   Query_2.Close;
-  Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
-    ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
+  if tabVideo.Visible then
+    Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id').AsString+
+      ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend'
+  else
+    Query_2.SQL.Text := 'SELECT * FROM stats_status st where id_equipment='+Modems.FieldByName('id_equipment').AsString+
+      ' and '+ GetSQLWhereDateTime('st.datetimeend','st.datetimestart')+ ' ORDER BY st.datetimeend';
 
   try
     Query.Open;
