@@ -459,7 +459,7 @@ type
   public
     { Public declarations }
     procedure ShowPointPosition(dttm:TDateTime);
-    procedure Create_Process(FName,FTitle: string);
+    procedure Create_Process(FName,FTitle: string; a_width, a_height: integer);
     procedure ShowPanelInfo(text:string;duration:integer);
   end;
 
@@ -1978,7 +1978,10 @@ end;
 
 procedure TForm1.C1Click(Sender: TObject);
 begin
-Button1.Click;
+  if tabVideo.Visible then
+    chartRSRPClick(chartRSRP)
+  else
+    Button1.Click;
 end;
 
 procedure TForm1.Camera1Click(Sender: TObject);
@@ -2506,7 +2509,7 @@ begin
   Modems.FreeBookmark(BoookMark);
 end;
 
-procedure TForm1.Create_Process(FName, FTitle: string);
+procedure TForm1.Create_Process(FName, FTitle: string; a_width, a_height: integer);
 var
   StInfo : TStartupInfo;
   SeAttr : TSecurityAttributes;
@@ -2563,35 +2566,35 @@ begin
   end;
 end;
 
-function Get_window_hwnd(ProcessID: Cardinal): HWND;
-function EnumWindowsProc(AH_w_n_d: HWND; l_Param: LPARAM): BOOL;stdcall;
-var dwPID: cardinal;
-begin
-  GetWindowThreadProcessId(AH_w_n_d, dwPID);
-  if dwPID=HWND(l_Param) then begin
-    hwnd_window := dwPID;
-    Result := false;
-  end
-  else begin
-    Result := True;
-  end;
-end;
+  function Get_window_hwnd(ProcessID: Cardinal): HWND;
+    function EnumWindowsProc(AH_w_n_d: HWND; l_Param: LPARAM): BOOL;stdcall;
+    var dwPID: cardinal;
+    begin
+      GetWindowThreadProcessId(AH_w_n_d, dwPID);
+      if dwPID=HWND(l_Param) then begin
+        hwnd_window := dwPID;
+        Result := false;
+      end
+      else begin
+        Result := True;
+      end;
+    end;
 
-begin
-  hwnd_window := 0;
-  EnumWindows(@EnumWindowsProc,LParam(ProcessID));
-  Result := hwnd_window;
-end;
+  begin
+    hwnd_window := 0;
+    EnumWindows(@EnumWindowsProc,LParam(ProcessID));
+    Result := hwnd_window;
+  end;
 
 begin
     ping_border_height := edtBorderHeightPing.Value;
     ping_border_width := edtBorderWidthPing.Value;
 
-    ping_height_without_borders := edtHeightPing.Value;
-    ping_width_without_borders := edtWidthPing.Value;
+    ping_height_without_borders := a_height;
+    ping_width_without_borders := a_width;
     if chkPingsWindowSizeInSymbol.Checked then begin
-      ping_height_without_borders := edtHeightPing.Value*edtKoeffPingFromSymbols.Value;
-      ping_width_without_borders := edtWidthPing.Value*edtKoeffPingFromSymbols.Value;
+      ping_height_without_borders := a_height*edtKoeffPingFromSymbols.Value;
+      ping_width_without_borders := a_width*edtKoeffPingFromSymbols.Value;
     end;
     ping_height_with_borders := ping_height_without_borders + ping_border_height;
     ping_width_with_borders := ping_width_without_borders + ping_border_width;
@@ -2617,7 +2620,7 @@ begin
   if chkPingsWindowSizeInSymbol.Checked then begin
     stInfo.dwFlags:=STARTF_USEPOSITION;
     FName := StringReplace(FName,'cmd.exe /K ', 'cmd.exe /C "mode con:cols='+
-              IntToStr(edtWidthPing.Value)+' lines='+IntToStr(edtHeightPing.Value)+ ' & ',[])+'"';
+              IntToStr(a_width)+' lines='+IntToStr(a_height)+ ' & ',[])+'"';
   end
   else stInfo.dwFlags:=STARTF_USESIZE or STARTF_USEPOSITION;
   if FTitle<>'' then StInfo.lpTitle:= pchar(FTitle);
@@ -3990,13 +3993,13 @@ begin
    begin
      if checkPing.Checked then
      begin
-       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString+' - bullet');
-       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_pc').AsString,Modemsname.AsString+' - PTX');
+       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString+' - bullet', edtWidthPing.Value, edtHeightPing.Value);
+       Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_pc').AsString,Modemsname.AsString+' - PTX', edtWidthPing.Value, edtHeightPing.Value);
        if Modems.FieldByName('ip_lte').AsString <>'' then begin
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM', edtWidthPing.Value, edtHeightPing.Value);
        end;
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN', edtWidthPing.Value, edtHeightPing.Value);
        end;
      end
      else
@@ -4019,7 +4022,7 @@ begin
    if Modems.FieldByName('ip_address').AsString <>'' then
    begin
       if checkPing.Checked then
-        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString)
+        Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_address').AsString,Modemsname.AsString, edtWidthPing.Value, edtHeightPing.Value)
       else
         ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_address').AsString),nil,SW_restore)
    end
@@ -4032,15 +4035,15 @@ begin
    begin
     ip_addresss :=Modems.FieldByName('ip_address').AsString;
     if checkPing.Checked then begin
-      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,-1),Modemsname.AsString+' - Switch');
-      Create_Process('cmd.exe /K ping -t '+ip_addresss,Modemsname.AsString+' - BulletSt');
-      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,1),Modemsname.AsString+' - BulletAP');
-      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,2),Modemsname.AsString+' - Kobus');
+      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,-1),Modemsname.AsString+' - Switch', edtWidthPing.Value, edtHeightPing.Value);
+      Create_Process('cmd.exe /K ping -t '+ip_addresss,Modemsname.AsString+' - BulletSt', edtWidthPing.Value, edtHeightPing.Value);
+      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,1),Modemsname.AsString+' - BulletAP', edtWidthPing.Value, edtHeightPing.Value);
+      Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,2),Modemsname.AsString+' - Kobus', edtWidthPing.Value, edtHeightPing.Value);
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN', edtWidthPing.Value, edtHeightPing.Value);
        end;
        if Modems.FieldByName('ip_lte').AsString <>'' then begin
-          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM');
+          Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM', edtWidthPing.Value, edtHeightPing.Value);
        end;
     end
     else begin
@@ -4080,12 +4083,51 @@ frmPingPort := TfrmPingPort.Create(Application);
 end;
 
 procedure TForm1.PopupGpgListenerClick(Sender: TObject);
+var a_memo: TStrings; a_name_file1, a_name_session1, a_name_file2, a_name_session2: AnsiString;
 begin
-//вывести 2 окна kitty подключившись к кобусу по портам 10201 и 10202
+// формируем файлы конфигов kitty для выбранного бурстанка (если ещё нету)
+  a_name_file1 := ExtractFilePath(Application.ExeName)+'kitty\Sessions\' + Modemsname.AsString + '---(1)';
+  a_name_session1 := Modemsname.AsString + '---(1)';
+  a_name_file2 := ExtractFilePath(Application.ExeName)+'kitty\Sessions\' + Modemsname.AsString + '---(2)';
+  a_name_session2 := Modemsname.AsString + '---(2)';
+  if not FileExists(a_name_file1) then begin
+    a_memo := TStringList.Create;
+    a_memo.Clear;
+    a_memo.Add('HostName\' + AddIPaddress(Modemsip_address.AsString,2)+'\');
+    a_memo.Add('Protocol\telnet\');
+    a_memo.Add('PortNumber\10201\');
+    a_memo.Add('WinTitle\%25%25s\');
+    a_memo.Add('TermWidth\227\');
+    a_memo.Add('TermHeight\15\');
+    a_memo.Add('TermXPos\0\');
+    a_memo.Add('TermYPos\0\');
+    a_memo.Add('SaveWindowPos\1\');
+    a_memo.SaveToFile(a_name_file1);
+    a_memo.Free;
+  end;
+  if not FileExists(a_name_file2) then begin
+    a_memo := TStringList.Create;
+    a_memo.Clear;
+    a_memo.Add('HostName\' + AddIPaddress(Modemsip_address.AsString,2)+'\');
+    a_memo.Add('Protocol\telnet\');
+    a_memo.Add('PortNumber\10202\');
+    a_memo.Add('WinTitle\%25%25s\');
+    a_memo.Add('TermWidth\227\');
+    a_memo.Add('TermHeight\15\');
+    a_memo.Add('TermXPos\0\');
+    a_memo.Add('TermYPos\270\');
+    a_memo.Add('SaveWindowPos\1\');
+    a_memo.SaveToFile(a_name_file2);
+    a_memo.Free;
+  end;
+
+  //вывести 2 окна kitty подключившись к кобусу по портам 10201 и 10202
+
   //ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-telnet -P 10201 -initdelay 0 '+AddIPaddress(Modemsip_address.AsString,2)),nil,SW_restore);
   //ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-telnet -P 10202 -initdelay 0 '+AddIPaddress(Modemsip_address.AsString,2)),nil,SW_restore);
-  Create_Process('kitty\kitty.exe -title "'+Modemsname.AsString+' - (1)" '+'-telnet -P 10201 -initdelay 0 '+AddIPaddress(Modemsip_address.AsString,2),Modemsname.AsString+' - (1)');
-  Create_Process('kitty\kitty.exe -title "'+Modemsname.AsString+' - (2)" '+'-telnet -P 10202 -initdelay 0 '+AddIPaddress(Modemsip_address.AsString,2),Modemsname.AsString+' - (2)');
+
+  Create_Process('kitty\kitty.exe -load ' + a_name_session1,'Title', 1, 1); // 2 последних параметра не используются в данном случае
+  Create_Process('kitty\kitty.exe -load ' + a_name_session2,'Title', 1, 1); // 2 последних параметра не используются в данном случае
 end;
 
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
