@@ -121,36 +121,37 @@ begin
      // Выбираем данные по уровням сигналов
      if form1.Query.Active then form1.query.Active:=false;
      form1.query.SQL.Clear;
-     form1.query.SQL.Add('select s.x, s.y, s.signal_level as signal_level, s.mac_ap from statss s');
+     (*
+select s.datetime,
+       (select ROUND(sg.x) from stats_gps sg where sg.id_equipment=s.id_equipment and DATE_FORMAT(sg.datetime,'%Y%m%d%H')=DATE_FORMAT(s.datetime,'%Y%m%d%H') and ABS(Time_to_sec(TIMEDIFF(sg.datetime,s.datetime)))<30 order by ABS(Time_to_sec(TIMEDIFF(sg.datetime,s.datetime)))  LIMIT 1) as x,
+       (select ROUND(sg.y) from stats_gps sg where sg.id_equipment=s.id_equipment and DATE_FORMAT(sg.datetime,'%Y%m%d%H')=DATE_FORMAT(s.datetime,'%Y%m%d%H') and ABS(Time_to_sec(TIMEDIFF(sg.datetime,s.datetime)))<30 order by ABS(Time_to_sec(TIMEDIFF(sg.datetime,s.datetime)))  LIMIT 1) as y,
+       s.id_equipment, e.name, s.signal_level as signal_level, s.mac_ap
+from statss s, equipment e
+where
+ s.id_equipment = e.id and
+--       s.id_equipment = 184 and
+--       s.signal_level = -100 and
+       s.datetime between '2024-12-24 00:00:01' and '2024-12-24 07:00:00'
+          *)
+     form1.query.SQL.Add('select (select sg.x from stats_gps sg where sg.id_equipment=s.id_equipment and DATE_FORMAT(sg.datetime,"%Y%m%d%H")=DATE_FORMAT(s.datetime,"%Y%m%d%H") and ' +
+        'ABS(Time_to_sec(TIMEDIFF(sg.datetime,s.datetime)))<30 order by ABS(Time_to_sec(TIMEDIFF(sg.datetime,s.datetime)))  LIMIT 1) as x, '+
+      '(select sg.y from stats_gps sg where sg.id_equipment=s.id_equipment and DATE_FORMAT(sg.datetime,"%Y%m%d%H")=DATE_FORMAT(s.datetime,"%Y%m%d%H") and '+
+        'ABS(Time_to_sec(TIMEDIFF(sg.datetime,s.datetime)))<30 order by ABS(Time_to_sec(TIMEDIFF(sg.datetime,s.datetime)))  LIMIT 1) as y,' +
+      ' s.signal_level as signal_level, s.mac_ap from statss s');
      if not useExcavs then form1.Query.SQL.Append(', modems m, equipment e');
      form1.query.SQL.Add('where ');
-     if trunc(startdttm)=trunc(enddttm) then begin
-        form1.Query.SQL.Add('(s.date="'+FormatDateTime('yyyy-mm-dd',startdttm)+'")');
-         if TimeOf(startdttm)>StrToTime('00:00:00') then begin
-            form1.Query.SQL.Add('and (s.time>="'+FormatDateTime('hh:mm:ss',startdttm)+'")');
-         end;
-         if TimeOf(enddttm)<=StrToTime('23:59:00') then begin
-            form1.Query.SQL.Add('and (s.time<="'+FormatDateTime('hh:mm:ss',enddttm)+'")');
-         end;
-     end else begin
-        if (TimeOf(startdttm)>StrToTime('00:00:00')) or (TimeOf(enddttm)<=StrToTime('23:59:00')) then begin
-          form1.query.SQL.Add('((s.date between '+QuotedStr(FormatDateTime('yyyy-mm-dd',startdttm+1)) + ' and '+
-                QuotedStr(FormatDateTime('yyyy-mm-dd',enddttm-1))+')');
-          form1.query.SQL.Add('or ((s.date="'+FormatDateTime('yyyy-mm-dd',startdttm)+'") and (s.time>="'+FormatDateTime('hh:mm:ss',startdttm)+'"))');
-          form1.query.SQL.Add('or ((s.date="'+FormatDateTime('yyyy-mm-dd',enddttm)+'") and (s.time<="'+FormatDateTime('hh:mm:ss',enddttm)+'")))');
-        end else begin
-          form1.query.SQL.Add('(s.date between '+QuotedStr(FormatDateTime('yyyy-mm-dd',startdttm)) + ' and '+
-                QuotedStr(FormatDateTime('yyyy-mm-dd',enddttm))+')');
-        end;
-     end;
+     if trunc(startdttm)=trunc(enddttm) then
+        form1.Query.SQL.Add('s.datetime between "'+FormatDateTime('yyyy-mm-dd 00:00:01',startdttm)+'" and "'+FormatDateTime('yyyy-mm-dd 23:59:59',startdttm)+'"')
+     else
+        form1.Query.SQL.Add('s.datetime between "'+FormatDateTime('yyyy-mm-dd hh:mm:ss',startdttm)+'" and "'+FormatDateTime('yyyy-mm-dd hh:mm:ss',enddttm)+'"');
      {if TimeOf(startdttm)>StrToTime('00:00:00') then begin
         form1.Query.SQL.Add('and (s.time>="'+FormatDateTime('hh:mm:ss',startdttm)+'")');
      end;
      if TimeOf(enddttm)<=StrToTime('23:59:58') then begin
         form1.Query.SQL.Add('and (s.time<="'+FormatDateTime('hh:mm:ss',enddttm)+'")');
      end;}
-     form1.Query.SQL.Add('and (s.status=2)');
-     form1.Query.SQL.Add('and (s.x>0)');
+     //form1.Query.SQL.Add('and (s.status=2)');
+     //form1.Query.SQL.Add('and (s.x>0)');
      if not useExcavs then begin
         form1.Query.SQL.Add('and (e.equipment_type=1) and (e.name=m.name)  and (m.id_modem=s.id_modem)');
      end;

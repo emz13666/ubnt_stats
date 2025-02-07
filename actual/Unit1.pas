@@ -520,6 +520,8 @@ var
   ChartEQInfo:TEQInfo; // «десь хранитс€ информаци€ об оборудовании с графика
 
 function AddIPaddress(ip_addr: String; val:integer):String;
+function pw_kobus_ssh(ip_addr: String): string;
+function kobus_new(ip_addr: String): boolean;
 function IsOLEObjectInstalled(Name: String): boolean;
 procedure AddToListFromDB(Query: TADOQuery; List: TStrings; Pole, Table, Where: Widestring);
 function GetSQLWhereDateTime(FieldDate1: AnsiString; FieldDate2: AnsiString=''): AnsiString;
@@ -532,6 +534,18 @@ uses Unit3, MapSettings, MapFail;
 
 {$R *.dfm}
 {$R res_vnc.res}
+
+function kobus_new(ip_addr: String): boolean;
+begin
+  if ip_addr='10.70.124.124' then  Result := true
+  else Result := false;
+end;
+
+function pw_kobus_ssh(ip_addr: String): string;
+begin
+  if ip_addr='10.70.124.124' then  Result := 'imx8mp'
+  else Result := 'kobus@2019';
+end;
 
 //ѕри создании формы: извлекает и сохран€ет файлы из ресурсов EXE, если еще не извлечено
 procedure ExtractResources;
@@ -4127,7 +4141,13 @@ begin
   //ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-telnet -P 10202 -initdelay 0 '+AddIPaddress(Modemsip_address.AsString,2)),nil,SW_restore);
 
   Create_Process('kitty\kitty.exe -load ' + a_name_session1,'Title', 1, 1); // 2 последних параметра не используютс€ в данном случае
-  Create_Process('kitty\kitty.exe -load ' + a_name_session2,'Title', 1, 1); // 2 последних параметра не используютс€ в данном случае
+  if not kobus_new(AddIPaddress(Modemsip_address.AsString,2)) then
+    Create_Process('kitty\kitty.exe -load ' + a_name_session2,'Title', 1, 1); // 2 последних параметра не используютс€ в данном случае
+
+  //”далить созданные файлы конфигов kitty
+  sleep(500);  //чтобы окна kitty успели  запуститьс€
+  DeleteFile(a_name_file1);
+  DeleteFile(a_name_file2);
 end;
 
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
@@ -4376,7 +4396,8 @@ begin
   if tabBur.Visible then
   begin
      IP := Modemsip_pc.AsString;
-     ShellExecute(0,nil,PChar('kitty\klink.exe'),pchar('-ssh -auto-store-sshkey root@'+IP+' -pw kobus@2019 "/sbin/reboot"'),nil,SW_restore);
+
+     ShellExecute(0,nil,PChar('kitty\klink.exe'),pchar('-ssh -auto-store-sshkey root@'+IP+' -pw '+ pw_kobus_ssh(IP) + ' "/sbin/reboot"'),nil,SW_restore);
             //«аписываем событие в системный журнал событий Windows
            buf:='reboot on KOBUS '+IP+' execute success.';
            EventLog:=RegisterEventSource(nil,PChar('EMZ_xreboot'));
@@ -4926,7 +4947,7 @@ end;
 
 procedure TForm1.btnChangePTXClick(Sender: TObject);
 begin
-  if (Modemsname.AsString='A500')or(Modemsname.AsString='A501')or(Modemsname.AsString='EX500') then
+  if (Modemsname.AsString='A500')or(Modemsname.AsString='EX500') then
     ShowMessage('“екущий - виртуальный самосвал/экскаватор. ¬ыберите другой.')
   else
       if Modemsid_ptx.AsInteger=0 then begin
@@ -4979,7 +5000,8 @@ begin
  end;
  if FTPFileZilla1.tag = 0 then
  begin
-    ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-auto-store-sshkey root@'+AddIPaddress(Modemsip_address.AsString,2)+' -pw kobus@2019'),nil,SW_restore);
+
+    ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-auto-store-sshkey root@'+AddIPaddress(Modemsip_address.AsString,2)+' -pw '+ pw_kobus_ssh(AddIPaddress(Modemsip_address.AsString,2))),nil,SW_restore);
     sleep(1000);
  end;
 end;
@@ -5152,7 +5174,7 @@ var
     i,di:integer;
     coordFinded:boolean;
     tmpimg:TImage;
-    filePNG:string;
+    filePNG, tmpcaption:string;
     kx,ky:real;
     paintx,painty:integer;
   diff: TDateTime;
@@ -5217,6 +5239,7 @@ begin
     frmWiFiAnalize.StationName:=NamesModems[i];
     frmWiFiAnalize.x:=round(x);
     frmWiFiAnalize.y:=round(y);
+    frmShowMap.Caption := frmShowMap.Caption + ' (' + Inttostr(round(x)) + ',' + Inttostr(round(y)) +  ')';
     // «акончили задавать параметры
     frmShowMap.TBSettings.Enabled:=false;
     frmShowMap.TBStations.Enabled:=false;

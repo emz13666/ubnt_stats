@@ -1,4 +1,10 @@
-asugtk>
-OMStip A152
->
-net/Hub/All
+login:
+admin
+Password:
+modular
+login:
+admin
+Password:
+modular
+\>
+"\windows\\ptx\\Administration\\GPS Information.exe"
