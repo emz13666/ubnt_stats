@@ -537,13 +537,13 @@ uses Unit3, MapSettings, MapFail;
 
 function kobus_new(ip_addr: String): boolean;
 begin
-  if ip_addr='10.70.124.124' then  Result := true
+  if (ip_addr='10.70.124.124')or(ip_addr='10.70.124.134') then  Result := true
   else Result := false;
 end;
 
 function pw_kobus_ssh(ip_addr: String): string;
 begin
-  if ip_addr='10.70.124.124' then  Result := 'imx8mp'
+  if kobus_new(ip_addr) then  Result := 'imx8mp'
   else Result := 'kobus@2019';
 end;
 
