@@ -4012,17 +4012,19 @@ begin
        if Modems.FieldByName('ip_lte').AsString <>'' then begin
           Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM', edtWidthPing.Value, edtHeightPing.Value);
        end;
+       (* 28.06.25 - comment. Он все равно не доступен
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
           Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN', edtWidthPing.Value, edtHeightPing.Value);
-       end;
+       end;                                           *)
      end
      else
      begin
         ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_address').AsString),nil,SW_restore);
         ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_pc').AsString),nil,SW_restore);
+        (* 28.06.25 - comment. Он все равно не доступен
         if Modems.FieldByName('ip_vpn').AsString <>'' then begin
            ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_vpn').AsString),nil,SW_restore);
-        end;
+        end;                                           *)
         if Modems.FieldByName('ip_lte').AsString <>'' then begin
            ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_lte').AsString),nil,SW_restore);
         end;
@@ -4053,9 +4055,10 @@ begin
       Create_Process('cmd.exe /K ping -t '+ip_addresss,Modemsname.AsString+' - BulletSt', edtWidthPing.Value, edtHeightPing.Value);
       Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,1),Modemsname.AsString+' - BulletAP', edtWidthPing.Value, edtHeightPing.Value);
       Create_Process('cmd.exe /K ping -t '+AddIPaddress(ip_addresss,2),Modemsname.AsString+' - Kobus', edtWidthPing.Value, edtHeightPing.Value);
+      (* 28.06.25 - comment. Он все равно не доступен
        if Modems.FieldByName('ip_vpn').AsString <>'' then begin
           Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_vpn').AsString,Modemsname.AsString+' - LTE VPN', edtWidthPing.Value, edtHeightPing.Value);
-       end;
+       end;                                          *)
        if Modems.FieldByName('ip_lte').AsString <>'' then begin
           Create_Process('cmd.exe /K ping -t '+Modems.FieldByName('ip_lte').AsString,Modemsname.AsString+' - LTE SIM', edtWidthPing.Value, edtHeightPing.Value);
        end;
@@ -4065,9 +4068,10 @@ begin
       ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+ip_addresss),nil,SW_restore);
       ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+AddIPaddress(ip_addresss,1)),nil,SW_restore);
       ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+AddIPaddress(ip_addresss,2)),nil,SW_restore);
+      (* 28.06.25 - comment. Он все равно не доступен
         if Modems.FieldByName('ip_vpn').AsString <>'' then begin
            ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_vpn').AsString),nil,SW_restore);
-        end;
+        end;                               *)
         if Modems.FieldByName('ip_lte').AsString <>'' then begin
            ShellExecute(0,nil,PChar('cmd.exe'),pchar('/K ping -t '+Modems.FieldByName('ip_lte').AsString),nil,SW_restore);
         end;

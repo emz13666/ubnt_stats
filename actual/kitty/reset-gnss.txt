@@ -1,0 +1,5 @@
+#
+/opt/kobus9/bin/agps0.sh 
+#BESTPOSA,
+RESET
+
