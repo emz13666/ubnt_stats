@@ -344,6 +344,8 @@ type
     Ping3569: TMenuItem;
     Ping81: TMenuItem;
     Ping82: TMenuItem;
+    btnResetGnss1ch: TBitBtn;
+    btnResetGnss2ch: TBitBtn;
     function SSH_Client(Server, Userid, Pass: Ansistring): TCryptSession;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -453,6 +455,8 @@ type
     procedure Camera1Click(Sender: TObject);
     procedure PCVideoSSHClick(Sender: TObject);
     procedure PingPC_NATClick(Sender: TObject);
+    procedure tabBurHide(Sender: TObject);
+    procedure btnResetGnss1chClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -857,8 +861,16 @@ begin
   ToolTipsDBGrid1.tag :=0;
 end;
 
+procedure TForm1.tabBurHide(Sender: TObject);
+begin
+  btnResetGnss1ch.Visible := false;
+  btnResetGnss2ch.Visible := false;
+end;
+
 procedure TForm1.tabBurShow(Sender: TObject);
 begin
+  btnResetGnss1ch.Visible := true;
+  btnResetGnss2ch.Visible := true;
   GroupBox4.Caption := 'По всем бурстанкам в статусе ГОТОВ';
   C1.Visible := true;
   GPS1.Visible  := true;
@@ -2096,6 +2108,59 @@ begin
   frmPingPort.edtIPaddr.Text := Modemsip_lte.AsString;
   frmPingPort.edtPort.Text := '3569'; //ssh pc video
   frmPingPort.Show;
+end;
+
+procedure TForm1.btnResetGnss1chClick(Sender: TObject);
+var a_memo: TStrings; a_name_file1, a_name_session1, IP, IPS, cmd: String; hwnd1: cardinal;
+begin
+  IP := AddIPaddress(Modemsip_address.AsString,2);
+// формируем файлы конфигов kitty для выбранного бурстанка (если ещё нету)
+  a_name_file1 := ExtractFilePath(Application.ExeName)+'kitty\Sessions\drill-reset-gnss-'+IP;
+  a_name_session1 := 'drill-reset-gnss-' + IP;
+  if not FileExists(a_name_file1) then begin
+    a_memo := TStringList.Create;
+    a_memo.Clear;
+    a_memo.Add('HostName\' + IP +'\');
+    a_memo.Add('Protocol\ssh\');
+    a_memo.Add('PortNumber\22\');
+    a_memo.Add('WinTitle\%25%25s\');
+    a_memo.Add('UserName\root\');
+    if kobus_new(IP) then  begin
+      cmd := ' -cmd "/opt/kobus9/bin/agps0.sh\n\s02RESET\n" ';
+      //a_memo.Add('Autocommand\%2Fopt%2Fkobus9%2Fbin%2Fagps0.sh%5CnRESET%5Cn\');
+      //a_memo.Add('Password\2623nwT+hmmXOW8X\');
+    end
+    else begin
+      if (Sender as TComponent).Name = 'btnResetGnss1ch' then
+         //a_memo.Add('Autocommand\%2Fopt%2Fkobus9%2Fbin%2Fagps0.sh%5CnINTERFACEMODE%20com1%20COMPASS%20COMPASS%5CnRESET%5Cn\')
+         cmd := ' -cmd "/opt/kobus9/bin/agps0.sh\n\s02INTERFACEMODE com1 COMPASS COMPASS\n\pRESET\n" '
+      else
+        //a_memo.Add('Autocommand\%2Fopt%2Fkobus9%2Fbin%2Fagps1.sh%5CnINTERFACEMODE%20com1%20COMPASS%20COMPASS%5CnRESET%5Cn\');
+        cmd := ' -cmd "/opt/kobus9/bin/agps1.sh\n\s02INTERFACEMODE com1 COMPASS COMPASS\n\pRESET\n" ';
+      //a_memo.Add('Password\65n23p%2FQzkpg95Kdm1jOf\');
+    end;
+    a_memo.Add('NoRemoteWinTitle\1\');
+    a_memo.SaveToFile(a_name_file1);
+    a_memo.Free;
+  end;
+
+  ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-auto-store-sshkey -load '+ a_name_session1 +
+    ' -pw ' + pw_kobus_ssh(IP) + cmd),nil,SW_SHOW);
+  Application.ProcessMessages;
+  IPS :='drill-reset-gnss-' + IP;
+  sleep(13000);
+  hwnd1 := FindWindow(nil,PChar(IPS));
+  sleep(500);
+  SendMessage(hwnd1,WM_DESTROY,0,0);
+  Sleep(500);
+  //showmessage('restart gpslistener...');
+  ShellExecute(0,nil,PChar('kitty\kitty.exe'),pchar('-l root -pw '+ pw_kobus_ssh(IP) +
+        ' -auto-store-sshkey -ssh ' + IP + ' -cmd "kobus.interface restart gpslistener;exit"'),nil,SW_SHOW);
+  //Удалить созданные файлы конфигов kitty
+  DeleteFile(a_name_file1);
+  Application.ProcessMessages;
+  sleep(7000);
+  PopupGpgListenerClick(Sender);
 end;
 
 procedure TForm1.btnSetPingClick(Sender: TObject);
