@@ -4,7 +4,7 @@ unit MyUtils;
 interface
 
 uses Windows, sysUtils, shFolder, Classes;
-// Работа с еврсией файла
+// Работа с версией файла
 type
 
   TVersion = record
@@ -62,6 +62,7 @@ function GetShiftindex(dttm:TDateTime):integer;   // Определение номера смены по
 function ShiftAndSecToDateTime(shiftindex, seconds:integer):TDateTime;  // Функция, преобразуюжая номер смены и количество секунд с начала смены в формат дата время
 function MSecondToTime(const miliSeconds: Cardinal): TTime; //Перевести секунды в формат времени
 function IsIPAddress(str: string): boolean; // Является ли строка IP Адресом
+function IsMacAddress(str:string):boolean;  // Является ли строка MAC-адресом
 function isDNSName(str:string):boolean; // Является ли строка именем dns
 function DateTimeToTimeStamp1970(dt:TDateTime):Longint; // Определение количества секунд, которые прошли с 01.01.1970 до момента dt
 function GetSpecialFolderPath(folder : integer) : string; // Получение пути к специальному каталогу
@@ -79,6 +80,9 @@ function MySQLDate(dttm:TDateTime):string;          // 2020-04-10 Получение стро
 function MySQLDateTime(dttm:TDateTime):string;       // 2021-07-09 Получение строки даты и времени для MySQL и PostgreSQL
 function SizeOfFile(filename:string):LongInt;          // 2021-07-16 Определение размера файла по имени файла
 procedure MoveBigFile(filename:string;size:integer;postfix:string);   // 2021-08-07 Переименование файла, который больше size Байт в имя с постфиксом
+procedure FreeAndNilAssigned(var obj);            // 2022-10-18 Процедура удаления объекта с предварительной проверкой
+function FloatToStrEn(value:real):string;
+
 
 implementation
 
@@ -335,8 +339,8 @@ begin
   dd := miliSeconds div MSecPerDay;
   hh := (miliSeconds mod MSecPerDay) div MSecPerHour;
   mm := ((miliSeconds mod MSecPerDay) mod MSecPerHour) div MSecPerMinute;
-  ss := (((miliSeconds mod MSecPerDay) mod MSecPerHour) mod MSecPerMinute) div MSecsPerSec;
-  ms := (((miliSeconds mod MSecPerDay) mod MSecPerHour) mod MSecPerMinute) mod MSecsPerSec;
+  ss := (((miliSeconds mod MSecPerDay) mod MSecPerHour) mod MSecPerMinute) div MSecPerSec;
+  ms := (((miliSeconds mod MSecPerDay) mod MSecPerHour) mod MSecPerMinute) mod MSecPerSec;
   Result := EncodeTime(hh, mm, ss, ms);
 end;
 
@@ -369,6 +373,27 @@ begin
           Delete(str1,1,deleteindex);
      end;
      if countDigit<>4 then result:=false;
+end;
+
+// Является ли строка MAC-адресом
+function IsMacAddress(str:string):boolean;
+var
+  str1: string;
+  pos1: Integer;
+  countgroups: Integer;
+begin
+    str1:=UpperCase(str);
+    result:=true;
+    countgroups:=0;
+    while result and (length(str1)>0) do begin
+        pos1:=pos(':',str1);
+        if not (pos1 in [0,3]) then result:=false else begin
+           if not ((str1[1] in ['0'..'9','A'..'F']) and (str1[2] in ['0'..'9','A'..'F'])) then result:=false;
+        end;
+        inc(countgroups);
+        if pos1>0 then Delete(str1,1,pos1) else str1:='';
+    end;
+    if result and (countgroups<>6) then result:=false;
 end;
 
 // Является ли строка dns именем
@@ -594,6 +619,20 @@ begin
 
          end;
      end;
+end;
+
+procedure FreeAndNilAssigned(var obj);
+begin
+     try
+      if Assigned(TObject(obj)) then FreeAndNil(obj);
+     except
+
+     end;
+end;
+
+function FloatToStrEn(value:real):string;
+begin
+  result:=StringReplace(FloatToStr(value),DecimalSeparator,'.',[]);
 end;
 
 end.
